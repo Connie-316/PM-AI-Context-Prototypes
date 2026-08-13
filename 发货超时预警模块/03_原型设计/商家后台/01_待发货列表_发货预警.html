@@ -1,0 +1,1002 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 03_原型设计/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>待发货列表 - 发货超时预警 | 商家端</title>
+<style>
+  :root {
+    --color-primary: #1664FF;
+    --color-primary-hover: #1458DB;
+    --color-danger: #F5222D;
+    --color-warning: #FAAD14;
+    --color-success: #52C41A;
+    --color-orange: #FF7700;
+    --bg-page: #F5F5F5;
+    --bg-card: #FFFFFF;
+    --bg-header: #1A1A1A;
+    --text-title: #333333;
+    --text-body: #333333;
+    --text-secondary: #595959;
+    --text-assist: #8C8C8C;
+    --border-color: #E5E5E5;
+    --border-light: #D9D9D9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif; background: var(--bg-page); color: var(--text-body); font-size: 14px; }
+
+  /* 顶部导航 */
+  .topbar { background: var(--bg-header); height: 56px; display: flex; align-items: center; padding: 0 24px; }
+  .topbar-logo { color: #fff; font-size: 16px; font-weight: 600; }
+  .topbar-nav { display: flex; gap: 32px; margin-left: 48px; }
+  .topbar-menu { color: rgba(255,255,255,0.65); font-size: 14px; cursor: pointer; padding: 16px 0; border-bottom: 2px solid transparent; }
+  .topbar-menu.active { color: #fff; border-bottom-color: var(--color-primary); }
+  .topbar-menu:hover { color: #fff; }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .topbar-user { color: rgba(255,255,255,0.85); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .topbar-user .avatar { width: 32px; height: 32px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; }
+
+  /* 布局 */
+  .layout { display: flex; min-height: calc(100vh - 56px); }
+  .sidebar { width: 200px; background: var(--bg-header); padding: 12px 0; flex-shrink: 0; }
+  .sidebar-menu { height: 48px; display: flex; align-items: center; padding: 0 20px; color: #fff; font-size: 14px; cursor: pointer; border-left: 3px solid transparent; }
+  .sidebar-menu.active { border-left-color: var(--color-primary); background: rgba(22,100,255,0.15); color: var(--color-primary); }
+  .main { flex: 1; padding: 20px; overflow: auto; }
+
+  /* 页面标题 */
+  .page-title { font-size: 18px; font-weight: 600; color: var(--text-title); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .page-title .badge { background: var(--color-danger); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 10px; font-weight: 400; }
+
+  /* Tab */
+  .tabs { background: var(--bg-card); border-radius: 8px 8px 0 0; display: flex; border-bottom: 1px solid var(--border-color); }
+  .tab { padding: 14px 24px; font-size: 14px; color: var(--text-assist); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; position: relative; white-space: nowrap; }
+  .tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); font-weight: 500; }
+  .tab .count { background: #f0f0f0; color: var(--text-assist); font-size: 12px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+  .tab.active .count { background: #E8F0FF; color: var(--color-primary); }
+  .tab .red-dot { width: 6px; height: 6px; background: var(--color-danger); border-radius: 50%; position: absolute; top: 10px; right: 6px; display: none; }
+  .tab.has-warning .red-dot { display: block; }
+
+  /* 核心逻辑说明框 */
+  .logic-box {
+    background: linear-gradient(135deg, #fef3e2 0%, #fff9f0 100%);
+    border: 2px solid #fa8c16;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    font-family: "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    white-space: pre;
+    overflow-x: auto;
+    color: #333;
+  }
+  .logic-box .title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fa8c16;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #fa8c16;
+  }
+  .logic-box .section { margin: 8px 0; }
+  .logic-box .section-title { color: #d4380d; font-weight: 600; }
+  .logic-box .highlight { color: #fa8c16; font-weight: 600; }
+  .logic-box .red { color: #f5222d; font-weight: 600; }
+  .logic-box .orange { color: #fa8c16; font-weight: 600; }
+  .logic-box .yellow { color: #d4a800; font-weight: 600; }
+  .logic-box .blue { color: #1890ff; font-weight: 600; }
+  .logic-box .arrow { color: #999; }
+
+  /* 统计栏 */
+  .stats-bar { background: var(--bg-card); padding: 14px 20px; display: flex; gap: 20px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+  .stat-item { display: flex; align-items: center; gap: 8px; font-size: 13px; white-space: nowrap; }
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .stat-dot.red { background: var(--color-danger); }
+  .stat-dot.orange { background: var(--color-orange); }
+  .stat-dot.yellow { background: var(--color-warning); }
+  .stat-dot.blue { background: var(--color-primary); }
+  .stat-dot.green { background: var(--color-success); }
+  .stat-num { font-weight: 600; }
+  .stat-num.red { color: var(--color-danger); }
+  .stat-num.orange { color: var(--color-orange); }
+  .stat-num.yellow { color: var(--color-warning); }
+  .stat-num.blue { color: var(--color-primary); }
+  .stat-num.green { color: var(--color-success); }
+
+  /* 筛选栏 */
+  .toolbar { background: var(--bg-card); padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+  .toolbar-select { height: 32px; padding: 0 10px; border: 1px solid var(--border-light); border-radius: 4px; font-size: 13px; min-width: 100px; background: #fff; }
+  .toolbar-input { height: 32px; padding: 0 10px; border: 1px solid var(--border-light); border-radius: 4px; font-size: 13px; width: 160px; }
+  .btn { height: 32px; padding: 0 14px; border-radius: 4px; font-size: 13px; cursor: pointer; border: 1px solid var(--border-light); background: #fff; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+  .btn-primary { background: var(--color-primary) !important; color: #fff !important; border-color: var(--color-primary) !important; }
+  .btn-primary:hover { background: var(--color-primary-hover) !important; }
+  .btn-danger { color: var(--color-danger) !important; border-color: var(--color-danger) !important; background: #FFF0F0 !important; }
+  .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .refresh-time { font-size: 12px; color: var(--text-assist); white-space: nowrap; }
+
+  /* 表格 */
+  .table-wrap { background: var(--bg-card); border-radius: 0 0 8px 8px; overflow-x: auto; }
+  table { width: max-content; min-width: 100%; border-collapse: collapse; }
+  thead { background: #FAFAFA; }
+  th { padding: 12px 14px; text-align: left; font-size: 13px; color: var(--text-secondary); font-weight: 600; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 13px; color: var(--text-body); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFAFA; }
+
+  /* 复选框热区 */
+  .checkbox-cell { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; cursor: pointer; }
+  .checkbox-cell input { width: 16px; height: 16px; cursor: pointer; margin: 0; }
+
+  /* 风险行背景 */
+  tr.risk-red td { background: #FFF8F8; }
+  tr.risk-orange td { background: #FFFBF5; }
+
+  /* 风险预警标签 */
+  .risk-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+  .risk-badge.red { background: #FFF0F0; color: var(--color-danger); }
+  .risk-badge.orange { background: #FFF7E6; color: var(--color-orange); }
+  .risk-badge.yellow { background: #FFFBE6; color: var(--color-warning); }
+  .risk-badge.blue { background: #E8F0FF; color: var(--color-primary); }
+
+  /* 剩余时间 */
+  .time-left { font-weight: 600; white-space: nowrap; }
+  .time-left.red { color: var(--color-danger); }
+  .time-left.orange { color: var(--color-orange); }
+  .time-left.yellow { color: var(--color-warning); }
+  .time-left.blue { color: var(--color-primary); }
+  .time-left.gray { color: var(--text-assist); font-weight: 400; }
+
+  /* 紧急程度 */
+  .urgent-tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: 500; }
+  .urgent-tag.normal { background: #F5F5F5; color: var(--text-secondary); }
+  .urgent-tag.urgent { background: #FFF7E6; color: var(--color-orange); }
+  .urgent-tag.frequent { background: #FFF0F0; color: var(--color-danger); }
+
+  /* 逾期时长 */
+  .overdue-time { color: var(--color-danger); font-weight: 600; white-space: nowrap; }
+
+  /* 处理状态 */
+  .status-tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 12px; white-space: nowrap; }
+  .status-tag.pending { background: #FFF7E6; color: var(--color-warning); }
+  .status-tag.processing { background: #E8F0FF; color: var(--color-primary); }
+  .status-tag.done { background: #F6FFED; color: var(--color-success); }
+
+  /* 链接 */
+  .order-link { color: var(--color-primary); cursor: pointer; }
+  .order-link:hover { text-decoration: underline; }
+
+  /* 订单状态文字 */
+  .order-status-text { white-space: nowrap; }
+
+  /* PO收货 */
+  .po-receive { white-space: nowrap; }
+  .po-receive.uncomplete { color: var(--color-danger); font-weight: 500; }
+  .po-receive.complete { color: var(--text-body); }
+
+  /* 商品类型 */
+  .goods-type { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 4px; white-space: nowrap; }
+  .goods-type.standard { background: #E8F0FF; color: var(--color-primary); }
+  .goods-type.cast { background: #FFF7E6; color: var(--color-orange); }
+  .goods-type.software { background: #F0F0FF; color: #722ED1; }
+  .goods-type.custom { background: #FFF1F0; color: #EB2F96; }
+
+  /* 操作按钮 */
+  .action-btns { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+  .action-btn { padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; border: 1px solid var(--border-light); background: #fff; color: var(--text-body); white-space: nowrap; }
+  .action-btn:hover { color: var(--color-primary); border-color: var(--color-primary); }
+  .action-btn.primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+  .action-btn.primary:hover { background: var(--color-primary-hover); }
+  .action-btn.danger { color: var(--color-danger); border-color: var(--color-danger); background: #FFF0F0; }
+  .action-btn.danger:hover { background: var(--color-danger); color: #fff; }
+  .action-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+  .expand-btn { color: var(--text-assist); font-size: 12px; cursor: pointer; padding: 4px 8px; white-space: nowrap; }
+  .expand-btn:hover { color: var(--color-primary); }
+
+  /* 展开行 */
+  .expand-row { display: none; }
+  .expand-row.active { display: table-row; }
+  .expand-row td { padding: 0; background: #FAFAFA; }
+  .expand-content { padding: 16px 20px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .expand-item { }
+  .expand-label { font-size: 12px; color: var(--text-assist); margin-bottom: 4px; white-space: nowrap; }
+  .expand-value { font-size: 13px; color: var(--text-body); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .expand-value.highlight { color: var(--color-danger); font-weight: 600; }
+
+  /* 分页 */
+  .pagination { background: var(--bg-card); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); }
+  .page-info { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+  .page-btns { display: flex; gap: 8px; }
+  .page-btn { min-width: 32px; height: 32px; padding: 0 10px; border: 1px solid var(--border-light); border-radius: 4px; font-size: 13px; cursor: pointer; background: #fff; color: var(--text-body); display: flex; align-items: center; justify-content: center; }
+  .page-btn:hover { color: var(--color-primary); border-color: var(--color-primary); }
+  .page-btn.current { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+  .page-btn.disabled { color: #ccc; cursor: not-allowed; }
+
+  /* Tab内容 */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* 弹窗 */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--bg-card); border-radius: 8px; width: 500px; max-height: 85vh; overflow: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-size: 15px; font-weight: 600; color: var(--text-title); }
+  .modal-close { cursor: pointer; color: var(--text-assist); font-size: 20px; line-height: 1; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+  .modal-close:hover { background: #f5f5f5; color: var(--text-body); }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
+
+  /* 表单 */
+  .form-item { margin-bottom: 16px; }
+  .form-item:last-child { margin-bottom: 0; }
+  .form-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .form-label.required::before { content: '*'; color: var(--color-danger); }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--border-light); border-radius: 4px; font-size: 13px; font-family: inherit; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(22,100,255,0.1); }
+  .form-textarea { min-height: 80px; resize: vertical; }
+
+  /* 时间线 */
+  .timeline { padding: 8px 0; }
+  .timeline-item { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--border-color); }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-time { width: 140px; flex-shrink: 0; font-size: 12px; color: var(--text-assist); white-space: nowrap; }
+  .timeline-content { flex: 1; }
+  .timeline-operator { font-weight: 500; color: var(--text-body); font-size: 13px; }
+  .timeline-action { color: var(--text-secondary); font-size: 12px; margin-top: 2px; }
+  .timeline-note { color: var(--text-assist); font-size: 12px; margin-top: 6px; background: #FAFAFA; padding: 8px; border-radius: 4px; line-height: 1.5; }
+
+  /* 订单信息 */
+  .order-info { background: #FAFAFA; padding: 12px 16px; border-radius: 4px; margin-bottom: 16px; }
+  .order-info-row { display: flex; gap: 24px; font-size: 13px; flex-wrap: wrap; }
+  .order-info-item { display: flex; gap: 8px; }
+  .order-info-label { color: var(--text-assist); }
+  .order-info-value { color: var(--text-body); font-weight: 500; }
+
+  /* 新增字段标记 */
+  .new-field { position: relative; }
+  .new-field::after { content: '新'; display: inline-block; font-size: 9px; background: var(--color-success); color: #fff; padding: 1px 3px; border-radius: 2px; margin-left: 4px; vertical-align: middle; font-weight: normal; }
+
+  /* 新增按钮标记 */
+  .new-btn { position: relative; }
+  .new-btn::after { content: ''; }
+
+  /* 小按钮 */
+  .btn-small { height: 26px !important; padding: 0 8px !important; font-size: 11px !important; }
+
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div class="topbar">
+  <div class="topbar-logo">物料商城</div>
+  <div class="topbar-nav">
+    <div class="topbar-menu">工作台</div>
+    <div class="topbar-menu">商品管理</div>
+    <div class="topbar-menu active">订单管理</div>
+    <div class="topbar-menu">供应商管理</div>
+    <div class="topbar-menu">消息中心</div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-user">
+      <span class="avatar">张</span>
+      <span>张三</span>
+    </div>
+  </div>
+</div>
+
+<!-- 文档导航（简洁版） -->
+<div style="background:#f8f9fa;border-bottom:1px solid #e5e5e5;padding:8px 24px;display:flex;align-items:center;gap:12px;font-size:12px;">
+  <a href="../发货超时预警_商家端_产品门户.html" style="color:#1664FF;text-decoration:none;padding:4px 8px;background:#fff;border:1px solid #d9d9d9;border-radius:4px;">📋 目录</a>
+  <a href="../../02_需求文档/PRD_发货超时预警功能_h5.html" target="_blank" style="color:#666;text-decoration:none;padding:4px 8px;background:#fff;border:1px solid #d9d9d9;border-radius:4px;">📄 PRD</a>
+  <span style="color:#1664FF;padding:4px 8px;background:#e6f0ff;border-radius:4px;font-weight:500;">🎨 待发货列表</span>
+</div>
+
+<!-- 侧边+主内容 -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-menu">订单列表</div>
+    <div class="sidebar-menu active">待发货列表</div>
+  </div>
+
+  <div class="main">
+    <div class="page-title">待发货列表 <span class="badge">3</span></div>
+
+    <!-- ========== 待发货 Tab ========== -->
+    <div id="tab-waiting" class="tab-content active">
+
+      <!-- 统计栏 -->
+      <div class="stats-bar">
+        <div class="stat-item"><span class="stat-dot red"></span><span>紧急</span><span class="stat-num red">3</span></div>
+        <div class="stat-item"><span class="stat-dot orange"></span><span>高风险</span><span class="stat-num orange">7</span></div>
+        <div class="stat-item"><span class="stat-dot yellow"></span><span>中风险</span><span class="stat-num yellow">12</span></div>
+        <div class="stat-item"><span class="stat-dot blue"></span><span>低风险</span><span class="stat-num blue">23</span></div>
+      </div>
+
+      <!-- Tab切换 -->
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('waiting',this)">待发货 <span class="count">45</span><span class="red-dot"></span></div>
+        <div class="tab has-warning" onclick="switchTab('overdue',this)">已超时 <span class="count">8</span><span class="red-dot"></span></div>
+        <div class="tab" onclick="switchTab('today',this)">今日发货 <span class="count">23</span></div>
+      </div>
+
+      <!-- 筛选栏 -->
+      <div class="toolbar">
+        <select class="toolbar-select"><option>全部企业</option><option>广东华兴玻璃</option><option>佛山群志光电</option></select>
+        <select class="toolbar-select"><option>全部跟单员</option><option>张三</option><option>李四</option><option>王五</option></select>
+        <select class="toolbar-select"><option>全部紧急程度</option><option>普通</option><option>紧急</option><option>高频</option></select>
+        <select class="toolbar-select"><option>全部风险</option><option>🚨 紧急</option><option>⚠️ 高风险</option><option>⏰ 中风险</option><option>📋 低风险</option></select>
+        <input type="text" class="toolbar-input" placeholder="SO单号/企业名称">
+        <button class="btn">搜索</button>
+        <div class="toolbar-right">
+          <span class="refresh-time">最后更新：14:32:45</span>
+          <button class="btn" onclick="location.reload()">🔄 刷新</button>
+        </div>
+      </div>
+
+      <!-- 表格 -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></th>
+              <th style="width:120px">企业名称</th>
+              <th style="width:110px">SO单号</th>
+              <th style="width:110px">订单状态</th>
+              <th style="width:70px">PO收货</th>
+              <th style="width:90px">支付时间</th>
+              <th style="width:70px">紧急程度</th>
+              <th style="width:60px">备注</th>
+              <th style="width:75px">[新]风险预警</th>
+              <th style="width:85px">[新]剩余时间</th>
+              <th style="width:220px">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 红色紧急 -->
+            <tr class="risk-red">
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>广东华兴玻璃</td>
+              <td><span class="order-link">SO20260618001</span></td>
+              <td><span class="order-status-text">待发货：1项5件</span></td>
+              <td><span class="po-receive uncomplete">3/5</span></td>
+              <td>06-18 09:23</td>
+              <td><span class="urgent-tag frequent">高频</span></td>
+              <td>-</td>
+              <td><span class="risk-badge red">🚨 紧急</span></td>
+              <td><span class="time-left red">32分</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn primary btn-small" onclick="showModal('shipModal')">发货</button>
+                  <button class="action-btn btn-small" onclick="showTip('销售单')">销售单</button>
+                  <button class="action-btn btn-small" onclick="showTip('送货单')">送货单</button>
+                  <button class="action-btn btn-small" onclick="showModal('changeDateModal')">[修改交期]</button>
+                  <button class="action-btn btn-small" onclick="showMore()">更多</button>
+                  <button class="expand-btn btn-small" onclick="toggleExpand(this)">收起 ▲</button>
+                </div>
+              </td>
+            </tr>
+            <!-- 展开行 -->
+            <tr class="expand-row active">
+              <td colspan="11">
+                <div class="expand-content">
+                  <div class="expand-item"><div class="expand-label">物料名称</div><div class="expand-value">H13模具钢 100×50×20mm</div></div>
+                  <div class="expand-item"><div class="expand-label">商品类型</div><div class="expand-value"><span class="goods-type standard">标准件</span></div></div>
+                  <div class="expand-item"><div class="expand-label">供应商名称</div><div class="expand-value">上海宝钢特殊钢</div></div>
+                  <div class="expand-item"><div class="expand-label">交收方式</div><div class="expand-value">送货上门</div></div>
+                  <div class="expand-item"><div class="expand-label">跟单员</div><div class="expand-value">张三</div></div>
+                  <div class="expand-item"><div class="expand-label">预计发货日</div><div class="expand-value highlight">06-18 15:32</div></div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- 橙色高风险 -->
+            <tr class="risk-orange">
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>佛山群志光电</td>
+              <td><span class="order-link">SO20260617045</span></td>
+              <td><span class="order-status-text">待发货：1项3件</span></td>
+              <td><span class="po-receive uncomplete">0/3</span></td>
+              <td>06-17 14:30</td>
+              <td><span class="urgent-tag urgent">紧急</span></td>
+              <td>需要发票</td>
+              <td><span class="risk-badge orange">⚠️ 高</span></td>
+              <td><span class="time-left orange">1小时22分</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn primary btn-small" onclick="showModal('shipModal')">发货</button>
+                  <button class="action-btn btn-small" onclick="showTip('销售单')">销售单</button>
+                  <button class="action-btn btn-small" onclick="showTip('送货单')">送货单</button>
+                  <button class="action-btn btn-small" onclick="showModal('changeDateModal')">[修改交期]</button>
+                  <button class="action-btn btn-small" onclick="showMore()">更多</button>
+                  <button class="expand-btn btn-small" onclick="toggleExpand(this)">展开 ▼</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- 黄色中风险 -->
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>深圳比亚迪电子</td>
+              <td><span class="order-link">SO20260617052</span></td>
+              <td><span class="order-status-text">待发货：3项8件</span></td>
+              <td><span class="po-receive complete">8/8</span></td>
+              <td>06-17 16:45</td>
+              <td><span class="urgent-tag normal">普通</span></td>
+              <td>-</td>
+              <td><span class="risk-badge yellow">⏰ 中</span></td>
+              <td><span class="time-left yellow">3小时12分</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn primary btn-small" onclick="showModal('shipModal')">发货</button>
+                  <button class="action-btn btn-small" onclick="showTip('销售单')">销售单</button>
+                  <button class="action-btn btn-small" onclick="showTip('送货单')">送货单</button>
+                  <button class="action-btn btn-small" onclick="showModal('changeDateModal')">[修改交期]</button>
+                  <button class="action-btn btn-small" onclick="showMore()">更多</button>
+                  <button class="expand-btn btn-small" onclick="toggleExpand(this)">展开 ▼</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- 蓝色低风险 -->
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>东莞劲胜精密</td>
+              <td><span class="order-link">SO20260616078</span></td>
+              <td><span class="order-status-text">待发货：2项6件</span></td>
+              <td><span class="po-receive uncomplete">2/6</span></td>
+              <td>06-16 10:20</td>
+              <td><span class="urgent-tag normal">普通</span></td>
+              <td>-</td>
+              <td><span class="risk-badge blue">📋 低</span></td>
+              <td><span class="time-left blue">20小时30分</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn primary btn-small" onclick="showModal('shipModal')">发货</button>
+                  <button class="action-btn btn-small" onclick="showTip('销售单')">销售单</button>
+                  <button class="action-btn btn-small" onclick="showTip('送货单')">送货单</button>
+                  <button class="action-btn btn-small" onclick="showModal('changeDateModal')">[修改交期]</button>
+                  <button class="action-btn btn-small" onclick="showMore()">更多</button>
+                  <button class="expand-btn btn-small" onclick="toggleExpand(this)">展开 ▼</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- 无风险 -->
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>广州LG显示科技</td>
+              <td><span class="order-link">SO20260615088</span></td>
+              <td><span class="order-status-text">待发货：4项12件</span></td>
+              <td><span class="po-receive complete">12/12</span></td>
+              <td>06-15 08:30</td>
+              <td><span class="urgent-tag normal">普通</span></td>
+              <td>-</td>
+              <td><span style="color:var(--text-assist);font-size:12px;">—</span></td>
+              <td><span class="time-left gray">1天3小时</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn primary btn-small" onclick="showModal('shipModal')">发货</button>
+                  <button class="action-btn btn-small" onclick="showTip('销售单')">销售单</button>
+                  <button class="action-btn btn-small" onclick="showTip('送货单')">送货单</button>
+                  <button class="action-btn btn-small" onclick="showModal('changeDateModal')">[修改交期]</button>
+                  <button class="action-btn btn-small" onclick="showMore()">更多</button>
+                  <button class="expand-btn btn-small" onclick="toggleExpand(this)">展开 ▼</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <div class="page-info">共 45 条，每页 10 条</div>
+          <div class="page-btns">
+            <button class="page-btn disabled">上一页</button>
+            <button class="page-btn current">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">下一页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 已超时 Tab ========== -->
+    <div id="tab-overdue" class="tab-content">
+
+      <div class="stats-bar">
+        <div class="stat-item"><span>今日超时</span><span class="stat-num red">3</span></div>
+        <div class="stat-item"><span>本周超时</span><span class="stat-num">23</span></div>
+        <div class="stat-item"><span>待处理</span><span class="stat-num orange">5</span></div>
+        <div class="stat-item"><span>处理中</span><span class="stat-num blue">2</span></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab" onclick="switchTab('waiting',this)">待发货 <span class="count">45</span></div>
+        <div class="tab active has-warning" onclick="switchTab('overdue',this)">已超时 <span class="count">8</span><span class="red-dot"></span></div>
+        <div class="tab" onclick="switchTab('today',this)">今日发货 <span class="count">23</span></div>
+      </div>
+
+      <div class="toolbar">
+        <select class="toolbar-select"><option>全部企业</option></select>
+        <select class="toolbar-select"><option>全部跟单员</option></select>
+        <select class="toolbar-select"><option>处理状态</option><option>待处理</option><option>处理中</option><option>已完成</option></select>
+        <select class="toolbar-select"><option>超时原因</option><option>仓库备货延迟</option><option>物流问题</option><option>商品缺货</option><option>其他</option></select>
+        <input type="text" class="toolbar-input" placeholder="SO单号/企业名称">
+        <button class="btn">搜索</button>
+        <div class="toolbar-right">
+          <span class="refresh-time">最后更新：14:32:45</span>
+          <button class="btn">📤 导出</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></th>
+              <th style="width:120px">企业名称</th>
+              <th style="width:110px">SO单号</th>
+              <th style="width:110px">订单状态</th>
+              <th style="width:70px">PO收货</th>
+              <th style="width:90px">支付时间</th>
+              <th style="width:70px">紧急程度</th>
+              <th style="width:90px">逾期时长</th>
+              <th style="width:80px">[新]处理状态</th>
+              <th style="width:180px">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 待处理 -->
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>广东华兴玻璃</td>
+              <td><span class="order-link">SO20260617001</span></td>
+              <td><span class="order-status-text">待发货：1项3件</span></td>
+              <td><span class="po-receive uncomplete">0/3</span></td>
+              <td>06-17 08:00</td>
+              <td><span class="urgent-tag urgent">紧急</span></td>
+              <td><span class="overdue-time">5小时32分</span></td>
+              <td><span class="status-tag pending">待处理</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn primary btn-small" onclick="showModal('shipModal')">发货</button>
+                  <button class="action-btn btn-small" onclick="showModal('processModal')">[新]标记处理</button>
+                  <button class="expand-btn btn-small" onclick="toggleExpand(this)">展开 ▼</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- 处理中 -->
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>佛山群志光电</td>
+              <td><span class="order-link">SO20260617008</span></td>
+              <td><span class="order-status-text">待发货：2项5件</span></td>
+              <td><span class="po-receive uncomplete">2/5</span></td>
+              <td>06-17 10:30</td>
+              <td><span class="urgent-tag normal">普通</span></td>
+              <td><span class="overdue-time">3小时15分</span></td>
+              <td><span class="status-tag processing">处理中</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn primary btn-small" onclick="showModal('shipModal')">发货</button>
+                  <button class="action-btn btn-small" onclick="showModal('recordModal')">[新]处理记录</button>
+                  <button class="expand-btn btn-small" onclick="toggleExpand(this)">展开 ▼</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+        <div class="pagination">
+          <div class="page-info">共 8 条</div>
+          <div class="page-btns">
+            <button class="page-btn disabled">上一页</button>
+            <button class="page-btn current">1</button>
+            <button class="page-btn disabled">下一页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 今日发货 Tab ========== -->
+    <div id="tab-today" class="tab-content">
+
+      <div class="stats-bar">
+        <div class="stat-item"><span>今日待发货</span><span class="stat-num">15</span></div>
+        <div class="stat-item"><span>已完成</span><span class="stat-num green">3</span></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab" onclick="switchTab('waiting',this)">待发货 <span class="count">45</span></div>
+        <div class="tab" onclick="switchTab('overdue',this)">已超时 <span class="count">8</span></div>
+        <div class="tab active" onclick="switchTab('today',this)">今日发货 <span class="count">23</span></div>
+      </div>
+
+      <div class="toolbar">
+        <select class="toolbar-select"><option>全部供应商</option></select>
+        <select class="toolbar-select"><option>全部跟单员</option></select>
+        <select class="toolbar-select"><option>商品类型</option><option>标准件</option><option>铸件</option><option>软件</option><option>非标件</option></select>
+        <input type="text" class="toolbar-input" placeholder="SO单号/物料名称">
+        <button class="btn">搜索</button>
+        <div class="toolbar-right">
+          <span class="refresh-time">最后更新：14:32:45</span>
+          <button class="btn btn-primary">📦 批量发货</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></th>
+              <th style="width:160px">物料名称</th>
+              <th style="width:70px">[新]商品类型</th>
+              <th style="width:110px">SO单号</th>
+              <th style="width:75px">SO状态</th>
+              <th style="width:120px">供应商名称</th>
+              <th style="width:85px">PO应发货日</th>
+              <th style="width:85px">SO应发货日</th>
+              <th style="width:70px">交收方式</th>
+              <th style="width:60px">跟单员</th>
+              <th style="width:100px">买家企业</th>
+              <th style="width:75px">PO收货</th>
+              <th style="width:70px">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>H13模具钢 100×50×20mm</td>
+              <td><span class="goods-type standard">标准件</span></td>
+              <td><span class="order-link">SO20260618001</span></td>
+              <td><span class="status-tag pending">待发货</span></td>
+              <td>上海宝钢特殊钢</td>
+              <td>06-18 18:00</td>
+              <td>06-18 15:32</td>
+              <td>送货上门</td>
+              <td>张三</td>
+              <td>广东华兴玻璃</td>
+              <td><span class="po-receive uncomplete">3/5</span></td>
+              <td><button class="action-btn primary btn-small">发货</button></td>
+            </tr>
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>D2钢材 200×100×10mm</td>
+              <td><span class="goods-type standard">标准件</span></td>
+              <td><span class="order-link">SO20260618002</span></td>
+              <td><span class="status-tag pending">待发货</span></td>
+              <td>东北特钢集团</td>
+              <td>06-18 18:00</td>
+              <td>06-18 16:00</td>
+              <td>送货上门</td>
+              <td>李四</td>
+              <td>佛山群志光电</td>
+              <td><span class="po-receive uncomplete">0/3</span></td>
+              <td><button class="action-btn btn-small disabled" style="opacity:0.5;cursor:not-allowed;">已发货</button></td>
+            </tr>
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>铸件模具毛坯 XYZ-001</td>
+              <td><span class="goods-type cast">铸件</span></td>
+              <td><span class="order-link">SO20260618003</span></td>
+              <td><span class="status-tag pending">待发货</span></td>
+              <td>佛山铸造厂</td>
+              <td>06-18 18:00</td>
+              <td>06-18 17:00</td>
+              <td>自提</td>
+              <td>王五</td>
+              <td>东莞劲胜精密</td>
+              <td><span class="po-receive uncomplete">1/2</span></td>
+              <td><button class="action-btn primary btn-small">发货</button></td>
+            </tr>
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>SAP MES软件授权 V2.0</td>
+              <td><span class="goods-type software">软件</span></td>
+              <td><span class="order-link">SO20260618004</span></td>
+              <td><span class="status-tag pending">待发货</span></td>
+              <td>上海软件科技</td>
+              <td>06-18 18:00</td>
+              <td>06-18 18:00</td>
+              <td>电子交付</td>
+              <td>赵六</td>
+              <td>广州LG显示科技</td>
+              <td><span class="po-receive complete">1/1</span></td>
+              <td><button class="action-btn primary btn-small">发货</button></td>
+            </tr>
+            <tr>
+              <td style="padding:12px 8px;"><div class="checkbox-cell"><input type="checkbox"></div></td>
+              <td>非标刀具定制品 JX-2024</td>
+              <td><span class="goods-type custom">非标件</span></td>
+              <td><span class="order-link">SO20260618005</span></td>
+              <td><span class="status-tag pending">待发货</span></td>
+              <td>深圳精密刀具</td>
+              <td>06-19 18:00</td>
+              <td>06-19 10:00</td>
+              <td>送货上门</td>
+              <td>张三</td>
+              <td>广东华兴玻璃</td>
+              <td><span class="po-receive uncomplete">0/1</span></td>
+              <td><button class="action-btn primary btn-small">发货</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <div class="page-info">共 23 条</div>
+          <div class="page-btns">
+            <button class="page-btn disabled">上一页</button>
+            <button class="page-btn current">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">下一页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 弹窗 ========== -->
+
+<div id="shipModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><span>确认发货</span><span class="modal-close" onclick="closeModal('shipModal')">×</span></div>
+    <div class="modal-body">
+      <div class="form-item"><div class="form-label">SO单号</div><div style="font-weight:500;">SO20260618001</div></div>
+      <div class="form-item"><div class="form-label">物料信息</div><div>H13模具钢 100×50×20mm × 5件</div></div>
+      <div class="form-item"><div class="form-label required">物流单号</div><input type="text" class="form-input" placeholder="请输入物流单号"></div>
+      <div class="form-item"><div class="form-label">发货备注</div><textarea class="form-textarea" placeholder="选填"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('shipModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('shipModal');alert('发货成功！')">确认发货</button>
+    </div>
+  </div>
+</div>
+
+<div id="processModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><span>标记处理</span><span class="modal-close" onclick="closeModal('processModal')">×</span></div>
+    <div class="modal-body">
+      <div class="form-item"><div class="form-label">SO单号</div><div style="font-weight:500;">SO20260617001</div></div>
+      <div class="form-item"><div class="form-label required">超时原因</div>
+        <select class="form-select">
+          <option value="">请选择超时原因</option>
+          <option>仓库备货延迟</option><option>物流问题</option><option>商品缺货</option><option>买家延期</option><option>其他</option>
+        </select>
+      </div>
+      <div class="form-item"><div class="form-label">处理说明</div><textarea class="form-textarea" placeholder="请描述处理情况（选填）"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('processModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('processModal');alert('标记成功！')">确认</button>
+    </div>
+  </div>
+</div>
+
+<div id="recordModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><span>处理记录</span><span class="modal-close" onclick="closeModal('recordModal')">×</span></div>
+    <div class="modal-body">
+      <div class="order-info">
+        <div class="order-info-row">
+          <div class="order-info-item"><span class="order-info-label">SO单号：</span><span class="order-info-value">SO20260617008</span></div>
+          <div class="order-info-item"><span class="order-info-label">逾期时长：</span><span class="order-info-value" style="color:var(--color-danger);">3小时15分</span></div>
+        </div>
+      </div>
+      <div class="form-item"><div class="form-label">处理时间线</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-time">2026-06-17 14:30</div>
+            <div class="timeline-content">
+              <div class="timeline-operator">李四</div>
+              <div class="timeline-action">标记处理中</div>
+              <div class="timeline-note">超时原因：仓库备货延迟，正在加急备货中</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-item" style="margin-top:16px;"><div class="form-label">新增处理记录</div>
+        <select class="form-select" style="margin-bottom:8px;">
+          <option>标记处理中</option><option>填写原因</option><option>确认发货</option>
+        </select>
+        <textarea class="form-textarea" placeholder="选填备注"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('recordModal')">关闭</button>
+      <button class="btn btn-primary" onclick="closeModal('recordModal');alert('记录已保存！')">保存记录</button>
+    </div>
+  </div>
+</div>
+
+<div id="changeDateModal" class="modal-overlay">
+  <div class="modal" style="width:460px;">
+    <div class="modal-header"><span>修改交期</span><span style="font-size:11px;background:#E8F0FF;color:#1664FF;padding:2px 8px;border-radius:4px;font-weight:normal;margin-left:auto;margin-right:32px;">v2.0 · 跳转审核列表</span><span class="modal-close" onclick="closeModal('changeDateModal')">×</span></div>
+    <div class="modal-body">
+      <div style="background:#E8F0FF;border:1px solid #91CAFF;border-radius:4px;padding:10px 12px;font-size:12px;color:#0958D9;margin-bottom:16px;">
+        ℹ️ v2.0 重构：修改交期功能已迁移至【审核列表-修改交期】流程，弹窗/审批/状态机由审核列表模块负责。本入口仅作为 UI 占位，演示点击交互；实际开发对接审核列表后，此弹窗将由审核列表替换。
+      </div>
+      <div class="form-item"><div class="form-label">SO单号</div><div style="font-weight:500;">SO20260616078</div></div>
+      <div class="form-item"><div class="form-label">商品类型</div><div><span class="goods-type cast">铸件</span></div></div>
+      <div class="form-item">
+        <div class="form-label">当前预计发货日（基准时间）</div>
+        <div style="color:var(--color-danger);font-weight:600;">2026-06-23 18:00（铸件=预计发货日）</div>
+      </div>
+      <div class="form-item"><div class="form-label">基准说明</div><div style="font-size:12px;color:#595959;line-height:1.6;">
+        铸件=预计发货日 / 非标件=预计发货日（兜底）<br>
+        标准件-库存=订单创建+1天 / 标准件-PO采购=PO 订单供应商交期<br>
+        软件=不进入预警池（自动发邮箱，状态=已发货）
+      </div></div>
+      <div style="background:#FFF7E6;border:1px solid #FFD591;border-radius:4px;padding:10px 12px;font-size:12px;color:#7C5000;">
+        ⚠️ 审核通过后：① 重新计算剩余时间 ② 重算风险等级 ③ 通知记录清零 ④ 已超时订单若新剩余时间&gt;72h 自动流回待发货 Tab
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('changeDateModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('changeDateModal');alert('已跳转至【审核列表-修改交期】流程（占位提示）。')">确认跳转审核列表</button>
+    </div>
+  </div>
+</div>
+
+<div id="tipModal" class="modal-overlay">
+  <div class="modal" style="width:380px;">
+    <div class="modal-header"><span id="tipTitle">提示</span><span class="modal-close" onclick="closeModal('tipModal')">×</span></div>
+    <div class="modal-body" style="text-align:center;padding:32px;">
+      <div style="font-size:48px;margin-bottom:16px;" id="tipIcon">📄</div>
+      <div style="font-size:14px;" id="tipText">正在生成中...</div>
+      <div style="font-size:12px;color:var(--text-assist);margin-top:8px;">即将自动下载</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tab, el) {
+    document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    el.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleExpand(btn) {
+    const row = btn.closest('tr');
+    const nextRow = row.nextElementSibling;
+    if (nextRow && nextRow.classList.contains('expand-row')) {
+      nextRow.classList.toggle('active');
+      btn.textContent = nextRow.classList.contains('active') ? '收起 ▲' : '展开 ▼';
+    }
+  }
+
+  function showMore() { alert('更多操作：\n- 查看详情\n- 取消订单'); }
+
+  function showModal(id) { document.getElementById(id).classList.add('active'); }
+  function showTip(name) {
+    document.getElementById('tipTitle').textContent = name;
+    document.getElementById('tipIcon').textContent = name === '销售单' ? '📄' : '📦';
+    document.getElementById('tipText').textContent = name + '正在生成中...';
+    showModal('tipModal');
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); }));
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active')); });
+</script>
+
+<!-- ========== 功能逻辑说明 ========== -->
+<div style="margin-top:16px;padding:20px;background:#fef9f0;border:2px solid #fa8c16;border-radius:8px;font-size:12px;line-height:1.8;color:#333;">
+<div style="font-weight:600;font-size:14px;margin-bottom:12px;color:#fa8c16;padding-bottom:8px;border-bottom:1px dashed #fa8c16;">📋 功能逻辑说明</div>
+
+<!-- 一、风险预警计算 -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">一、风险预警计算</strong></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">计算项</td><td style="padding:6px 8px;border:1px solid #ddd;">说明</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">预警基准<br><span style="font-size:10px;color:#FA8C16;">(v2.0 按商品类型分档)</span></td><td style="padding:6px 8px;border:1px solid #ddd;">
+<strong>铸件</strong> = 预计发货日（供应商交期+客户交期）<br>
+<strong>非标件</strong> = 预计发货日（兜底，TODO待业务确认）<br>
+<strong>标准件-库存</strong> = 订单创建+1天（无PO订单）<br>
+<strong>标准件-PO采购</strong> = PO 订单供应商交期（有PO订单）<br>
+<strong>软件</strong> = <span style="color:#722ED1;font-weight:600;">不进入预警池</span>（付款后自动发邮箱）
+</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">预警范围</td><td style="padding:6px 8px;border:1px solid #ddd;">距基准时间≤72小时（3天）内开始预警</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">剩余时间</td><td style="padding:6px 8px;border:1px solid #ddd;">基准时间 - 当前时间，精确到分钟</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">扫描范围</td><td style="padding:6px 8px;border:1px solid #ddd;">所有待发货订单，每60分钟扫描一次</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">触发条件</td><td style="padding:6px 8px;border:1px solid #ddd;">剩余时间 ≤ 72小时开始预警</td></tr>
+</table>
+
+<!-- 二、风险等级定义 -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">二、风险等级定义</strong></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">等级</td><td style="padding:6px 8px;border:1px solid #ddd;">标识</td><td style="padding:6px 8px;border:1px solid #ddd;">剩余时间</td><td style="padding:6px 8px;border:1px solid #ddd;">行背景色</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">紧急</td><td style="padding:6px 8px;border:1px solid #ddd;">🚨</td><td style="padding:6px 8px;border:1px solid #ddd;color:#f5222d;font-weight:600;">≤ 2小时</td><td style="padding:6px 8px;border:1px solid #ddd;background:#FFF8F8;">红色浅底</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">高风险</td><td style="padding:6px 8px;border:1px solid #ddd;">⚠️</td><td style="padding:6px 8px;border:1px solid #ddd;color:#fa8c16;font-weight:600;">2h < 时间 ≤ 8h</td><td style="padding:6px 8px;border:1px solid #ddd;background:#FFFBF5;">橙色浅底</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">中风险</td><td style="padding:6px 8px;border:1px solid #ddd;">⏰</td><td style="padding:6px 8px;border:1px solid #ddd;color:#d4a800;font-weight:600;">8h < 时间 ≤ 12h</td><td style="padding:6px 8px;border:1px solid #ddd;">—</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">低风险</td><td style="padding:6px 8px;border:1px solid #ddd;">📋</td><td style="padding:6px 8px;border:1px solid #ddd;color:#1890ff;font-weight:600;">12h < 时间 ≤ 72h</td><td style="padding:6px 8px;border:1px solid #ddd;">—</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">无风险</td><td style="padding:6px 8px;border:1px solid #ddd;">—</td><td style="padding:6px 8px;border:1px solid #ddd;color:#999;">> 72小时</td><td style="padding:6px 8px;border:1px solid #ddd;">—</td></tr>
+</table>
+
+<!-- 三、列表排序规则 -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">三、列表排序规则（待发货Tab）</strong></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">优先级</td><td style="padding:6px 8px;border:1px solid #ddd;">风险等级</td><td style="padding:6px 8px;border:1px solid #ddd;">排序方式</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">1（最高）</td><td style="padding:6px 8px;border:1px solid #ddd;color:#f5222d;">🚨 紧急</td><td style="padding:6px 8px;border:1px solid #ddd;">按剩余时间升序（越短越前）</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">2</td><td style="padding:6px 8px;border:1px solid #ddd;color:#fa8c16;">⚠️ 高风险</td><td style="padding:6px 8px;border:1px solid #ddd;">按剩余时间升序</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">3</td><td style="padding:6px 8px;border:1px solid #ddd;color:#d4a800;">⏰ 中风险</td><td style="padding:6px 8px;border:1px solid #ddd;">按剩余时间升序</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">4</td><td style="padding:6px 8px;border:1px solid #ddd;color:#1890ff;">📋 低风险</td><td style="padding:6px 8px;border:1px solid #ddd;">按剩余时间升序</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">5</td><td style="padding:6px 8px;border:1px solid #ddd;color:#999;">— 无风险</td><td style="padding:6px 8px;border:1px solid #ddd;">按订单创建时间升序</td></tr>
+</table>
+<div style="margin-top:8px;color:#666;font-size:11px;">⚠️ 注意：同等级内按剩余时间升序，不同等级按优先级排序，整体呈"红色→橙色→黄色→蓝色→灰色"的瀑布式排列</div>
+
+<!-- 四、已超时Tab排序 -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">四、列表排序规则（已超时Tab）</strong></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">排序维度</td><td style="padding:6px 8px;border:1px solid #ddd;">排序方式</td><td style="padding:6px 8px;border:1px solid #ddd;">说明</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;font-weight:600;">第1排序（绝对优先）</td><td style="padding:6px 8px;border:1px solid #ddd;color:#f5222d;font-weight:600;">按逾期时长降序</td><td style="padding:6px 8px;border:1px solid #ddd;">超时越久的排前面，不受处理状态影响</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">第2排序（同逾期时长时）</td><td style="padding:6px 8px;border:1px solid #ddd;">按处理状态</td><td style="padding:6px 8px;border:1px solid #ddd;">待处理 &gt; 处理中</td></tr>
+</table>
+<div style="margin-top:8px;color:#666;font-size:11px;">⚠️ 注意：第1排序绝对优先。处理状态仅在逾期时长完全相同时作为次要参考。</div>
+
+<!-- 五、升级规则 -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">五、预警升级规则</strong></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">规则</td><td style="padding:6px 8px;border:1px solid #ddd;">说明</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">单向升级</td><td style="padding:6px 8px;border:1px solid #ddd;">低 → 中 → 高 → 紧急，<span style="color:#f5222d;font-weight:600;">不可回落</span></td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">每级通知一次</td><td style="padding:6px 8px;border:1px solid #ddd;">每个等级只发1次钉钉通知，不重复打扰</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">已超时处理</td><td style="padding:6px 8px;border:1px solid #ddd;">移入「已超时Tab」后，不再触发新等级预警</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">防重复字段</td><td style="padding:6px 8px;border:1px solid #ddd;">记录 <span style="background:#f5f5f5;padding:2px 4px;border-radius:2px;">notified_levels</span>，已通知则跳过</td></tr>
+</table>
+
+<!-- 六、处理状态流转 -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">六、处理状态流转</strong></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">触发动作</td><td style="padding:6px 8px;border:1px solid #ddd;">前置状态</td><td style="padding:6px 8px;border:1px solid #ddd;">新状态</td><td style="padding:6px 8px;border:1px solid #ddd;">说明</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">超时</td><td style="padding:6px 8px;border:1px solid #ddd;">—</td><td style="padding:6px 8px;border:1px solid #ddd;color:#fa8c16;font-weight:600;">待处理</td><td style="padding:6px 8px;border:1px solid #ddd;">预计发货日到期后自动流转</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">标记处理</td><td style="padding:6px 8px;border:1px solid #ddd;">待处理</td><td style="padding:6px 8px;border:1px solid #ddd;color:#1664FF;font-weight:600;">处理中</td><td style="padding:6px 8px;border:1px solid #ddd;">选择超时原因后流转</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">确认发货</td><td style="padding:6px 8px;border:1px solid #ddd;">待处理/处理中</td><td style="padding:6px 8px;border:1px solid #ddd;color:#52C41A;font-weight:600;">移出列表（不再显示）</td><td style="padding:6px 8px;border:1px solid #ddd;">填写物流单号后流转，<strong>移出待发货Tab和已超时Tab，列表不再显示</strong></td></tr>
+</table>
+
+<!-- 七、字段显示逻辑 -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">七、字段显示逻辑</strong></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">字段</td><td style="padding:6px 8px;border:1px solid #ddd;">显示规则</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">[新]风险预警</td><td style="padding:6px 8px;border:1px solid #ddd;">剩余时间≤72h显示对应等级标签，>72h显示"—"</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">[新]剩余时间</td><td style="padding:6px 8px;border:1px solid #ddd;color:#f5222d;font-weight:600;">颜色跟随风险等级</td><td style="padding:6px 8px;border:1px solid #ddd;">倒计时格式：X天X小时 / X小时X分 / X分</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">逾期时长</td><td style="padding:6px 8px;border:1px solid #ddd;">已超时Tab特有，格式：已超时 X小时X分，红色加粗</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">[新]处理状态</td><td style="padding:6px 8px;border:1px solid #ddd;">待处理(黄) / 处理中(蓝)；确认发货后从列表消失</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">[新]商品类型</td><td style="padding:6px 8px;border:1px solid #ddd;">标准件(蓝) / 铸件(橙) / 软件(紫) / 非标件(粉)</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">展开行-基准时间<br><span style="font-size:10px;color:#FA8C16;">(v2.0 5 类基准)</span></td><td style="padding:6px 8px;border:1px solid #ddd;"><span style="color:#f5222d;font-weight:600;">红色高亮</span>，即超时判断线：<br>铸件/非标件=预计发货日；<br>标准件-库存=订单创建+1天；<br>标准件-PO采购=PO 订单供应商交期；<br>软件=不进入预警池</td></tr>
+</table>
+
+<!-- 八、钉钉通知策略（v2.0 统一 ActionCard） -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">八、钉钉通知策略（v2.0 统一一套机制）</strong>
+<span style="font-size:11px;background:#E8F0FF;color:#1664FF;padding:2px 6px;border-radius:3px;margin-left:6px;">v2.0 重构</span></div>
+<div style="background:#E8F0FF;border:1px solid #91CAFF;border-radius:4px;padding:8px 12px;font-size:12px;color:#0958D9;margin-bottom:10px;">
+ℹ️ v2.0 取消"提前催办"双轨机制，只保留一套基于剩余时间触发的钉钉群通知。所有等级均使用同一种 ActionCard 卡片，<strong>emoji 区分等级</strong>（钉钉机器人不支持设置卡片背景色）。
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">等级</td><td style="padding:6px 8px;border:1px solid #ddd;">emoji</td><td style="padding:6px 8px;border:1px solid #ddd;">合并规则</td><td style="padding:6px 8px;border:1px solid #ddd;">@策略</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;color:#f5222d;font-weight:600;">🚨 紧急</td><td style="padding:6px 8px;border:1px solid #ddd;font-size:14px;">🚨</td><td style="padding:6px 8px;border:1px solid #ddd;">不合并，逐条发送</td><td style="padding:6px 8px;border:1px solid #ddd;">不@</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;color:#fa8c16;font-weight:600;">⚠️ 高风险</td><td style="padding:6px 8px;border:1px solid #ddd;font-size:14px;">⚠️</td><td style="padding:6px 8px;border:1px solid #ddd;">按跟单员合并</td><td style="padding:6px 8px;border:1px solid #ddd;">不@</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;color:#d4a800;font-weight:600;">⏰ 中风险</td><td style="padding:6px 8px;border:1px solid #ddd;font-size:14px;">⏰</td><td style="padding:6px 8px;border:1px solid #ddd;">按仓库合并</td><td style="padding:6px 8px;border:1px solid #ddd;">不@</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;color:#1890ff;font-weight:600;">📋 低风险</td><td style="padding:6px 8px;border:1px solid #ddd;font-size:14px;">📋</td><td style="padding:6px 8px;border:1px solid #ddd;">全部合并1条</td><td style="padding:6px 8px;border:1px solid #ddd;">不@</td></tr>
+</table>
+<div style="margin-top:8px;font-size:11px;color:#666;">📌 升级衔接：单向升级（低→中→高→紧急），每等级只发1次，升级到新等级时按新等级的合并规则重新发；修改交期后等级可回落，已发通知记录清零重新积累。</div>
+
+<!-- 九、修改交期（v2.0 接入审核列表） -->
+<div style="margin:16px 0;"><strong style="color:#d4380d;">九、修改交期（v2.0 接入审核列表模块）</strong>
+<span style="font-size:11px;background:#E8F0FF;color:#1664FF;padding:2px 6px;border-radius:3px;margin-left:6px;">v2.0 重构</span></div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;">
+<tr style="background:#f5f5f5;font-weight:600;"><td style="padding:6px 8px;border:1px solid #ddd;">维度</td><td style="padding:6px 8px;border:1px solid #ddd;">v2.0 规则</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">入口位置</td><td style="padding:6px 8px;border:1px solid #ddd;">待发货 Tab 操作列 + 订单详情页基础信息区</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">点击行为</td><td style="padding:6px 8px;border:1px solid #ddd;">跳转至【审核列表-修改交期】流程（弹窗/审批/状态机由审核列表模块负责）</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">审核通过后行为</td><td style="padding:6px 8px;border:1px solid #ddd;">① 重新计算剩余时间 ② 重算风险等级 ③ 通知记录清零 ④ 已超时订单若新剩余时间&gt;72h 自动流回待发货 Tab</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">客户通知</td><td style="padding:6px 8px;border:1px solid #ddd;">不通知客户</td></tr>
+<tr><td style="padding:6px 8px;border:1px solid #ddd;">本 PRD 范围</td><td style="padding:6px 8px;border:1px solid #ddd;">仅保留按钮入口 + 弹窗 UI 占位，不展开弹窗字段/审批流程/状态机</td></tr>
+</table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 03_原型设计/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>优惠券模块 · 原型与PRD门户</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #F0F2F5;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== 顶部导航 ===== */
+    .top-bar {
+      height: 56px;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      flex-shrink: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .top-logo {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-right: 32px;
+      white-space: nowrap;
+    }
+    .top-logo span { color: #60A5FA; }
+    .top-tabs { display: flex; gap: 4px; }
+    .top-tab {
+      padding: 8px 20px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all .2s;
+    }
+    .top-tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+    .top-tab.active { color: #fff; background: rgba(96,165,250,0.2); border-color: rgba(96,165,250,0.4); font-weight: 600; }
+
+    /* ===== 主体：左侧目录 + 右侧内容 ===== */
+    .main { flex: 1; display: flex; overflow: hidden; }
+
+    /* ===== 左侧目录 ===== */
+    .sidebar {
+      width: 240px;
+      background: #fff;
+      border-right: 1px solid #E5E7EB;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar-section { border-bottom: 1px solid #F0F0F0; }
+    .sidebar-header {
+      padding: 14px 16px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+    .sidebar-item:hover { background: #F5F7FF; color: #3370FF; }
+    .sidebar-item.active { background: #E8F0FF; color: #3370FF; border-left-color: #3370FF; font-weight: 600; }
+    .sidebar-item .badge {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 1px 6px;
+      background: #F5F5F5;
+      color: #999;
+      border-radius: 10px;
+    }
+    .sidebar-item .badge.done { background: #F6FFED; color: #52C41A; }
+
+    /* ===== 右侧内容区 ===== */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .content-toolbar {
+      background: #fff;
+      padding: 10px 20px;
+      border-bottom: 1px solid #E5E5E5;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .toolbar-title { font-size: 13px; color: #666; flex: 1; }
+    .toolbar-title strong { color: #3370FF; }
+    .toolbar-btn {
+      padding: 5px 14px;
+      background: #3370FF;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .toolbar-btn:hover { background: #2860E0; }
+
+    .content-frame {
+      flex: 1;
+      overflow: hidden;
+      background: #E8E8E8;
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .content-frame iframe {
+      width: 375px;
+      height: 100%;
+      min-height: 680px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      background: #fff;
+    }
+    .content-frame iframe.pc { width: 100%; max-width: none; height: 700px; }
+    .content-frame iframe.admin { width: 100%; max-width: none; height: 800px; }
+    .content-frame iframe.prd-frame {
+      width: 100%;
+      max-width: 860px;
+      padding: 32px 40px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      overflow-y: auto;
+    }
+
+    /* ===== 右侧信息面板 ===== */
+    .info-panel {
+      width: 260px;
+      background: #fff;
+      border-left: 1px solid #E5E7EB;
+      overflow-y: auto;
+      flex-shrink: 0;
+      padding: 16px;
+    }
+    .info-section { margin-bottom: 20px; }
+    .info-section-title { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .info-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #F5F5F5; }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .key { color: #666; }
+    .info-row .val { color: #333; font-weight: 600; }
+    .info-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .tag-done { background: #F6FFED; color: #52C41A; }
+    .tag-wip { background: #FFF7E6; color: #FA8C16; }
+    .info-link {
+      display: block;
+      padding: 7px 10px;
+      background: #F5F7FF;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #3370FF;
+      text-decoration: none;
+      margin-bottom: 6px;
+    }
+    .info-link:hover { background: #E8F0FF; }
+
+    /* ===== 快捷状态卡 ===== */
+    .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .status-card { background: #F5F7FF; border-radius: 8px; padding: 10px; text-align: center; }
+    .status-card .num { font-size: 22px; font-weight: 700; color: #3370FF; }
+    .status-card .label { font-size: 11px; color: #999; margin-top: 2px; }
+
+    /* ===== PRD渲染内容 ===== */
+    .prd-content { font-size: 14px; line-height: 1.7; color: #333; }
+    .prd-content h1 { font-size: 20px; font-weight: 700; color: #1a1a2e; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 2px solid #E5E5E5; }
+    .prd-content h2 { font-size: 16px; font-weight: 700; color: #1a1a2e; margin: 24px 0 10px; }
+    .prd-content h3 { font-size: 14px; font-weight: 600; color: #333; margin: 16px 0 8px; }
+    .prd-content table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+    .prd-content th { background: #F5F7FF; padding: 8px 12px; text-align: left; font-weight: 600; border: 1px solid #E5E5E5; color: #333; }
+    .prd-content td { padding: 7px 12px; border: 1px solid #E5E5E5; vertical-align: top; }
+    .prd-content tr:nth-child(even) td { background: #FAFAFA; }
+    .prd-content code { background: #F0F5FF; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #3370FF; }
+    .prd-content pre { background: #F5F7FF; padding: 12px; border-radius: 6px; overflow-x: auto; margin: 10px 0; }
+    .prd-content pre code { background: none; padding: 0; }
+    .prd-content ul, .prd-content ol { padding-left: 20px; margin: 8px 0; }
+    .prd-content li { margin-bottom: 4px; }
+    .prd-content strong { font-weight: 600; color: #333; }
+    .prd-content em { color: #666; }
+    .prd-toc { background: #FFF7E6; border: 1px solid #FFE58F; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+    .prd-toc-title { font-size: 13px; font-weight: 700; color: #AD6800; margin-bottom: 8px; }
+    .prd-toc a { display: block; font-size: 12px; color: #3370FF; text-decoration: none; padding: 2px 0; }
+    .prd-toc a:hover { text-decoration: underline; }
+
+    /* ===== 隐藏类 ===== */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <div class="top-bar">
+    <div class="top-logo">🎫 优惠券模块 <span>原型与PRD</span></div>
+    <div class="top-tabs">
+      <div class="top-tab active" data-panel="mini">📱 小程序原型</div>
+      <div class="top-tab" data-panel="pc">💻 PC门户原型</div>
+      <div class="top-tab" data-panel="admin">🏢 商家后台原型</div>
+      <div class="top-tab" data-panel="prd">📄 PRD文档</div>
+    </div>
+  </div>
+
+  <!-- 主体 -->
+  <div class="main">
+
+    <!-- 左侧目录 -->
+    <div class="sidebar">
+
+      <!-- 小程序原型 -->
+      <div class="sidebar-section" data-panel="mini">
+        <div class="sidebar-header">📱 小程序原型 · 13个页面</div>
+        <div class="sidebar-item active" data-file="小程序/v2.0-WX-06领券中心.html" data-title="领券中心">
+          领券中心 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-07我的优惠券.html" data-title="我的优惠券">
+          我的优惠券 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-08购物车优惠券.html" data-title="购物车优惠券">
+          购物车优惠券浮层 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-09商品详情优惠券.html" data-title="商品详情领券">
+          商品详情领券区 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10确认订单优惠券.html" data-title="确认订单">
+          确认订单选券 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-11优惠券去使用商品列表.html" data-title="优惠券可用商品">
+          优惠券去使用 <span class="badge new">🆕</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10b-确认订单优惠券-单商品.html" data-title="确认订单-单商品">
+          确认订单-单商品 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10c-确认订单优惠券-单商品折扣.html" data-title="确认订单-单商品折扣">
+          确认订单-单商品折扣 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10d-确认订单优惠券-多商品折扣.html" data-title="确认订单-多商品折扣">
+          确认订单-多商品折扣 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10e-确认订单优惠券-全部退款-未过期.html" data-title="确认订单-全部退款未过期">
+          退款-未过期 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10f-确认订单优惠券-全部退款-已过期.html" data-title="确认订单-全部退款已过期">
+          退款-已过期 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10g-确认订单优惠券-部分退款.html" data-title="确认订单-部分退款">
+          部分退款 <span class="badge done">✅</span>
+        </div>
+      </div>
+
+      <!-- PC端原型 -->
+      <div class="sidebar-section hidden" data-panel="pc">
+        <div class="sidebar-header">💻 PC门户原型 · 9个页面</div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-领券中心.html" data-title="领券中心">
+          领券中心 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-我的优惠券.html" data-title="我的优惠券">
+          我的优惠券 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-商品详情优惠券.html" data-title="商品详情">
+          商品详情优惠券 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-确认订单优惠券.html" data-title="确认订单">
+          确认订单优惠券 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-优惠券去使用商品列表.html" data-title="优惠券可用商品">
+          优惠券去使用 <span class="badge new">🆕</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-确认订单优惠券-单商品.html" data-title="确认订单-单商品">
+          确认订单-单商品 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-确认订单优惠券-全部退款-未过期.html" data-title="确认订单-退款未过期">
+          退款-未过期 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-确认订单优惠券-全部退款-已过期.html" data-title="确认订单-退款已过期">
+          退款-已过期 <span class="badge done">✅</span>
+        </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-确认订单优惠券-部分退款.html" data-title="确认订单-部分退款">
+          部分退款 <span class="badge done">✅</span>
+        </div>
+      </div>
+
+      <!-- 商家后台原型 -->
+      <div class="sidebar-section hidden" data-panel="admin">
+        <div class="sidebar-header">🏢 商家后台原型 · 1个文件 6个页面</div>
+        <div class="sidebar-item active" data-file="商家后台/v2.0-MC-优惠券管理.html" data-title="优惠券管理（6合1）" data-type="admin">
+          优惠券管理（6合1） <span class="badge done">✅</span>
+        </div>
+      </div>
+
+      <!-- PRD文档章节 -->
+      <div class="sidebar-section hidden" data-panel="prd">
+        <div class="sidebar-header">📄 PRD v1.1 章节导航</div>
+        <div class="sidebar-item" data-prd-section="overview">一、业务背景</div>
+        <div class="sidebar-item" data-prd-section="version">二、版本规划</div>
+        <div class="sidebar-item" data-prd-section="type">三、优惠券类型</div>
+        <div class="sidebar-item" data-prd-section="scope">四、适用范围</div>
+        <div class="sidebar-item" data-prd-section="grant">五、发放方式</div>
+        <div class="sidebar-item" data-prd-section="limit">六、限制规则</div>
+        <div class="sidebar-item" data-prd-section="stack">七、促销叠加逻辑</div>
+        <div class="sidebar-item" data-prd-section="refund">八、退款退券规则</div>
+        <div class="sidebar-item" data-prd-section="status">十一、优惠券状态显示逻辑</div>
+        <div class="sidebar-item" data-prd-section="order">十二、确认订单选券逻辑</div>
+        <div class="sidebar-item" data-prd-section="admin">十三、商家端功能</div>
+      </div>
+
+    </div>
+
+    <!-- 右侧内容区 -->
+    <div class="content-area">
+      <div class="content-toolbar">
+        <div class="toolbar-title">当前：<strong id="toolbarTitle">小程序 / 领券中心</strong></div>
+        <a class="toolbar-btn" id="openBtn" href="#" target="_blank">↗ 新窗口打开</a>
+      </div>
+      <div class="content-frame">
+        <iframe id="contentFrame" src="小程序/v2.0-WX-06领券中心.html"></iframe>
+      </div>
+    </div>
+
+    <!-- 右侧信息面板 -->
+    <div class="info-panel">
+      <div class="status-grid">
+        <div class="status-card"><div class="num">13</div><div class="label">小程序</div></div>
+        <div class="status-card"><div class="num">9</div><div class="label">PC端</div></div>
+        <div class="status-card"><div class="num">6</div><div class="label">商家后台</div></div>
+        <div class="status-card"><div class="num">23</div><div class="label">原型总数</div></div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-section-title">当前页面信息</div>
+        <div class="info-row"><span class="key">端</span><span class="val" id="infoTerminal">小程序端</span></div>
+        <div class="info-row"><span class="key">文件</span><span class="val" id="infoFile">v2.0-WX-06领券中心.html</span></div>
+        <div class="info-row"><span class="key">状态</span><span class="val"><span class="info-tag tag-done">✅ 已完成</span></span></div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-section-title">PRD规则关联</div>
+        <a class="info-link" href="../02_PRD/优惠券模块PRD_v1.5.md#发放方式" target="_blank">📄 §5 发放方式</a>
+        <a class="info-link" href="../02_PRD/优惠券模块PRD_v1.5.md#状态显示逻辑" target="_blank">📄 §11 状态显示逻辑</a>
+        <a class="info-link" href="../02_PRD/优惠券模块PRD_v1.5.md#确认订单选券逻辑" target="_blank">📄 §12 确认订单选券逻辑</a>
+        <a class="info-link" href="../02_PRD/优惠券模块PRD_v1.5.md#商家端功能" target="_blank">📄 §13 商家端功能</a>
+      </div>
+
+      <div class="info-section">
+        <div class="info-section-title">功能要点</div>
+        <div class="info-row"><span class="key">Tab</span><span class="val" id="infoTab">全部/可领取/已领取</span></div>
+        <div class="info-row"><span class="key">按钮</span><span class="val" id="infoBtn">立即领取/已领取✓</span></div>
+        <div class="info-row"><span class="key">券类型</span><span class="val" id="infoType">满减/折扣</span></div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-section-title">研发注意事项</div>
+        <div class="info-row"><span class="key">限时折扣</span><span class="val">不可用券</span></div>
+        <div class="info-row"><span class="key">每单限用</span><span class="val">1张</span></div>
+        <div class="info-row"><span class="key">退款退券</span><span class="val">未过期退回</span></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+// ===== 页面数据 =====
+var pageInfo = {
+  mini: {
+    '领券中心':    { tabs: '全部/可领取/已领取', btn: '立即领取/已领取✓', type: '满减/折扣' },
+    '我的优惠券':   { tabs: '全部/待使用/已使用/已失效', btn: '去使用/已使用/已失效', type: '满减/折扣' },
+    '购物车优惠券浮层': { tabs: '可用/不可用', btn: '确定', type: '仅满减' },
+    '商品详情领券区': { tabs: '展开/收起', btn: '立即领取/已领取✓', type: '品牌/新客' },
+    '确认订单选券': { tabs: '可用/不可用', btn: '确定', type: '满减' }
+  },
+  pc: {
+    '领券中心':      { tabs: '全部/可领取/已领取', btn: '立即领取/已领取', type: '满减/折扣' },
+    '我的优惠券':     { tabs: '全部/待使用/已使用/已失效', btn: '去使用', type: '满减/折扣' },
+    '商品详情优惠券': { tabs: '展开/收起', btn: '立即领取/已领取✓', type: '品牌/品类' },
+    '确认订单优惠券': { tabs: '可用/不可用', btn: '提交订单', type: '满减' }
+  },
+  admin: {
+    '优惠券管理（6合1）': { tabs: '列表/新增/编辑/复制/兑换码/日志', btn: '编辑/复制/上下架/删除', type: '—' }
+  }
+};
+
+// ===== 端切换 =====
+document.querySelectorAll('.top-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.top-tab').forEach(function(t) { t.classList.remove('active'); });
+    this.classList.add('active');
+
+    var panel = this.dataset.panel;
+
+    // 切换侧边栏
+    document.querySelectorAll('.sidebar-section').forEach(function(s) {
+      s.classList.add('hidden');
+      if (s.dataset.panel === panel) { s.classList.remove('hidden'); }
+    });
+
+    // 默认加载第一个
+    var firstItem = document.querySelector('.sidebar-section[data-panel="' + panel + '"] .sidebar-item');
+    if (firstItem) { firstItem.click(); }
+  });
+});
+
+// ===== 页面切换 =====
+document.querySelectorAll('.sidebar-item[data-file]').forEach(function(item) {
+  item.addEventListener('click', function() {
+    var panel = this.closest('.sidebar-section').dataset.panel;
+    document.querySelectorAll('.sidebar-section[data-panel="' + panel + '"] .sidebar-item').forEach(function(i) { i.classList.remove('active'); });
+    this.classList.add('active');
+
+    var file = this.dataset.file;
+    var title = this.dataset.title;
+    var type = this.dataset.type;
+    var frame = document.getElementById('contentFrame');
+
+    frame.src = file;
+    frame.className = type === 'admin' ? 'admin' : (panel === 'pc' ? 'pc' : '');
+    frame.removeAttribute('srcdoc');
+
+    document.getElementById('toolbarTitle').textContent = (panel === 'mini' ? '小程序 / ' : panel === 'pc' ? 'PC端 / ' : '商家后台 / ') + title;
+    document.getElementById('openBtn').href = file;
+    document.getElementById('infoTerminal').textContent = panel === 'mini' ? '小程序端' : panel === 'pc' ? 'PC门户端' : '商家后台';
+    document.getElementById('infoFile').textContent = file.split('/').pop();
+
+    updateInfo(panel, title);
+  });
+});
+
+// ===== PRD章节切换 =====
+document.querySelectorAll('.sidebar-item[data-prd-section]').forEach(function(item) {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.sidebar-item[data-prd-section]').forEach(function(i) { i.classList.remove('active'); });
+    this.classList.add('active');
+
+    var section = this.dataset.prdSection;
+    document.getElementById('toolbarTitle').textContent = 'PRD / §' + sectionNum(section) + ' ' + this.textContent;
+    document.getElementById('openBtn').href = '../02_PRD/优惠券模块PRD_v1.5.md';
+    document.getElementById('infoTerminal').textContent = 'PRD v1.1';
+    document.getElementById('infoFile').textContent = '优惠券模块PRD_v1.5.md';
+
+    loadPrdSection(section);
+  });
+});
+
+function sectionNum(s) {
+  return { overview:1, version:2, type:3, scope:4, grant:5, limit:6, stack:7, refund:8, status:11, order:12, admin:13 }[s] || s;
+}
+
+// ===== 加载PRD章节 =====
+var prdCache = {};
+function loadPrdSection(section) {
+  var frame = document.getElementById('contentFrame');
+  frame.className = 'prd-frame';
+  frame.removeAttribute('src');
+
+  if (prdCache[section]) {
+    frame.srcdoc = prdCache[section];
+    return;
+  }
+
+  fetch('../02_PRD/优惠券模块PRD_v1.5.md')
+    .then(function(r) { return r.text(); })
+    .then(function(md) {
+      var html = renderPrd(md, section);
+      prdCache[section] = html;
+      frame.srcdoc = html;
+    })
+    .catch(function() {
+      // fetch失败（可能是file://协议限制），提供下载链接
+      frame.srcdoc = '<div style="padding:40px;color:#666;font-size:14px;line-height:1.8;">' +
+        '<div style="margin-bottom:20px;font-size:16px;color:#333;">📄 PRD文件加载失败</div>' +
+        '<div style="margin-bottom:16px;">由于浏览器安全限制，file协议下无法使用fetch加载本地文件。</div>' +
+        '<div style="margin-bottom:16px;">请选择以下方式查看PRD：</div>' +
+        '<ol style="margin-left:20px;margin-bottom:20px;">' +
+        '<li style="margin-bottom:8px;">点击顶部工具栏的 <strong style="color:#3370FF;">↗ 新窗口打开</strong> 按钮</li>' +
+        '<li style="margin-bottom:8px;">或直接双击打开 PRD 文件：<br>' +
+        '<code style="display:block;background:#F5F5F5;padding:10px;border-radius:4px;margin-top:8px;font-size:12px;">../02_PRD/优惠券模块PRD_v1.5.md</code></li>' +
+        '</ol>' +
+        '<div style="color:#999;font-size:12px;">路径：优惠券模块/02_PRD/优惠券模块PRD_v1.5.md</div>' +
+        '</div>';
+    });
+}
+
+function renderPrd(md, targetSection) {
+  // 用marked解析
+  var fullHtml = marked.parse(md);
+
+  // 提取目标章节内容
+  var sectionMap = {
+    overview: '业务背景', version: '版本规划', type: '优惠券类型',
+    scope: '适用范围', grant: '发放方式', limit: '限制规则',
+    stack: '促销叠加逻辑', refund: '退款退券',
+    status: '状态显示逻辑', order: '确认订单', admin: '商家端'
+  };
+  var sectionName = sectionMap[targetSection] || '';
+
+  // 简单策略：找到包含章节标题的位置，截取到下一个一级标题之前
+  var patterns = {
+    overview: /一、业务背景[\s\S]*?(?=\n## |\n#|$)/,
+    version: /二、版本规划[\s\S]*?(?=\n## |\n#|$)/,
+    type: /三、优惠券类型[\s\S]*?(?=\n## |\n#|$)/,
+    scope: /四、适用范围[\s\S]*?(?=\n## |\n#|$)/,
+    grant: /五、发放方式[\s\S]*?(?=\n## |\n#|$)/,
+    limit: /六、限制规则[\s\S]*?(?=\n## |\n#|$)/,
+    stack: /七、促销叠加[\s\S]*?(?=\n## |\n#|$)/,
+    refund: /八、退款退券[\s\S]*?(?=\n## |\n#|$)/,
+    status: /十?一?.?状态显示逻辑[\s\S]*?(?=\n## |\n#|$)/,
+    order: /十?二?.?确认订单[\s\S]*?(?=\n## |\n#|$)/,
+    admin: /十?三?.?商家端[\s\S]*?(?=\n## |\n#|$)/
+  };
+
+  var pattern = patterns[targetSection];
+  var sectionMd = pattern ? md.match(pattern) : md;
+  if (!sectionMd) {
+    // fallback：显示全部
+    sectionMd = md;
+  } else if (typeof sectionMd === 'object' && sectionMd[0]) {
+    sectionMd = sectionMd[0];
+  }
+
+  // 生成目录
+  var toc = '<div class="prd-toc"><div class="prd-toc-title">📑 章节导航</div>' +
+    Object.keys(sectionMap).map(function(k) {
+      return '<a href="javascript:void(0)" onclick="loadPrdSection(\'' + k + '\')">' + sectionMap[k] + '</a>';
+    }).join('') + '</div>';
+
+  return '<div class="prd-content">' + toc + marked.parse(sectionMd) + '</div>';
+}
+
+// ===== 更新信息面板 =====
+function updateInfo(panel, title) {
+  var info = (pageInfo[panel] || {})[title] || {};
+  document.getElementById('infoTab').textContent = info.tabs || '—';
+  document.getElementById('infoBtn').textContent = info.btn || '—';
+  document.getElementById('infoType').textContent = info.type || '—';
+}
+
+// ===== 默认加载第一个 =====
+document.querySelector('.sidebar-section[data-panel="mini"] .sidebar-item').click();
+
+window.loadPrdSection = loadPrdSection;
+</script>
+
+</body>
+</html>

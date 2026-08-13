@@ -1,0 +1,144 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 03_原型设计/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>资金管理 v1.0 - 商家端门户</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; }
+    .topbar { background: #1a1a1a; height: 56px; display: flex; align-items: center; padding: 0 32px; }
+    .topbar-title { color: #fff; font-size: 18px; font-weight: 600; }
+    .topbar-subtitle { color: rgba(255,255,255,0.65); font-size: 14px; margin-left: 12px; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 24px; }
+    .header { background: linear-gradient(135deg, #1664FF 0%, #0958D9 100%); color: #fff; padding: 32px 40px; border-radius: 12px; margin-bottom: 24px; }
+    .header h1 { font-size: 24px; margin-bottom: 8px; }
+    .header p { opacity: 0.85; font-size: 14px; line-height: 1.6; }
+    .header-tags { margin-top: 16px; display: flex; gap: 8px; }
+    .header-tag { background: rgba(255,255,255,0.2); color: #fff; font-size: 12px; padding: 4px 12px; border-radius: 4px; }
+    .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .section-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; padding-left: 12px; border-left: 3px solid #1664FF; }
+    .link-list { display: flex; flex-direction: column; gap: 12px; }
+    .link-item { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.2s; }
+    .link-item:hover { background: #e6f7ff; transform: translateX(4px); }
+    .link-icon { width: 40px; height: 40px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .link-content { flex: 1; }
+    .link-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .link-desc { font-size: 12px; color: #666; margin-top: 2px; }
+    .link-arrow { color: #1890ff; font-size: 16px; }
+    .na-row { padding: 12px 16px; background: #fafafa; border-radius: 8px; color: #999; font-size: 13px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .feature-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f8f9fa; border-radius: 8px; }
+    .feature-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .feature-icon.red { background: #fff0f0; }
+    .feature-icon.orange { background: #fff7e6; }
+    .feature-icon.yellow { background: #fffbe6; }
+    .feature-icon.blue { background: #e6f7ff; }
+    .feature-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+    .feature-desc { font-size: 11px; color: #666; }
+    .info-row { display: flex; gap: 24px; flex-wrap: wrap; }
+    .info-item { font-size: 13px; color: #666; }
+    .info-label { color: #999; }
+    .roadmap-note { font-size: 12px; color: #d97706; background: #fff7e6; padding: 8px 12px; border-radius: 6px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-title">物料商城</div>
+    <div class="topbar-subtitle">产品文档中心</div>
+  </div>
+  <div class="container">
+    <div class="header">
+      <h1>资金管理</h1>
+      <p>资金流水 / 销售统计 / 支出统计3个模块。解决资金流水与收支明细混淆、销售统计口径不统一（铸件按来图时间/标准件按支付时间）、坏账无独立管理路径这3个长期存在的问题。</p>
+      <div class="header-tags">
+        <span class="header-tag">商家端</span>
+        <span class="header-tag">v1.0</span>
+        <span class="header-tag">进行中</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>📄</span>需求文档</div>
+      <div class="section-title">PRD 文档</div>
+      <div class="link-list">
+        <a href="../PRD-资金管理-v1.0.md" class="link-item" target="_blank">
+          <div class="link-icon">📝</div>
+          <div class="link-content">
+            <div class="link-name">PRD-资金管理-v1.0.md</div>
+            <div class="link-desc">完整需求文档（暂无H5展示版）</div>
+          </div>
+          <div class="link-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🎨</span>原型设计</div>
+      <div class="section-title">商家后台原型</div>
+      <div class="link-list">
+        <a href="商家后台/ui-demo-fund-flow.html" class="link-item" target="_blank">
+          <div class="link-icon">💰</div>
+          <div class="link-content">
+            <div class="link-name">ui-demo-fund-flow.html</div>
+            <div class="link-desc">资金流水/销售统计/支出统计原型，含底部"全局数据字典"折叠面板</div>
+          </div>
+          <div class="link-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🕓</span>历史版本</div>
+      <div class="na-row">N/A，目前只有v1.0一个版本，暂无历史快照</div>
+      <div class="roadmap-note">⚠️ PRD内含v1.1/v1.2/v1.3路线图（账期台账/对账中心/发票管理），是未来规划不是已发布版本，不要跟历史版本混淆</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>⚙️</span>核心功能</div>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-icon blue">💵</div>
+          <div>
+            <div class="feature-name">收支明细净化</div>
+            <div class="feature-desc">只展示"钱真发生过"的事件，待支付/已取消订单不出现</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">📊</div>
+          <div>
+            <div class="feature-name">销售统计双口径</div>
+            <div class="feature-desc">铸件按来图时间、标准件按支付时间，4维度可拆分</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon red">⚠️</div>
+          <div>
+            <div class="feature-name">坏账独立管理</div>
+            <div class="feature-desc">独立状态机，财务可手动勾销，销售总额自动剔除</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon yellow">🔄</div>
+          <div>
+            <div class="feature-name">退款失败追踪</div>
+            <div class="feature-desc">可追踪可重试，减少资金风险</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>ℹ️</span>文档信息</div>
+      <div class="info-row">
+        <div class="info-item"><span class="info-label">版本：</span>v1.0</div>
+        <div class="info-item"><span class="info-label">作者：</span>Victoria（PM）</div>
+        <div class="info-item"><span class="info-label">创建日期：</span>2026-07-13</div>
+        <div class="info-item"><span class="info-label">状态：</span>进行中，待评审</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

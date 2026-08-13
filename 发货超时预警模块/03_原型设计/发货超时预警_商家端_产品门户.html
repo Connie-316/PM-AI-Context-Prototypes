@@ -1,0 +1,241 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 03_原型设计/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ============================================================
+  发货超时预警_商家端_产品门户.html
+  版本：v2.2  更新时间：2026-08-11
+  说明：此文件为本模块所有产品交付物的入口导航，
+        每次 PRD/原型 版本变更后必须同步更新本文件的：
+        1. header-tag 版本号
+        2. 底部"文档信息"区的版本号和更新时间
+        3. 如有新增文件，在对应区块补充链接
+  （2026-08-11修正：本文件此前冻结在v1.8/2026-07-14，PRD早已推进到v2.1，
+   中间缺了v2.0核心重构的所有变更——不只是版本号label过期，"提前催办"卡片
+   描述的机制已经在v2.0被移除，"商品类型区分"卡片描述的还是2档旧规则，
+   实际是5档。这次一并补齐，详见下方CHANGELOG新增的v2.0/v2.1条目。
+   2026-08-11再修正一次：第三轮独立验证发现"修改交期"卡片写"标准件/铸件均支持"，
+   这个措辞抄自PRD一条v1.7遗留的旧验收标准，跟PRD自己v2.0新增的"不限类型"条目
+   矛盾——已同步把PRD那条改掉，详见下方v2.2条目）
+  ============================================================ -->
+<title>发货超时预警 · 商家端产品门户 v2.2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif; background: #f0f2f5; color: #333; font-size: 14px; }
+
+  .topbar { background: #1a1a1a; height: 56px; display: flex; align-items: center; padding: 0 32px; gap: 8px; }
+  .topbar-title { color: #fff; font-size: 18px; font-weight: 600; }
+  .topbar-dot { color: rgba(255,255,255,0.3); }
+  .topbar-subtitle { color: rgba(255,255,255,0.55); font-size: 14px; }
+
+  .container { max-width: 900px; margin: 40px auto; padding: 0 24px 60px; }
+
+  .header { background: linear-gradient(135deg, #1664FF 0%, #0958D9 100%); color: #fff; padding: 36px 40px; border-radius: 12px; margin-bottom: 20px; }
+  .header-eyebrow { font-size: 12px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+  .header p { opacity: 0.85; font-size: 14px; line-height: 1.7; max-width: 600px; }
+  .header-tags { margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .header-tag { background: rgba(255,255,255,0.18); color: #fff; font-size: 12px; padding: 4px 12px; border-radius: 4px; }
+  .header-tag.version { background: rgba(255,255,255,0.35); font-weight: 600; }
+
+  .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+
+  .section-label { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px; padding-left: 10px; border-left: 3px solid #1664FF; }
+  .section-group { margin-bottom: 20px; }
+  .section-group:last-child { margin-bottom: 0; }
+
+  .link-list { display: flex; flex-direction: column; gap: 10px; }
+  .link-item { display: flex; align-items: center; gap: 16px; padding: 14px 18px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.18s; border: 1px solid transparent; }
+  .link-item:hover { background: #EEF4FF; border-color: #ADC6FF; transform: translateX(3px); }
+  .link-icon { width: 38px; height: 38px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .link-content { flex: 1; min-width: 0; }
+  .link-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .link-desc { font-size: 12px; color: #888; margin-top: 3px; line-height: 1.5; }
+  .link-arrow { color: #1664FF; font-size: 16px; flex-shrink: 0; }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .feature-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #f8f9fa; border-radius: 8px; }
+  .feature-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .fi-red { background: #fff0f0; }
+  .fi-orange { background: #fff7e6; }
+  .fi-yellow { background: #fffbe6; }
+  .fi-blue { background: #e6f7ff; }
+  .fi-green { background: #f6ffed; }
+  .fi-purple { background: #f9f0ff; }
+  .feature-name { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; }
+  .feature-desc { font-size: 11px; color: #888; line-height: 1.5; }
+
+  .divider { border: none; border-top: 1px solid #f0f0f0; margin: 18px 0; }
+
+  .info-card { background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1.5px solid #ffe58f; }
+  .info-row { display: flex; gap: 32px; flex-wrap: wrap; align-items: center; }
+  .info-item { font-size: 13px; }
+  .info-label { color: #aaa; margin-right: 4px; }
+  .info-value { color: #333; font-weight: 500; }
+  .info-value.status { color: #fa8c16; font-weight: 600; }
+
+  .changelog { margin-top: 14px; }
+  .changelog-title { font-size: 12px; font-weight: 600; color: #aaa; margin-bottom: 8px; letter-spacing: 0.5px; }
+  .changelog-item { font-size: 12px; color: #666; padding: 4px 0; border-bottom: 1px solid #f5f5f5; display: flex; gap: 12px; }
+  .changelog-item:last-child { border-bottom: none; }
+  .changelog-ver { color: #1664FF; font-weight: 600; min-width: 40px; }
+  .changelog-date { color: #aaa; min-width: 80px; }
+
+  .notice { background: #FFF7E6; border: 1px solid #FFD591; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #7C5000; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">物料商城</div>
+  <div class="topbar-dot">›</div>
+  <div class="topbar-subtitle">产品文档中心</div>
+  <div class="topbar-dot">›</div>
+  <div class="topbar-subtitle" style="color:rgba(255,255,255,0.85);">发货超时预警</div>
+</div>
+
+<div class="container">
+
+  <!-- 头部 -->
+  <div class="header">
+    <div class="header-eyebrow">MERCHANT PORTAL · 商家端</div>
+    <h1>发货超时预警模块</h1>
+    <p>基于待发货列表的分级预警系统。支持按商品类型5档差异化预警基准、4级风险标识、修改交期、钉钉通知及超时处理记录。</p>
+    <div class="header-tags">
+      <span class="header-tag">商家端</span>
+      <span class="header-tag version">v2.2</span>
+      <span class="header-tag">待研发交接</span>
+      <span class="header-tag">2026-08-11 更新</span>
+    </div>
+  </div>
+
+  <!-- 维护提醒（开发可忽略） -->
+  <div class="notice">
+    ⚠️ <strong>维护说明（产品经理看）：</strong>每次更新 PRD 或原型版本后，必须同步更新本文件：① header 版本号标签 ② 底部"当前版本"和"更新时间" ③ 变更记录。运行 delivery-checklist 中的自动检查脚本可验证版本一致性。
+  </div>
+
+  <!-- 需求文档 -->
+  <div class="card">
+    <div class="card-title">📄 需求文档</div>
+
+    <div class="section-group">
+      <div class="section-label">PRD 文档</div>
+      <div class="link-list">
+        <a href="../02_需求文档/PRD_发货超时预警功能_h5.html" class="link-item" target="_blank">
+          <div class="link-icon">📋</div>
+          <div class="link-content">
+            <div class="link-name">PRD_发货超时预警功能_h5.html &nbsp;<span style="font-size:11px;color:#1664FF;font-weight:600;">v2.2</span></div>
+            <div class="link-desc">H5展示版，带样式排版，推荐开发/评审使用</div>
+          </div>
+          <div class="link-arrow">→</div>
+        </a>
+        <a href="../02_需求文档/PRD_发货超时预警功能.md" class="link-item" target="_blank">
+          <div class="link-icon">📝</div>
+          <div class="link-content">
+            <div class="link-name">PRD_发货超时预警功能.md &nbsp;<span style="font-size:11px;color:#1664FF;font-weight:600;">v2.2</span></div>
+            <div class="link-desc">原始需求文档，包含用户故事、核心流程、功能拆解清单（18项）</div>
+          </div>
+          <div class="link-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 原型设计 -->
+  <div class="card">
+    <div class="card-title">🎨 原型设计</div>
+
+    <div class="section-group">
+      <div class="section-label">商家后台原型</div>
+      <div class="link-list">
+        <a href="商家后台/01_待发货列表_发货预警.html" class="link-item" target="_blank">
+          <div class="link-icon">📱</div>
+          <div class="link-content">
+            <div class="link-name">01_待发货列表_发货预警.html</div>
+            <div class="link-desc">完整交互原型 · 待发货（预警+修改交期）/ 已超时（处理状态）/ 今日发货三个Tab</div>
+          </div>
+          <div class="link-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心功能速览 -->
+  <div class="card">
+    <div class="card-title">✨ 核心功能速览</div>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-icon fi-red">🚨</div>
+        <div>
+          <div class="feature-name">4级风险预警</div>
+          <div class="feature-desc">紧急 ≤2h / 高 2–8h / 中 8–12h / 低 12–72h</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon fi-orange">🔔</div>
+        <div>
+          <div class="feature-name">钉钉通知</div>
+          <div class="feature-desc">紧急级不合并逐条发送；高风险按跟单员合并；中风险按仓库合并；低风险全部合并1条，均不@任何人</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon fi-yellow">⏰</div>
+        <div>
+          <div class="feature-name">统一ActionCard通知</div>
+          <div class="feature-desc">v2.0起取消"提前催办"双轨机制，所有等级用同一种卡片，emoji区分等级，每等级只通知1次</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon fi-blue">📝</div>
+        <div>
+          <div class="feature-name">处理记录</div>
+          <div class="feature-desc">超时原因必填，待处理→处理中（可多次追加记录）→确认发货后从列表移除</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon fi-green">📅</div>
+        <div>
+          <div class="feature-name">修改交期</div>
+          <div class="feature-desc">不限商品类型（标准件/铸件/非标件均支持，软件不进池不涉及），跳转审核列表模块处理，改后重新计算风险等级、通知记录清零</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon fi-purple">🏷️</div>
+        <div>
+          <div class="feature-name">商品类型区分（5档）</div>
+          <div class="feature-desc">铸件/非标件=供应商客户交期；标准件-库存=订单创建+1天；标准件-PO=PO供应商交期；软件不进池</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文档信息 -->
+  <div class="info-card">
+    <div class="info-row">
+      <div class="info-item"><span class="info-label">当前版本</span><span class="info-value">v2.2</span></div>
+      <div class="info-item"><span class="info-label">更新时间</span><span class="info-value">2026-08-11</span></div>
+      <div class="info-item"><span class="info-label">文档状态</span><span class="info-value status">待研发交接</span></div>
+      <div class="info-item"><span class="info-label">负责人</span><span class="info-value">产品经理</span></div>
+    </div>
+    <hr class="divider">
+    <div class="changelog">
+      <div class="changelog-title">CHANGELOG</div>
+      <div class="changelog-item"><span class="changelog-ver">v2.2</span><span class="changelog-date">2026-08-11</span><span>修正§7验收标准两条互相矛盾的"修改交期"条目——v1.7旧条目限定"标准件/铸件"，跟v2.0新条目"不限类型"冲突，已合并为准确表述（产品门户重写后独立验证时发现）</span></div>
+      <div class="changelog-item"><span class="changelog-ver"><a href="../02_需求文档/history/PRD_发货超时预警功能_v2.1.md" target="_blank" style="color:inherit;text-decoration:underline">v2.1</a></span><span class="changelog-date">2026-08-10</span><span>补充铸件/非标件无交期时的兜底规则说明到流程图和已确认事项（此前只在正文出现，容易被开发漏掉）——<a href="../02_需求文档/history/PRD_发货超时预警功能_v2.1.md" target="_blank">查看该版快照</a></span></div>
+      <div class="changelog-item"><span class="changelog-ver"><a href="../02_需求文档/history/PRD_发货超时预警功能_v2.0.md" target="_blank" style="color:inherit;text-decoration:underline">v2.0</a></span><span class="changelog-date">2026-07-16</span><span>核心重构：预警基准2类→5类（按商品类型分档，软件不进池）；钉钉通知双轨（剩余时间+提前催办）→统一ActionCard；修改交期本PRD弹窗→轻量化只加入口，跳转审核列表模块；退款相关全部清理；功能拆解15条→18条——<a href="../02_需求文档/history/PRD_发货超时预警功能_v2.0.md" target="_blank">查看该版快照</a></span></div>
+      <div class="changelog-item"><span class="changelog-ver">v1.8</span><span class="changelog-date">2026-07-14</span><span>去掉周末预警规则；标记处理支持多次追加；催办统一钉钉群消息非工作时间跳过；已超时Tab只显示待处理/处理中；版本同步PRD v1.8（v1.8及更早版本无物理快照文件，未经git跟踪，见versions.md底部说明）</span></div>
+      <div class="changelog-item"><span class="changelog-ver">v1.7</span><span class="changelog-date">2026-07-14</span><span>确认5条业务决策：标准件/铸件均支持修改交期；修改后重新起算可降级；铸件无交期按标准件兜底；移除电话催办改钉钉+周末17:00预警；已超时Tab只显示未发货订单</span></div>
+      <div class="changelog-item"><span class="changelog-ver">v1.6</span><span class="changelog-date">2026-07-14</span><span>补充标准件/铸件差异化超时基准；新增修改交期功能；提前催办改为超时时间基准；移除退款流程；明确已超时排序规则</span></div>
+      <div class="changelog-item"><span class="changelog-ver">v1.5</span><span class="changelog-date">2026-06-26</span><span>回退修正：预警基准恢复为订单创建+7天；阈值恢复为≤2h/2-8h/8-12h/12-72h</span></div>
+      <div class="changelog-item"><span class="changelog-ver">v1.2</span><span class="changelog-date">2026-06-24</span><span>补充高/中/低风险卡片格式；补充合并卡片格式；明确扫描范围</span></div>
+      <div class="changelog-item"><span class="changelog-ver">v1.0</span><span class="changelog-date">2026-06-24</span><span>按PRD标准模板重写</span></div>
+      <div class="changelog-item" style="border-top:1px solid #eee;padding-top:8px;margin-top:4px"><span></span><span></span><span>📖 <a href="../02_需求文档/history/PRD_发货超时预警功能_versions.md" target="_blank">查看完整版本记录</a>（含v0.1-v1.8的文字变更说明，早期版本无物理快照文件）</span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

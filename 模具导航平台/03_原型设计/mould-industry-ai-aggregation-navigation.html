@@ -1,0 +1,1814 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 03_原型设计/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模聚派 · 模具行业AI聚合导航平台 v7.0</title>
+<style>
+/* ===== CSS Reset & Variables ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f6fa;--card-bg:#fff;--text:#1a1a2e;--text-secondary:#6b7280;
+  --text-muted:#9ca3af;--primary:#2563eb;--primary-light:#dbeafe;
+  --primary-dark:#1d4ed8;--accent:#f59e0b;--accent-light:#fef3c7;
+  --danger:#ef4444;--danger-light:#fee2e2;--border:#e5e7eb;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 15px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --transition:all .2s ease;
+  --green1:#ecfdf5;--green2:#047857;--blue1:#eff6ff;--blue2:#1d4ed8;
+  --amber1:#fffbeb;--amber2:#b45309;--purple1:#f5f3ff;--purple2:#6d28d9;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+
+/* ===== Top Bar ===== */
+.top-bar{background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;font-size:12px;padding:6px 0;text-align:center;overflow:hidden;position:relative}
+.top-bar-inner{white-space:nowrap;animation:marquee 25s linear infinite;display:inline-block}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.top-bar span{margin:0 24px;opacity:.85}
+.top-bar .hot{color:var(--accent);font-weight:600}
+
+/* ===== Header ===== */
+.header{background:var(--card-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+.header-inner{max-width:1400px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;font-weight:700}
+.logo-text{font-size:20px;font-weight:700;color:var(--text);white-space:nowrap}
+.logo-text span{color:var(--primary)}
+.logo-sub{font-size:11px;color:var(--text-muted);display:block;line-height:1}
+
+/* ===== Nav ===== */
+.main-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1;justify-content:center}
+.main-nav a{text-decoration:none;color:var(--text-secondary);font-size:13px;padding:6px 10px;border-radius:var(--radius-xs);transition:var(--transition);white-space:nowrap;font-weight:500}
+.main-nav a:hover,.main-nav a.active{background:var(--primary-light);color:var(--primary)}
+.header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.btn-login{background:var(--primary);color:#fff;border:none;padding:7px 18px;border-radius:var(--radius-xs);font-size:13px;cursor:pointer;font-weight:500;transition:var(--transition);white-space:nowrap}
+.btn-login:hover{background:var(--primary-dark);transform:translateY(-1px)}
+
+/* ===== Search Section ===== */
+.search-section{max-width:1400px;margin:0 auto;padding:20px 20px 0}
+.search-hero{background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:var(--radius);padding:30px;color:#fff;box-shadow:var(--shadow-md);margin-bottom:20px}
+.search-hero-title{font-size:24px;font-weight:700;margin-bottom:6px}
+.search-hero-sub{font-size:14px;opacity:.85;margin-bottom:18px}
+.search-box{display:flex;gap:8px;flex-wrap:wrap}
+.search-input-wrap{flex:1;min-width:250px;position:relative}
+.search-input-wrap input{width:100%;padding:12px 16px 12px 44px;border-radius:var(--radius-sm);border:2px solid transparent;font-size:15px;outline:none;transition:var(--transition);background:#fff;color:var(--text)}
+.search-input-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(245,158,11,.2)}
+.search-input-wrap .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.5}
+.search-engines{display:flex;gap:4px;flex-wrap:wrap}
+.search-engines button{padding:8px 14px;border-radius:var(--radius-xs);border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:13px;transition:var(--transition);white-space:nowrap;font-weight:500}
+.search-engines button:hover,.search-engines button.active{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.6)}
+
+/* ===== Ad Banner ===== */
+.ad-banner-wrap{max-width:1400px;margin:0 auto;padding:0 20px 6px}
+.ad-banner{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid var(--accent);border-radius:var(--radius);padding:12px 20px;display:flex;align-items:center;gap:16px;font-size:14px;color:#92400e;cursor:pointer;transition:var(--transition)}
+.ad-banner:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.ad-banner .ad-tag{background:var(--accent);color:#fff;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;flex-shrink:0}
+.ad-banner .ad-text{flex:1;font-weight:500}
+.ad-banner .ad-cta{background:#fff;color:#92400e;border:1px solid var(--accent);padding:6px 16px;border-radius:var(--radius-xs);font-size:13px;cursor:pointer;font-weight:600;white-space:nowrap;transition:var(--transition)}
+.ad-banner .ad-cta:hover{background:var(--accent);color:#fff}
+
+/* ===== Main Content ===== */
+.main-wrap{max-width:1400px;margin:0 auto;padding:0 20px 30px;display:grid;grid-template-columns:220px 1fr;gap:20px}
+
+/* ===== Sidebar ===== */
+.sidebar{position:sticky;top:90px;align-self:start}
+.sidebar-inner{background:var(--card-bg);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow-sm)}
+.sidebar-title{font-size:13px;color:var(--text-muted);padding:8px 10px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.sidebar-layer{font-size:11px;color:var(--text-muted);padding:10px 10px 4px;font-weight:600;border-top:1px solid var(--border);margin-top:4px}
+.sidebar-layer:first-of-type{border-top:none;margin-top:0}
+.sidebar-nav{list-style:none}
+.sidebar-nav li a{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:var(--radius-xs);text-decoration:none;color:var(--text-secondary);font-size:13px;transition:var(--transition);font-weight:500}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{background:var(--primary-light);color:var(--primary)}
+.sidebar-nav li a .cat-icon{font-size:16px;width:20px;text-align:center}
+
+/* ===== Layer Divider ===== */
+.layer-divider{display:flex;align-items:center;gap:12px;margin:28px 0 12px;padding:0 4px}
+.layer-divider:first-of-type{margin-top:0}
+.layer-label{font-size:13px;font-weight:600;padding:5px 14px;border-radius:20px;white-space:nowrap}
+.layer-label.l1{background:#ecfdf5;color:#047857}
+.layer-label.l2{background:#eff6ff;color:#1d4ed8}
+.layer-label.l3{background:#fffbeb;color:#b45309}
+.layer-label.l4{background:#f5f3ff;color:#6d28d9}
+.layer-line{flex:1;height:1px}
+.layer-line.l1{background:linear-gradient(90deg,#04785720,transparent)}
+.layer-line.l2{background:linear-gradient(90deg,#1d4ed820,transparent)}
+.layer-line.l3{background:linear-gradient(90deg,#b4530920,transparent)}
+.layer-line.l4{background:linear-gradient(90deg,#6d28d920,transparent)}
+
+/* ===== Card Grid ===== */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.tool-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+.tool-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--primary)}
+.tool-card .card-badge{position:absolute;top:12px;right:12px;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.card-badge.hot{background:#fee2e2;color:#dc2626}
+.card-badge.rec{background:var(--primary-light);color:var(--primary)}
+.card-badge.new{background:var(--accent-light);color:#b45309}
+.card-icon{font-size:32px;margin-bottom:10px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text);padding-right:60px}
+.card-desc{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:12px}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-go{display:inline-block;padding:6px 14px;background:var(--primary-light);color:var(--primary);border-radius:var(--radius-xs);text-decoration:none;font-size:12px;font-weight:500;transition:var(--transition)}
+.btn-go:hover{background:var(--primary);color:#fff}
+
+/* ===== Category Header ===== */
+.cat-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--primary-light)}
+.cat-header .cat-header-icon{font-size:24px}
+.cat-header h2{font-size:18px;font-weight:700}
+.cat-header .cat-count{font-size:12px;color:var(--text-muted);background:var(--bg);padding:3px 10px;border-radius:20px;font-weight:500}
+.cat-header .cat-more{font-size:13px;color:var(--primary);text-decoration:none;margin-left:auto;font-weight:500}
+
+/* ===== Inline Ad Card ===== */
+.ad-inline{background:linear-gradient(135deg,#fef3c7,#fef9c3);border:1px dashed var(--accent);border-radius:var(--radius);padding:16px;cursor:pointer;transition:var(--transition);display:flex;flex-direction:column;justify-content:center}
+.ad-inline:hover{box-shadow:var(--shadow-md)}
+.ad-inline .ad-inline-icon{font-size:28px;margin-bottom:6px}
+.ad-inline .ad-inline-title{font-size:14px;font-weight:600;color:#92400e;margin-bottom:4px}
+.ad-inline .ad-inline-desc{font-size:12px;color:#b45309;line-height:1.4}
+
+/* ===== Footer ===== */
+.footer{background:#1e293b;color:#cbd5e1;padding:30px 20px;margin-top:40px}
+.footer-inner{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:30px}
+.footer-col h4{color:#fff;font-size:14px;margin-bottom:14px;font-weight:600}
+.footer-col a{display:block;color:#94a3b8;text-decoration:none;font-size:13px;padding:3px 0;transition:var(--transition)}
+.footer-col a:hover{color:#fff}
+.footer-bottom{max-width:1400px;margin:20px auto 0;padding-top:16px;border-top:1px solid #334155;text-align:center;font-size:13px}
+
+/* ===== Highlight animation ===== */
+.search-highlight{box-shadow:0 0 0 3px var(--accent)!important;border-color:var(--accent)!important;transform:translateY(-2px)}
+
+/* ===== Mobile Hamburger ===== */
+.mobile-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:none;background:none;z-index:200}
+.mobile-toggle span{display:block;width:24px;height:3px;background:var(--text);border-radius:3px;transition:var(--transition)}
+.mobile-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.mobile-toggle.open span:nth-child(2){opacity:0}
+.mobile-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* ===== Mobile Nav Overlay ===== */
+.mobile-nav-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:150}
+.mobile-nav-overlay.open{display:block}
+.mobile-nav-panel{position:fixed;top:0;right:-300px;width:280px;height:100%;background:var(--card-bg);z-index:151;transition:right .3s ease;overflow-y:auto;padding:80px 20px 20px;box-shadow:var(--shadow-lg)}
+.mobile-nav-panel.open{right:0}
+.mobile-nav-panel a{display:flex;align-items:center;gap:10px;padding:12px 8px;text-decoration:none;color:var(--text);font-size:15px;border-bottom:1px solid var(--border);font-weight:500}
+.mobile-nav-panel a:hover{color:var(--primary);background:var(--primary-light);border-radius:var(--radius-xs)}
+.mobile-nav-panel .mobile-nav-title{font-size:12px;color:var(--text-muted);padding:16px 8px 8px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+
+/* ===== Bottom Nav (Mobile) ===== */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;width:100%;background:var(--card-bg);border-top:1px solid var(--border);z-index:99;padding:6px 8px env(safe-area-inset-bottom);box-shadow:0 -2px 10px rgba(0,0,0,.08)}
+.bottom-nav-inner{display:flex;justify-content:space-around;max-width:500px;margin:0 auto}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--text-secondary);font-size:10px;padding:4px 6px;border-radius:var(--radius-xs);min-width:48px}
+.bottom-nav-item .bn-icon{font-size:20px;line-height:1}
+.bottom-nav-item.active,.bottom-nav-item:hover{color:var(--primary)}
+
+/* ===== Responsive ===== */
+@media(max-width:1200px){
+}
+@media(max-width:1024px){
+  .main-nav{display:none}
+  .mobile-toggle{display:flex}
+  .main-wrap{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .card-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-inner{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .header-inner{padding:8px 12px;gap:10px}
+  .logo-text{font-size:17px}
+  .logo-icon{width:36px;height:36px;font-size:18px}
+  .mobile-toggle{display:flex}
+  .bottom-nav{display:block}
+  body{padding-bottom:70px}
+  .search-hero{padding:20px 16px}
+  .search-hero-title{font-size:20px}
+  .search-hero-sub{font-size:12px}
+  .search-input-wrap input{padding:10px 12px 10px 38px;font-size:14px}
+  .search-engines button{font-size:11px;padding:6px 10px}
+  .card-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr 1fr;gap:20px}
+  .ad-banner{padding:10px 14px;font-size:12px}
+  .ad-banner .ad-cta{font-size:11px;padding:5px 12px}
+  .top-bar{font-size:11px}
+  .content-area{padding:0 8px}
+  .cat-header h2{font-size:16px}
+  .cat-header .cat-header-icon{font-size:20px}
+}
+@media(max-width:480px){
+  .header-inner{padding:6px 10px;gap:6px}
+  .logo-text{font-size:15px}
+  .logo-sub{font-size:10px}
+  .logo-icon{width:32px;height:32px;font-size:16px}
+  .btn-login{padding:5px 12px;font-size:11px}
+  .search-section{padding:12px 12px 0}
+  .search-hero{padding:14px 12px}
+  .search-hero-title{font-size:18px}
+  .search-input-wrap input{font-size:13px;padding:10px 12px 10px 34px}
+  .search-engines{gap:3px}
+  .search-engines button{font-size:10px;padding:5px 8px}
+  .tool-card{padding:14px}
+  .card-title{font-size:14px}
+  .card-desc{font-size:12px}
+  .footer-inner{grid-template-columns:1fr;gap:16px}
+  .footer{padding:20px 16px}
+  .ad-banner{flex-wrap:wrap;gap:8px;padding:10px}
+  .bottom-nav-item{font-size:9px}
+  .bottom-nav-item .bn-icon{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <span>🔴 宇树科技IPO募资42亿 人形机器人量产元年</span>
+    <span>🏗️ 中泰模具+启泰智能 "数智聚模"平台生态：物料商城·设计交易·知识·人才·MES</span>
+    <span>🔥 DMC2026倒计时<span class="hot" id="dmcCountdown">计算中...</span>（7.1-7.4 上海虹桥）</span>
+    <span>📊 模具钢H13指数 116.61 ↑</span>
+    <span>🚀 4家AI模具报价工具一月内集中发布</span>
+    <!-- 2026-08-11修正：marquee动画用的是"内容复制一份、滚动50%"的常见无缝循环写法（见上方@keyframes marquee），
+         但原来这里只有一份内容，动画到100%时其实只滚了半份内容长度就跳回起点，会有明显的跳动感。
+         下面复制一份一模一样的内容，倒计时span换成不同id避免重复id -->
+    <span>🔴 宇树科技IPO募资42亿 人形机器人量产元年</span>
+    <span>🏗️ 中泰模具+启泰智能 "数智聚模"平台生态：物料商城·设计交易·知识·人才·MES</span>
+    <span>🔥 DMC2026倒计时<span class="hot" id="dmcCountdown2">计算中...</span>（7.1-7.4 上海虹桥）</span>
+    <span>📊 模具钢H13指数 116.61 ↑</span>
+    <span>🚀 4家AI模具报价工具一月内集中发布</span>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">🔩</div>
+      <div>
+        <div class="logo-text">模聚派<span>·导航</span></div>
+        <div class="logo-sub">Mold Industry Hub v7.0</div>
+      </div>
+    </a>
+    <nav class="main-nav">
+      <a href="#cat-course">🎓 课程</a><a href="#cat-creator">📹 达人</a>
+      <a href="#cat-tool">🛠 软件</a><a href="#cat-model3d">📐 图纸库</a><a href="#cat-standard">🏷️ 标准</a><a href="#cat-robot">🤖 精密</a>
+      <a href="#cat-mall">🛒 采购</a><a href="#cat-material">📐 行情</a><a href="#cat-heat">🔩 热/流/温</a><a href="#cat-3dprint">🖨️ 3D打印</a><a href="#cat-used">🔄 二手</a>
+      <a href="#cat-company">🏢 企业</a><a href="#cat-report">📊 报告</a>
+      <a href="#cat-portal">🌐 门户</a><a href="#cat-news">📰 资讯</a>
+      <a href="#cat-park">🏗️ 产业园</a><a href="#cat-trade">🌍 外贸</a>
+      <a href="#cat-expo">🎪 展会</a><a href="#cat-mes">🏭 智管</a>
+      <a href="#cat-job">💼 招聘</a><a href="#cat-benchmark">🏗️ 机床/检测</a><a href="#cat-ai-mold">🧠 AI</a>
+    </nav>
+    <div class="header-actions">
+      <button class="mobile-toggle" onclick="toggleMobileNav()" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+      <button class="btn-login" onclick="alert('暂未开放，敬请期待')">加入收藏</button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav Overlay -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav-panel" id="mobileNavPanel">
+  <div class="mobile-nav-title">🟢 学习成长</div>
+  <a href="#cat-course" onclick="closeMobileNav()">🎓 专业课程</a>
+  <a href="#cat-creator" onclick="closeMobileNav()">📹 达人/KOL</a>
+  <div class="mobile-nav-title">🔵 设计研发</div>
+  <a href="#cat-tool" onclick="closeMobileNav()">🛠 CAD/CAE/CAM</a>
+  <a href="#cat-model3d" onclick="closeMobileNav()">📐 3D模型库</a>
+  <a href="#cat-standard" onclick="closeMobileNav()">🏷️ 行业标准</a>
+  <a href="#cat-robot" onclick="closeMobileNav()">🤖 机器人/精密模具</a>
+  <div class="mobile-nav-title">🟡 制造采购</div>
+  <a href="#cat-mall" onclick="closeMobileNav()">🛒 电商采购</a>
+  <a href="#cat-material" onclick="closeMobileNav()">📐 钢材行情</a>
+  <a href="#cat-heat" onclick="closeMobileNav()">🔩 热处理/热流道/温控</a>
+  <a href="#cat-3dprint" onclick="closeMobileNav()">🖨️ 3D打印</a>
+  <a href="#cat-used" onclick="closeMobileNav()">🔄 二手交易</a>
+  <a href="#cat-company" onclick="closeMobileNav()">🏢 知名企业</a>
+  <div class="mobile-nav-title">🟣 商业决策</div>
+  <a href="#cat-report" onclick="closeMobileNav()">📊 行业报告</a>
+  <a href="#cat-portal" onclick="closeMobileNav()">🌐 专业门户</a>
+  <a href="#cat-news" onclick="closeMobileNav()">📰 行业资讯</a>
+  <a href="#cat-park" onclick="closeMobileNav()">🏗️ 产业园</a>
+  <a href="#cat-trade" onclick="closeMobileNav()">🌍 外贸出海</a>
+  <a href="#cat-expo" onclick="closeMobileNav()">🎪 展会</a>
+  <a href="#cat-mes" onclick="closeMobileNav()">🏭 智慧管理</a>
+  <a href="#cat-job" onclick="closeMobileNav()">💼 招聘</a>
+  <a href="#cat-benchmark" onclick="closeMobileNav()">🏗️ 机床/检测</a>
+  <a href="#cat-ai-mold" onclick="closeMobileNav()">🧠 AI+模具</a>
+</div>
+
+<!-- Search -->
+<div class="search-section">
+  <div class="search-hero">
+    <div class="search-hero-title">🔍 模具行业一站式搜索</div>
+    <div class="search-hero-sub">选择搜索引擎，输入关键词，全网直达模具行业资源</div>
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="输入关键词，如：模具设计教程、模具钢材价格、冲压模具..." onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <div class="search-engines" id="searchEngines">
+        <button data-engine="baidu" class="active" onclick="setEngine('baidu',this)">百度</button>
+        <button data-engine="bing" onclick="setEngine('bing',this)">必应</button>
+        <button data-engine="google" onclick="setEngine('google',this)">Google</button>
+        <button data-engine="weixin" onclick="setEngine('weixin',this)">搜狗微信</button>
+        <button data-engine="bilibili" onclick="setEngine('bilibili',this)">B站</button>
+        <button data-engine="mysteel" onclick="setEngine('mysteel',this)">我的钢铁</button>
+        <button data-engine="1688" onclick="setEngine('1688',this)">1688</button>
+        <button data-engine="douyin" onclick="setEngine('douyin',this)">抖音</button>
+        <button data-engine="insite" onclick="setEngine('insite',this)">🔍 站内</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ad Banner -->
+<div class="ad-banner-wrap">
+  <div class="ad-banner" onclick="window.open('https://www.digitmold.com/','_blank')">
+    <span class="ad-tag">推荐</span>
+    <span class="ad-text">数智聚模 · 模具行业一站式产业互联网平台 — 物料商城 | 设计交易 | 知识平台 | 人才服务</span>
+    <button class="ad-cta">立即访问 →</button>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-wrap">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-title">📂 快速导航 · 4层架构</div>
+      <div class="sidebar-layer" style="color:#047857">🟢 学习成长</div>
+      <ul class="sidebar-nav">
+        <li><a href="#cat-course" class="active"><span class="cat-icon">🎓</span>专业课程/知识平台</a></li>
+        <li><a href="#cat-creator"><span class="cat-icon">📹</span>达人/KOL/自媒体</a></li>
+      </ul>
+      <div class="sidebar-layer" style="color:#1d4ed8">🔵 设计研发</div>
+      <ul class="sidebar-nav">
+        <li><a href="#cat-tool"><span class="cat-icon">🛠</span>CAD/CAE/CAM软件</a></li>
+        <li><a href="#cat-model3d"><span class="cat-icon">📐</span>3D模型/图纸库</a></li>
+        <li><a href="#cat-standard"><span class="cat-icon">🏷️</span>行业标准/专利</a></li>
+        <li><a href="#cat-robot"><span class="cat-icon">🤖</span>机器人/精密模具</a></li>
+      </ul>
+      <div class="sidebar-layer" style="color:#b45309">🟡 制造采购</div>
+      <ul class="sidebar-nav">
+        <li><a href="#cat-mall"><span class="cat-icon">🛒</span>电商集采/物料交易</a></li>
+        <li><a href="#cat-material"><span class="cat-icon">📐</span>物料行情/钢材交易</a></li>
+        <li><a href="#cat-heat"><span class="cat-icon">🔩</span>热处理/热流道/温控</a></li>
+        <li><a href="#cat-3dprint"><span class="cat-icon">🖨️</span>3D打印/增材制造</a></li>
+        <li><a href="#cat-used"><span class="cat-icon">🔄</span>二手设备/模具交易</a></li>
+        <li><a href="#cat-company"><span class="cat-icon">🏢</span>知名企业/品牌</a></li>
+      </ul>
+      <div class="sidebar-layer" style="color:#6d28d9">🟣 商业决策</div>
+      <ul class="sidebar-nav">
+        <li><a href="#cat-report"><span class="cat-icon">📊</span>行业报告/研究</a></li>
+        <li><a href="#cat-portal"><span class="cat-icon">🌐</span>专业门户/论坛</a></li>
+        <li><a href="#cat-news"><span class="cat-icon">📰</span>行业资讯/期刊</a></li>
+        <li><a href="#cat-park"><span class="cat-icon">🏗️</span>模具产业园/集群</a></li>
+        <li><a href="#cat-trade"><span class="cat-icon">🌍</span>外贸/出海</a></li>
+        <li><a href="#cat-expo"><span class="cat-icon">🎪</span>展会/大会</a></li>
+        <li><a href="#cat-mes"><span class="cat-icon">🏭</span>智慧管理/MES</a></li>
+        <li><a href="#cat-job"><span class="cat-icon">💼</span>招聘/人才/兼职</a></li>
+        <li><a href="#cat-benchmark"><span class="cat-icon">🏗️</span>加工机床/检测</a></li>
+        <li><a href="#cat-ai-mold"><span class="cat-icon">🧠</span>AI+模具</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <div class="content-area">
+<!-- ============================================================ -->
+<!-- 🟢 LAYER 1: 学习成长 -->
+<!-- ============================================================ -->
+<div class="layer-divider"><div class="layer-label l1">🟢 学习成长 — 个人能力提升</div><div class="layer-line l1"></div></div>
+
+<!-- 1. 🎓 专业课程/知识平台 -->
+<section id="cat-course">
+  <div class="cat-header">
+    <span class="cat-header-icon">🎓</span>
+    <h2>专业课程/知识平台</h2>
+    <span class="cat-count">6 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.icourse163.org/search.htm?search=%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1','_blank')">
+      <div class="card-badge rec">权威</div>
+      <div class="card-icon">🏫</div>
+      <div class="card-info">
+        <div class="card-title">中国大学MOOC</div>
+        <div class="card-desc">985/211高校精品课程聚合，搜索"模具设计"直达80+门课程。华中科大、上海交大等名校免费开放</div>
+        <div class="card-actions"><a href="https://www.icourse163.org/search.htm?search=%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1" target="_blank" class="btn-go">模具课程</a><a href="https://www.icourse163.org/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://higher.smartedu.cn/search?keyword=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge rec">官方</div>
+      <div class="card-icon">🏛️</div>
+      <div class="card-info">
+        <div class="card-title">国家高等教育智慧教育平台</div>
+        <div class="card-desc">教育部官方课程聚合平台，全国高校优质课程一站直达，搜索"模具"获取最新资源</div>
+        <div class="card-actions"><a href="https://higher.smartedu.cn/search?keyword=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">搜索课程</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.51zxw.net/NewAn/WebSearch/Course','_blank')">
+      <div class="card-badge hot">实战</div>
+      <div class="card-icon">💻</div>
+      <div class="card-info">
+        <div class="card-title">我要自学网</div>
+        <div class="card-desc">UG/NX、SolidWorks、CATIA等模具设计软件视频教程，从零基础到精通，搜索"模具"直达700+课程</div>
+        <div class="card-actions"><a href="https://www.51zxw.net/NewAn/WebSearch/Course" target="_blank" class="btn-go">搜索课程</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://open.163.com/search?query=%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1','_blank')">
+      <div class="card-icon">🌍</div>
+      <div class="card-info">
+        <div class="card-title">网易公开课</div>
+        <div class="card-desc">国内外名校公开课中文字幕，搜索"模具设计"获取制造工程类课程</div>
+        <div class="card-actions"><a href="https://open.163.com/search?query=%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1" target="_blank" class="btn-go">搜索课程</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('http://www.ysug.com/','_blank')">
+      <div class="card-icon">🎯</div>
+      <div class="card-info">
+        <div class="card-title">优胜模具培训学校</div>
+        <div class="card-desc">专注模具设计/数控编程培训，UG/PowerMILL/Moldflow系统教学，免费公开课资源丰富</div>
+        <div class="card-actions"><a href="http://www.ysug.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.bilibili.com/v/search?keyword=%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1%E6%95%99%E7%A8%8B','_blank')">
+      <div class="card-badge hot">免费</div>
+      <div class="card-icon">📺</div>
+      <div class="card-info">
+        <div class="card-title">B站模具设计教程专区</div>
+        <div class="card-desc">B站搜索"模具设计教程"，海量免费视频：UG分模/CAD排位/SolidWorks建模/moldflow模流</div>
+        <div class="card-actions"><a href="https://www.bilibili.com/v/search?keyword=%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1%E6%95%99%E7%A8%8B" target="_blank" class="btn-go">B站教程</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 📹 达人/KOL/自媒体（合并原公众号） -->
+<section id="cat-creator">
+  <div class="cat-header">
+    <span class="cat-header-icon">📹</span>
+    <h2>达人/KOL/自媒体</h2>
+    <span class="cat-count">6 个资源</span>
+    <a href="#" class="cat-more">v6.8 去搜索页</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.douyin.com/user/self?modal_id=0&search_word=%E6%A8%A1%E5%85%B7%E8%BE%BE%E4%BA%BA%E4%B8%80%E6%96%8C%E8%80%81%E5%B8%88','_blank')">
+      <div class="card-badge hot">10万粉</div>
+      <div class="card-icon">🎬</div>
+      <div class="card-info">
+        <div class="card-title">抖音 · 模具达人一斌老师</div>
+        <div class="card-desc">10万粉丝 | 70万赞 | 900+作品。冲压/注塑模具设计实战教学，从入门到精通系列</div>
+        <div class="card-actions"><a href="https://www.douyin.com/search/%E6%A8%A1%E5%85%B7%E8%BE%BE%E4%BA%BA%E4%B8%80%E6%96%8C%E8%80%81%E5%B8%88" target="_blank" class="btn-go">抖音主页</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.douyin.com/search/%E6%95%B0%E6%8E%A7%E5%BB%96%E5%93%A5','_blank')">
+      <div class="card-badge hot">百度百科收录</div>
+      <div class="card-icon">⚙️</div>
+      <div class="card-info">
+        <div class="card-title">抖音 · 数控廖哥</div>
+        <div class="card-desc">CNC加工实拍达人，百度百科收录。真实工厂场景，零基础学数控编程+模具加工实操</div>
+        <div class="card-actions"><a href="https://www.douyin.com/search/%E6%95%B0%E6%8E%A7%E5%BB%96%E5%93%A5" target="_blank" class="btn-go">抖音主页</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.douyin.com/search/%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1?type=user','_blank')">
+      <div class="card-icon">🎵</div>
+      <div class="card-info">
+        <div class="card-title">抖音 · 模具设计达人搜索</div>
+        <div class="card-desc">抖音搜索"模具设计"→用户Tab，发现更多优质模具设计创作者、工厂实拍、软件教程</div>
+        <div class="card-actions"><a href="https://www.douyin.com/search/%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1?type=user" target="_blank" class="btn-go">搜达人</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.douyin.com/search/%E6%A8%A1%E5%85%B7%E5%8A%A0%E5%B7%A5?type=general','_blank')">
+      <div class="card-icon">🏭</div>
+      <div class="card-info">
+        <div class="card-title">抖音 · 模具加工实拍</div>
+        <div class="card-desc">搜索"模具加工"，海量CNC/EDM/线切割实拍视频，了解模具全流程制造工艺</div>
+        <div class="card-actions"><a href="https://www.douyin.com/search/%E6%A8%A1%E5%85%B7%E5%8A%A0%E5%B7%A5?type=general" target="_blank" class="btn-go">搜视频</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://tieba.baidu.com/f?kw=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge hot">活跃社区</div>
+      <div class="card-icon">💬</div>
+      <div class="card-info">
+        <div class="card-title">百度贴吧 · 模具吧</div>
+        <div class="card-desc">贴吧模具/模具设计/注塑模具等吧，40万+帖子，CNC编程/设计问题求助/工作交流活跃</div>
+        <div class="card-actions"><a href="https://tieba.baidu.com/f?kw=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">模具吧</a><a href="https://tieba.baidu.com/f?kw=%E6%A8%A1%E5%85%B7%E8%AE%BE%E8%AE%A1" target="_blank" class="btn-go">模具设计吧</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://weixin.sogou.com/weixin?type=1&query=%E6%A8%A1%E5%85%B7%E5%B7%A5%E4%B8%9A','_blank')">
+      <div class="card-badge rec">深度</div>
+      <div class="card-icon">💬</div>
+      <div class="card-info">
+        <div class="card-title">微信公众号 · 模具工业</div>
+        <div class="card-desc">中国模协旗下，《模具工业》期刊公众号。行业政策+技术前沿+企业动态</div>
+        <div class="card-actions"><a href="https://weixin.sogou.com/weixin?type=1&query=%E6%A8%A1%E5%85%B7%E5%B7%A5%E4%B8%9A" target="_blank" class="btn-go">搜狗微信→模具工业</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 🔵 LAYER 2: 设计研发 -->
+<!-- ============================================================ -->
+<div class="layer-divider"><div class="layer-label l2">🔵 设计研发 — 专业工作工具</div><div class="layer-line l2"></div></div>
+
+<!-- 3. 🛠 CAD/CAE/CAM软件 -->
+<section id="cat-tool">
+  <div class="cat-header">
+    <span class="cat-header-icon">🛠</span>
+    <h2>CAD/CAE/CAM软件</h2>
+    <span class="cat-count">10 个资源</span>
+  </div>
+  <div class="card-grid">
+    <!-- 国内 -->
+    <div class="tool-card" onclick="window.open('https://www.keytme.com/','_blank')">
+      <div class="card-badge hot">国产替代</div>
+      <div class="card-icon">🧠</div>
+      <div class="card-info">
+        <div class="card-title">启泰"智一"设计系统</div>
+        <div class="card-desc">中泰近30年模具经验+独创算法，UG二次开发，覆盖料带工艺→结构设计→自动出图→制造编程，效率提升50%+</div>
+        <div class="card-actions"><a href="https://www.keytme.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.zwcad.com/','_blank')">
+      <div class="card-icon">🇨🇳</div>
+      <div class="card-info">
+        <div class="card-title">中望CAD/3D</div>
+        <div class="card-desc">国产CAD领导者，2D/3D一体化，模具行业AutoCAD替代方案，性价比高</div>
+        <div class="card-actions"><a href="https://www.zwcad.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.moldex3d.cn/','_blank')">
+      <div class="card-badge new">国产CAE</div>
+      <div class="card-icon">💧</div>
+      <div class="card-info">
+        <div class="card-title">Moldex3D 模流分析</div>
+        <div class="card-desc">塑胶射出成型CAE模流软件品牌，CAD整合前处理引擎，支持同步仿真产品设计变更</div>
+        <div class="card-actions"><a href="https://www.moldex3d.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.yxcax.com/','_blank')">
+      <div class="card-badge hot">UG外挂标杆</div>
+      <div class="card-icon">🔌</div>
+      <div class="card-info">
+        <div class="card-title">燕秀工具箱 (Yanxiu)</div>
+        <div class="card-desc">国内最早/最知名的UG模具设计外挂，一键排位/标准件库/BOM表/自动出图，十年免费深入人心</div>
+        <div class="card-actions"><a href="https://www.yxcax.com/" target="_blank" class="btn-go">官网</a><a href="https://www.yxcax.com/" target="_blank" class="btn-go">下载</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.ugsnx.com/','_blank')">
+      <div class="card-badge rec">外挂合集</div>
+      <div class="card-icon">🧰</div>
+      <div class="card-info">
+        <div class="card-title">UG模具外挂精选（星创·进玉·胡波）</div>
+        <div class="card-desc">UG爱好者论坛外挂专区：星创(电极设计)/进玉(一键编程)/胡波HB_MOULD(全功能)/维特(VICTORY)/优品(UP)等</div>
+        <div class="card-actions"><a href="https://www.ugsnx.com/" target="_blank" class="btn-go">UG外挂专区</a></div>
+      </div>
+    </div>
+    <!-- 国际 -->
+    <div class="tool-card" onclick="window.open('https://www.plm.automation.siemens.com/global/zh/products/nx/','_blank')">
+      <div class="card-icon">🔷</div>
+      <div class="card-info">
+        <div class="card-title">Siemens NX (UG)</div>
+        <div class="card-desc">高端CAD/CAM/CAE一体化平台，汽车模具设计首选，模具行业使用最广泛的3D设计软件</div>
+        <div class="card-actions"><a href="https://www.plm.automation.siemens.com/global/zh/products/nx/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.3ds.com/zh/products-services/catia/','_blank')">
+      <div class="card-icon">✈️</div>
+      <div class="card-info">
+        <div class="card-title">Dassault CATIA</div>
+        <div class="card-desc">航空/汽车行业高端CAD平台，复杂曲面建模能力极强，大型覆盖件模具设计标准工具</div>
+        <div class="card-actions"><a href="https://www.3ds.com/zh/products-services/catia/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.3ds.com/zh/products-services/solidworks/','_blank')">
+      <div class="card-icon">⚙️</div>
+      <div class="card-info">
+        <div class="card-title">SolidWorks</div>
+        <div class="card-desc">易学易用的3D设计软件，中小模具企业广泛使用，模具设计插件生态丰富（如IMOLD）</div>
+        <div class="card-actions"><a href="https://www.3ds.com/zh/products-services/solidworks/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.autodesk.com/products/moldflow/','_blank')">
+      <div class="card-badge rec">模流标杆</div>
+      <div class="card-icon">🌊</div>
+      <div class="card-info">
+        <div class="card-title">Autodesk Moldflow</div>
+        <div class="card-desc">注塑成型仿真分析行业标准。填充/保压/冷却/翘曲全流程仿真，优化模具设计减少试模次数</div>
+        <div class="card-actions"><a href="https://www.autodesk.com/products/moldflow/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.cimatron.com/','_blank')">
+      <div class="card-icon">🔧</div>
+      <div class="card-info">
+        <div class="card-title">Cimatron</div>
+        <div class="card-desc">3D Systems旗下，专注模具设计与制造CAM，电极设计+NC编程一体化</div>
+        <div class="card-actions"><a href="https://www.cimatron.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 📐 3D模型/图纸库 🆕 -->
+<section id="cat-model3d">
+  <div class="cat-header">
+    <span class="cat-header-icon">📐</span>
+    <h2>3D模型/图纸库</h2>
+    <span class="cat-count">5 个资源</span>
+    <a href="#" class="cat-more">🆕 全新类目</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://grabcad.com/library?locale=zh-CN','_blank')">
+      <div class="card-badge hot">全球最大</div>
+      <div class="card-icon">🌍</div>
+      <div class="card-info">
+        <div class="card-title">GrabCAD</div>
+        <div class="card-desc">全球最大免费CAD模型社区，数百万设计文件共享。搜索"mold"获取海量模具3D图纸和设计参考</div>
+        <div class="card-actions"><a href="https://grabcad.com/library?locale=zh-CN" target="_blank" class="btn-go">模型库</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://ljk.3dsource.cn/search.html?keyword=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge rec">国内专业</div>
+      <div class="card-icon">🗂️</div>
+      <div class="card-info">
+        <div class="card-title">3DSOURCE零件库</div>
+        <div class="card-desc">海量标准件/厂商件/模具CAD模型免费下载，支持UG/SolidWorks/CATIA等多格式</div>
+        <div class="card-actions"><a href="https://ljk.3dsource.cn/search.html?keyword=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">搜模具模型</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.3dfindit.com/','_blank')">
+      <div class="card-badge rec">全球</div>
+      <div class="card-icon">🏢</div>
+      <div class="card-info">
+        <div class="card-title">3Dfindit (CADENAS)</div>
+        <div class="card-desc">全球最大3D CAD模型搜索引擎（原PARTcommunity），5000+制造商目录，模具标准件/气动元件等支持150+格式</div>
+        <div class="card-actions"><a href="https://www.3dfindit.com/" target="_blank" class="btn-go">搜索模型</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.traceparts.cn/','_blank')">
+      <div class="card-icon">🔩</div>
+      <div class="card-info">
+        <div class="card-title">TraceParts 中国</div>
+        <div class="card-desc">全球零部件3D模型库中文版，模具标准件/紧固件/轴承等数百万模型免费下载</div>
+        <div class="card-actions"><a href="https://www.traceparts.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.zhizaoyun.com/','_blank')">
+      <div class="card-icon">☁️</div>
+      <div class="card-info">
+        <div class="card-title">制造云</div>
+        <div class="card-desc">国内工业资源平台，3D模型/技术文档/软件工具聚合，含模具设计专区</div>
+        <div class="card-actions"><a href="https://www.zhizaoyun.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. 🏷️ 行业标准/专利 🆕 -->
+<section id="cat-standard">
+  <div class="cat-header">
+    <span class="cat-header-icon">🏷️</span>
+    <h2>行业标准/专利</h2>
+    <span class="cat-count">5 个资源</span>
+    <a href="#" class="cat-more">v6.4 +TC33</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://std.samr.gov.cn/search/orgDetailView?tcCode=TC33','_blank')">
+      <div class="card-badge rec">模具专属</div>
+      <div class="card-icon">🔖</div>
+      <div class="card-info">
+        <div class="card-title">全国模具标准化技术委员会</div>
+        <div class="card-desc">SAC/TC33官方，1983年成立，秘书处设在桂林电科院。负责冲模/塑料模/压铸模/锻模等模具全品类国标制修订</div>
+        <div class="card-actions"><a href="https://std.samr.gov.cn/search/orgDetailView?tcCode=TC33" target="_blank" class="btn-go">TC33主页</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://openstd.samr.gov.cn/bzgk/std/std_list?p.p1=0&p.p90=circulation_date&p.p91=desc&p.p2=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge rec">官方权威</div>
+      <div class="card-icon">📋</div>
+      <div class="card-info">
+        <div class="card-title">国家标准全文公开系统</div>
+        <div class="card-desc">国家市场监管总局官方平台，GB国标全文免费在线阅读。搜索"模具"获取所有相关国标（按发布日期倒序）</div>
+        <div class="card-actions"><a href="https://openstd.samr.gov.cn/bzgk/std/std_list?p.p1=0&p.p90=circulation_date&p.p91=desc&p.p2=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">模具国标</a><a href="https://openstd.samr.gov.cn/bzgk/std/index" target="_blank" class="btn-go">全库</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.cssn.net.cn/','_blank')">
+      <div class="card-icon">🏛️</div>
+      <div class="card-info">
+        <div class="card-title">中国标准服务网</div>
+        <div class="card-desc">中国标准化研究院主办，国家级标准信息服务。覆盖GB/ISO/IEC/EN等国内外标准</div>
+        <div class="card-actions"><a href="https://www.cssn.net.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.spc.org.cn/','_blank')">
+      <div class="card-icon">📖</div>
+      <div class="card-info">
+        <div class="card-title">中国标准在线服务网</div>
+        <div class="card-desc">中国标准出版社正版标准网络发行平台，强制性与推荐性国标、行业标准正版获取</div>
+        <div class="card-actions"><a href="https://www.spc.org.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.soopat.com/','_blank')">
+      <div class="card-badge hot">免费</div>
+      <div class="card-icon">💡</div>
+      <div class="card-info">
+        <div class="card-title">SooPAT 专利搜索</div>
+        <div class="card-desc">中国专利免费检索平台，搜索"模具"查询最新模具设计/制造工艺/材料相关专利</div>
+        <div class="card-actions"><a href="https://www.soopat.com/" target="_blank" class="btn-go">搜专利</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5.5 🤖 机器人/精密模具 🆕 v6.1 -->
+<section id="cat-robot">
+  <div class="cat-header">
+    <span class="cat-header-icon">🤖</span>
+    <h2>机器人/精密模具</h2>
+    <span class="cat-count">3 个资源</span>
+    <a href="#" class="cat-more">v6.8 精简</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.unitree.com/','_blank')">
+      <div class="card-badge hot">量产元年</div>
+      <div class="card-icon">🦾</div>
+      <div class="card-info">
+        <div class="card-title">宇树科技 · 人形机器人</div>
+        <div class="card-desc">IPO募资42亿，2026人形机器人量产元年。每台需50+套精密模具：伺服电机壳/减速器壳体/传感器壳体等爆发需求</div>
+        <div class="card-actions"><a href="https://www.unitree.com/" target="_blank" class="btn-go">官网</a><a href="https://xueqiu.com/9057196330/389634965" target="_blank" class="btn-go">产业链分析</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.leaderdrive.com/','_blank')">
+      <div class="card-badge rec">核心部件</div>
+      <div class="card-icon">⚙️</div>
+      <div class="card-info">
+        <div class="card-title">绿的谐波 · 谐波减速器</div>
+        <div class="card-desc">国产谐波减速器龙头（688017），柔轮/刚轮精密成形模具微米级精度。人形机器人量产→减速器模具需求激增</div>
+        <div class="card-actions"><a href="https://www.leaderdrive.com/" target="_blank" class="btn-go">绿的谐波官网</a><a href="https://xueqiu.com/9057196330/389634965" target="_blank" class="btn-go">技术分析</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://openstd.samr.gov.cn/bzgk/std/std_list?p.p1=0&p.p90=circulation_date&p.p91=desc&p.p2=%E7%B2%BE%E5%AF%86%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge rec">国标参考</div>
+      <div class="card-icon">📋</div>
+      <div class="card-info">
+        <div class="card-title">精密模具国家标准</div>
+        <div class="card-desc">国标全文公开系统搜索"精密模具"，含精密冲压/精密注塑/微模具等GB标准全文在线阅读</div>
+        <div class="card-actions"><a href="https://openstd.samr.gov.cn/bzgk/std/std_list?p.p1=0&p.p90=circulation_date&p.p91=desc&p.p2=%E7%B2%BE%E5%AF%86%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">精密模具国标</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 🟡 LAYER 3: 制造采购 -->
+<!-- ============================================================ -->
+<div class="layer-divider"><div class="layer-label l3">🟡 制造采购 — 供应链核心</div><div class="layer-line l3"></div></div>
+
+<!-- 6. 🛒 电商集采/物料交易（合并原电商+物料行情） -->
+<section id="cat-mall">
+  <div class="cat-header">
+    <span class="cat-header-icon">🛒</span>
+    <h2>电商集采/物料交易</h2>
+    <span class="cat-count">4 个资源</span>
+    <a href="#" class="cat-more">v6.2 精简</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.digitmold.com/','_blank')">
+      <div class="card-badge new">模具垂直</div>
+      <div class="card-icon">🔩</div>
+      <div class="card-info">
+        <div class="card-title">数智聚模 · 物料商城</div>
+        <div class="card-desc">中泰/启泰旗下模具零部件一站式采购平台，冲压/注塑模具+非标刀具+标准件+原材料</div>
+        <div class="card-actions"><a href="https://www.digitmold.com/" target="_blank" class="btn-go">物料商城</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://buy.yxmold.com/','_blank')">
+      <div class="card-badge new">UG配套</div>
+      <div class="card-icon">🔩</div>
+      <div class="card-info">
+        <div class="card-title">燕秀商城</div>
+        <div class="card-desc">燕秀旗下模具配件商城，UG外挂内置标准件库→一站式比价下单：顶针/司筒/日期章/弹簧/导柱</div>
+        <div class="card-actions"><a href="https://buy.yxmold.com/" target="_blank" class="btn-go">商城</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.zkh.com/','_blank')">
+      <div class="card-badge hot">MRO龙头</div>
+      <div class="card-icon">🏪</div>
+      <div class="card-info">
+        <div class="card-title">震坤行 (ZKH)</div>
+        <div class="card-desc">工业用品一站式采购平台，覆盖模具加工刀具/量具/切削液/劳保等MRO品类，AI行家玲珑助手</div>
+        <div class="card-actions"><a href="https://www.zkh.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.misumi.com.cn/','_blank')">
+      <div class="card-badge rec">精密零件</div>
+      <div class="card-icon">📏</div>
+      <div class="card-info">
+        <div class="card-title">米思米 (MISUMI)</div>
+        <div class="card-desc">全球模具标准件龙头，海量FA工厂自动化零件+模具配件，3D模型免费下载，meviy AI报价</div>
+        <div class="card-actions"><a href="https://www.misumi.com.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6.5 📐 物料行情/钢材交易 🆕 -->
+<section id="cat-material">
+  <div class="cat-header">
+    <span class="cat-header-icon">📐</span>
+    <h2>物料行情/钢材交易</h2>
+    <span class="cat-count">6 个资源</span>
+    <a href="#" class="cat-more">v6.4 +天工国际</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.tggj.cn/','_blank')">
+      <div class="card-badge rec">国产龙头</div>
+      <div class="card-icon">🏗️</div>
+      <div class="card-info">
+        <div class="card-title">天工国际 (00826.HK)</div>
+        <div class="card-desc">全球工模具钢龙头企业，H13/P20/718H全系列覆盖，港股上市，年营收132亿。高速钢产量连续多年世界第一</div>
+        <div class="card-actions"><a href="https://www.tggj.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.mysteel.com/','_blank')">
+      <div class="card-badge hot">定价基准</div>
+      <div class="card-icon">📊</div>
+      <div class="card-info">
+        <div class="card-title">我的钢铁网 (Mysteel)</div>
+        <div class="card-desc">全球最大钢铁数据平台，H13/718H/NAK80等模具钢每日报价+钢厂调价+市场分析。已集成至本站搜索</div>
+        <div class="card-actions"><a href="https://www.mysteel.com/" target="_blank" class="btn-go">行情首页</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://jiage.cngold.org/gangtie/','_blank')">
+      <div class="card-icon">📈</div>
+      <div class="card-info">
+        <div class="card-title">金投价格 · 钢铁频道</div>
+        <div class="card-desc">钢铁/钼铁/钨铁等模具钢原料走势图+历史价格，大宗原料成本追踪</div>
+        <div class="card-actions"><a href="https://jiage.cngold.org/gangtie/" target="_blank" class="btn-go">价格走势</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://s.1688.com/selloffer/offer_search.htm?keywords=%E6%A8%A1%E5%85%B7%E9%92%A2','_blank')">
+      <div class="card-badge hot">源头价</div>
+      <div class="card-icon">🏷️</div>
+      <div class="card-info">
+        <div class="card-title">1688 · 模具钢直供</div>
+        <div class="card-desc">1688搜索"模具钢"，源头工厂直供价格。H13/SKD11/DC53/NAK80/718H全品类覆盖</div>
+        <div class="card-actions"><a href="https://s.1688.com/selloffer/offer_search.htm?keywords=%E6%A8%A1%E5%85%B7%E9%92%A2" target="_blank" class="btn-go">1688比价</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.china.proterial.com/','_blank')">
+      <div class="card-badge rec">国际</div>
+      <div class="card-icon">🇯🇵</div>
+      <div class="card-info">
+        <div class="card-title">博迈立铖 (Proterial)</div>
+        <div class="card-desc">全球顶级模具钢材供应商（2023年从日立集团独立更名），SLD-MAGIC/DAC/SKH系列，高硬度/高韧性冷作/热作模具钢标杆</div>
+        <div class="card-actions"><a href="https://www.china.proterial.com/" target="_blank" class="btn-go">中国官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.daido.co.jp/','_blank')">
+      <div class="card-icon">🇯🇵</div>
+      <div class="card-info">
+        <div class="card-title">大同特殊钢 (Daido)</div>
+        <div class="card-desc">日本特殊钢龙头，NAK80/DC53/DH31-S等经典模具钢牌号发明者，全球模具厂核心供应商</div>
+        <div class="card-actions"><a href="https://www.daido.co.jp/" target="_blank" class="btn-go">日本官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. 🔩 热处理/热流道/表面处理 🆕 -->
+<section id="cat-heat">
+  <div class="cat-header">
+    <span class="cat-header-icon">🔩</span>
+    <h2>热处理/热流道/温控</h2>
+    <span class="cat-count">4 个资源</span>
+    <a href="#" class="cat-more">v6.9 精简资讯</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.chta.org.cn/','_blank')">
+      <div class="card-icon">🏛️</div>
+      <div class="card-info">
+        <div class="card-title">中国热处理行业协会</div>
+        <div class="card-desc">CHTA官方平台，行业标准/技术交流/会员企业/培训认证，热处理全产业链信息</div>
+        <div class="card-actions"><a href="https://www.chta.org.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://yudo.com/cn/','_blank')">
+      <div class="card-badge rec">国产龙头</div>
+      <div class="card-icon">🌡️</div>
+      <div class="card-info">
+        <div class="card-title">YUDO柳道万和 · 热流道</div>
+        <div class="card-desc">韩国YUDO集团+柳道万和(苏州)中国子公司，注塑模具核心温控系统，覆盖汽车/家电/包装/医疗</div>
+        <div class="card-actions"><a href="https://yudo.com/cn/" target="_blank" class="btn-go">中国官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.milacron.com/','_blank')">
+      <div class="card-badge rec">全球顶级</div>
+      <div class="card-icon">🌐</div>
+      <div class="card-info">
+        <div class="card-title">Mold-Masters (加拿大)</div>
+        <div class="card-desc">全球热流道技术领导者，1963年创立，Milacron旗下，高精密温控+顺序阀+热半模系统，45国设有分公司</div>
+        <div class="card-actions"><a href="https://www.milacron.com/" target="_blank" class="btn-go">Milacron官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.gdaode.com/','_blank')">
+      <div class="card-badge new">温控专家</div>
+      <div class="card-icon">🌡️</div>
+      <div class="card-info">
+        <div class="card-title">奥德机械 AODE</div>
+        <div class="card-desc">国产模温机龙头，-120℃超低温至+400℃超高温全温段覆盖。注塑/压铸模具精准温控核心设备</div>
+        <div class="card-actions"><a href="https://www.gdaode.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7.5 🖨️ 3D打印/增材制造 🆕 v6.0 -->
+<section id="cat-3dprint">
+  <div class="cat-header">
+    <span class="cat-header-icon">🖨️</span>
+    <h2>3D打印/增材制造</h2>
+    <span class="cat-count">6 个资源</span>
+    <a href="#" class="cat-more">🆕 v6.0 新增</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.blt.com/','_blank')">
+      <div class="card-badge hot">金属打印龙头</div>
+      <div class="card-icon">🖨️</div>
+      <div class="card-info">
+        <div class="card-title">铂力特 (BLT)</div>
+        <div class="card-desc">科创板金属3D打印龙头，随形冷却水路/模具钢打印/快速原型，模具增材制造行业标杆</div>
+        <div class="card-actions"><a href="https://www.blt.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.farsoon.com/','_blank')">
+      <div class="card-badge rec">国产替代</div>
+      <div class="card-icon">🇨🇳</div>
+      <div class="card-info">
+        <div class="card-title">华曙高科 (Farsoon)</div>
+        <div class="card-desc">国产高分子+金属3D打印双龙头，尼龙/TPU/金属粉末烧结，模具异形水路打印专长</div>
+        <div class="card-actions"><a href="https://www.farsoon.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.eos.info/en','_blank')">
+      <div class="card-icon">🇩🇪</div>
+      <div class="card-info">
+        <div class="card-title">EOS (德国)</div>
+        <div class="card-desc">全球金属3D打印先驱，DMLS技术发明者，模具钢粉末材料+随形冷却方案行业领先</div>
+        <div class="card-actions"><a href="https://www.eos.info/en" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.stratasys.com/','_blank')">
+      <div class="card-icon">🔬</div>
+      <div class="card-info">
+        <div class="card-title">Stratasys (美国)</div>
+        <div class="card-desc">FDM/PolyJet技术先驱，模具原型/检具/工装快速制造，全彩多材料打印方案</div>
+        <div class="card-actions"><a href="https://www.stratasys.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.3dsystems.com/','_blank')">
+      <div class="card-icon">🏭</div>
+      <div class="card-info">
+        <div class="card-title">3D Systems</div>
+        <div class="card-desc">工业级金属+塑料3D打印全套方案，Cimatron模具设计→3DXpert随形冷却→DMP打印闭环</div>
+        <div class="card-actions"><a href="https://www.3dsystems.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://formlabs.com/','_blank')">
+      <div class="card-badge new">桌面工业级</div>
+      <div class="card-icon">🖨️</div>
+      <div class="card-info">
+        <div class="card-title">Formlabs</div>
+        <div class="card-desc">桌面级SLA/SLS 3D打印，模具原型/快速验证/小批量工装夹治具，低成本桌面级入门方案</div>
+        <div class="card-actions"><a href="https://formlabs.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. 🔄 二手设备/模具交易 🆕 -->
+<section id="cat-used">
+  <div class="cat-header">
+    <span class="cat-header-icon">🔄</span>
+    <h2>二手设备/模具交易</h2>
+    <span class="cat-count">4 个资源</span>
+    <a href="#" class="cat-more">🆕 全新类目</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.huishoushang.com/gq-moju-0-1/','_blank')">
+      <div class="card-badge hot">模具专区</div>
+      <div class="card-icon">♻️</div>
+      <div class="card-info">
+        <div class="card-title">回收商网 · 二手模具</div>
+        <div class="card-desc">135条+二手模具出售信息，含二手模具价格/图片/规格，覆盖注塑/冲压/压铸模具</div>
+        <div class="card-actions"><a href="https://www.huishoushang.com/gq-moju-0-1/" target="_blank" class="btn-go">二手模具</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.51chuli.com/zhusuji/','_blank')">
+      <div class="card-icon">🏭</div>
+      <div class="card-info">
+        <div class="card-title">处理网 · 二手注塑机</div>
+        <div class="card-desc">全国二手注塑机免费转让/求购信息发布平台，海天/力劲/震雄等品牌实时行情</div>
+        <div class="card-actions"><a href="https://www.51chuli.com/zhusuji/" target="_blank" class="btn-go">注塑机</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.58.com/hyzt/zhusuji/','_blank')">
+      <div class="card-icon">📱</div>
+      <div class="card-info">
+        <div class="card-title">58同城 · 二手注塑机</div>
+        <div class="card-desc">本地二手注塑设备交易，按城市筛选，支持在线联系卖家，适合就近采购</div>
+        <div class="card-actions"><a href="https://www.58.com/hyzt/zhusuji/" target="_blank" class="btn-go">本地交易</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.51jiuhuo.com/zhusumojv/','_blank')">
+      <div class="card-icon">🔄</div>
+      <div class="card-info">
+        <div class="card-title">51旧货网 · 二手注塑模具</div>
+        <div class="card-desc">最新二手注塑模具出售/求购/价格行情，个人和商家均可免费发布信息</div>
+        <div class="card-actions"><a href="https://www.51jiuhuo.com/zhusumojv/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. 🏢 知名企业/品牌 -->
+<section id="cat-company">
+  <div class="cat-header">
+    <span class="cat-header-icon">🏢</span>
+    <h2>知名企业/品牌</h2>
+    <span class="cat-count">13 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.haitianinter.com/cn/','_blank')">
+      <div class="card-badge rec">行业巨头</div>
+      <div class="card-icon">🏭</div>
+      <div class="card-info">
+        <div class="card-title">海天国际 (01882.HK)</div>
+        <div class="card-desc">全球注塑机龙头，1966年创立，年营收177亿。模具下游核心设备厂商，注塑机/模具/塑机一体化生态</div>
+        <div class="card-actions"><a href="https://www.haitianinter.com/cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.yizumi.com/','_blank')">
+      <div class="card-badge hot">国产替代</div>
+      <div class="card-icon">⚡</div>
+      <div class="card-info">
+        <div class="card-title">伊之密 (300415.SZ)</div>
+        <div class="card-desc">A股上市模压成型装备龙头，注塑机/压铸机/橡胶机三条产品线。模具→成型装备产业链上下游打通</div>
+        <div class="card-actions"><a href="https://www.yizumi.com/" target="_blank" class="btn-go">官网</a><a href="https://quote.eastmoney.com/SZ300415.html" target="_blank" class="btn-go">股票</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.vision-tool.com.cn/','_blank')">
+      <div class="card-badge rec">数字化标杆</div>
+      <div class="card-icon">🏗️</div>
+      <div class="card-info">
+        <div class="card-title">中泰模具 · 启泰智能</div>
+        <div class="card-desc">1999年成立，汽车冷冲压+热成形模具龙头。旗下启泰智能打造"数智聚模"平台生态</div>
+        <div class="card-actions"><a href="https://www.vision-tool.com.cn/" target="_blank" class="btn-go">中泰官网</a><a href="https://www.keytme.com/" target="_blank" class="btn-go">启泰智能</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.dme.net/','_blank')">
+      <div class="card-icon">🌍</div>
+      <div class="card-info">
+        <div class="card-title">DME (美国)</div>
+        <div class="card-desc">全球最大模具标准件供应商之一，产品覆盖模具配件/热流道/温控系统</div>
+        <div class="card-actions"><a href="https://www.dme.net/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.hasco.com/','_blank')">
+      <div class="card-icon">🇩🇪</div>
+      <div class="card-info">
+        <div class="card-title">HASCO (德国)</div>
+        <div class="card-desc">欧洲最大模具标准件制造商，模具标准化的全球标杆，产品目录即行业标准</div>
+        <div class="card-actions"><a href="https://www.hasco.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.tqm.cn/','_blank')">
+      <div class="card-icon">🚗</div>
+      <div class="card-info">
+        <div class="card-title">天汽模 (TQM)</div>
+        <div class="card-desc">中国汽车覆盖件模具龙头，A股上市公司，新能源汽车模具重要供应商</div>
+        <div class="card-actions"><a href="https://www.tqm.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.cac-citc.cn/','_blank')">
+      <div class="card-icon">✈️</div>
+      <div class="card-info">
+        <div class="card-title">成飞集成 (CAC)</div>
+        <div class="card-desc">航空+汽车模具双主业，中航工业旗下，高端模具与智能制造结合典范</div>
+        <div class="card-actions"><a href="https://www.cac-citc.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.silverbasis.cn/','_blank')">
+      <div class="card-icon">📱</div>
+      <div class="card-info">
+        <div class="card-title">银宝山新（002786）</div>
+        <div class="card-desc">A股上市大型精密注塑模具龙头，中国模协会长单位，通讯/消费电子/汽车三大领域，华为核心供应商</div>
+        <div class="card-actions"><a href="https://www.silverbasis.cn/" target="_blank" class="btn-go">官网</a><a href="https://quote.eastmoney.com/SZ002786.html" target="_blank" class="btn-go">股票</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.pushmold.com/','_blank')">
+      <div class="card-icon">🏭</div>
+      <div class="card-info">
+        <div class="card-title">普什模具</div>
+        <div class="card-desc">五粮液集团旗下，高精密注塑模具/包装模具/医疗器械模具，国家级专精特新</div>
+        <div class="card-actions"><a href="https://www.pushmold.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://cn.sz-changhong.com/','_blank')">
+      <div class="card-icon">💉</div>
+      <div class="card-info">
+        <div class="card-title">昌红科技</div>
+        <div class="card-desc">精密注塑模具+医疗器械双赛道，A股上市，OA设备/医疗耗材模具领先者</div>
+        <div class="card-actions"><a href="https://cn.sz-changhong.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.assab.com/zh-hans/','_blank')">
+      <div class="card-icon">🇸🇪</div>
+      <div class="card-info">
+        <div class="card-title">一胜百 (ASSAB)</div>
+        <div class="card-desc">瑞典Uddeholm旗下，全球顶级工模具钢品牌，提供从选材到热处理的全套方案</div>
+        <div class="card-actions"><a href="https://www.assab.com/zh-hans/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.galtai.com/','_blank')">
+      <div class="card-icon">🔧</div>
+      <div class="card-info">
+        <div class="card-title">巨轮智能</div>
+        <div class="card-desc">轮胎模具全球龙头+工业机器人，A股上市，子午线轮胎模具市占率领先</div>
+        <div class="card-actions"><a href="https://www.galtai.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.china-mould.com/','_blank')">
+      <div class="card-icon">📏</div>
+      <div class="card-info">
+        <div class="card-title">合力科技</div>
+        <div class="card-desc">铸造模具+热冲压模具双龙头，A股上市，汽车轻量化模具核心供应商</div>
+        <div class="card-actions"><a href="https://www.china-mould.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 🟣 LAYER 4: 商业决策 -->
+<!-- ============================================================ -->
+<div class="layer-divider"><div class="layer-label l4">🟣 商业决策 — 管理层视角</div><div class="layer-line l4"></div></div>
+
+<!-- 10. 📊 行业报告/研究 -->
+<section id="cat-report">
+  <div class="cat-header">
+    <span class="cat-header-icon">📊</span>
+    <h2>行业报告/研究</h2>
+    <span class="cat-count">4 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.chyxx.com/search?word=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge rec">首选</div>
+      <div class="card-icon">📈</div>
+      <div class="card-info">
+        <div class="card-title">智研咨询 · 模具产业报告</div>
+        <div class="card-desc">搜索"模具"获取行业研究报告，覆盖市场规模/竞争格局/进出口/发展趋势</div>
+        <div class="card-actions"><a href="https://www.chyxx.com/search?word=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">模具报告</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.askci.com/search/report/%E6%A8%A1%E5%85%B7/','_blank')">
+      <div class="card-icon">📋</div>
+      <div class="card-info">
+        <div class="card-title">中商产业研究院</div>
+        <div class="card-desc">搜索"模具"获取产业链图谱/投资前景/园区规划等研究报告</div>
+        <div class="card-actions"><a href="https://www.askci.com/search/report/%E6%A8%A1%E5%85%B7/" target="_blank" class="btn-go">搜报告</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.huaon.com/search?word=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-icon">📊</div>
+      <div class="card-info">
+        <div class="card-title">华经情报网</div>
+        <div class="card-desc">搜索"模具"获取行业数据/市场分析/企业研究等情报报告</div>
+        <div class="card-actions"><a href="https://www.huaon.com/search?word=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">搜报告</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.qcc.com/web/search?key=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge rec">企业数据</div>
+      <div class="card-icon">🔍</div>
+      <div class="card-info">
+        <div class="card-title">企查查 · 模具企业库</div>
+        <div class="card-desc">搜索"模具"查全国模具企业工商信息/股东/关联/司法风险，供应链尽调与客户背景核查</div>
+        <div class="card-actions"><a href="https://www.qcc.com/web/search?key=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">企业查询</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. 🌐 专业门户/论坛 -->
+<section id="cat-portal">
+  <div class="cat-header">
+    <span class="cat-header-icon">🌐</span>
+    <h2>专业门户/论坛</h2>
+    <span class="cat-count">6 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.keytimecloud.com/','_blank')">
+      <div class="card-badge hot">设计交易</div>
+      <div class="card-icon">🔗</div>
+      <div class="card-info">
+        <div class="card-title">启泰设计交易平台</div>
+        <div class="card-desc">中泰/启泰旗下模具设计交易门户，连接设计需求方与设计师，在线接单/发包/协作，基于UG二次开发智能设计系统</div>
+        <div class="card-actions"><a href="https://www.keytimecloud.com/" target="_blank" class="btn-go">设计交易</a><a href="https://www.keytme.com/" target="_blank" class="btn-go">启泰智能</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('http://www.cdmia.com.cn/','_blank')">
+      <div class="card-badge rec">权威</div>
+      <div class="card-icon">🏛️</div>
+      <div class="card-info">
+        <div class="card-title">中国模具工业协会官网</div>
+        <div class="card-desc">行业政策/展会通知/会员名录/行业数据/标准查询一站式入口</div>
+        <div class="card-actions"><a href="http://www.cdmia.com.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.istma.org/','_blank')">
+      <div class="card-icon">🌍</div>
+      <div class="card-info">
+        <div class="card-title">ISTMA 国际模协</div>
+        <div class="card-desc">国际模具与工装协会，全球模具贸易数据/技术标准/国际会议信息</div>
+        <div class="card-actions"><a href="https://www.istma.org/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.mould.net.cn/','_blank')">
+      <div class="card-icon">📌</div>
+      <div class="card-info">
+        <div class="card-title">中模网 (Promold)</div>
+        <div class="card-desc">模具全生命周期管理+生产加工外协管理数字化方案，智慧模具管理系统/注塑/冲压领域一站式平台</div>
+        <div class="card-actions"><a href="https://www.mould.net.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.ugsnx.com/','_blank')">
+      <div class="card-icon">🔷</div>
+      <div class="card-info">
+        <div class="card-title">UG爱好者论坛</div>
+        <div class="card-desc">国内最大UG/NX中文社区，模具设计/编程/CAM/后处理/外挂全系列</div>
+        <div class="card-actions"><a href="https://www.ugsnx.com/" target="_blank" class="btn-go">社区</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.tmdia.org.tw/','_blank')">
+      <div class="card-badge rec">行业组织</div>
+      <div class="card-icon">🇹🇼</div>
+      <div class="card-info">
+        <div class="card-title">台湾模具工业同业公会 (TMDIA)</div>
+        <div class="card-desc">台湾地区模具行业权威组织，会员企业名录/技术研讨会/国际展会/产业白皮书</div>
+        <div class="card-actions"><a href="https://www.tmdia.org.tw/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. 📰 行业资讯/期刊 -->
+<section id="cat-news">
+  <div class="cat-header">
+    <span class="cat-header-icon">📰</span>
+    <h2>行业资讯/期刊</h2>
+    <span class="cat-count">4 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://mjgy.cbpt.cnki.net/','_blank')">
+      <div class="card-badge rec">行业会刊</div>
+      <div class="card-icon">📖</div>
+      <div class="card-info">
+        <div class="card-title">《模具工业》杂志</div>
+        <div class="card-desc">中国模具工业协会会刊，1975年创刊，桂林电科院主办。模具行业最权威专业技术期刊</div>
+        <div class="card-actions"><a href="https://mjgy.cbpt.cnki.net/" target="_blank" class="btn-go">期刊主页</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('http://www.cdmia.com.cn/news/','_blank')">
+      <div class="card-badge rec">官方</div>
+      <div class="card-icon">📬</div>
+      <div class="card-info">
+        <div class="card-title">中国模协 · 行业新闻</div>
+        <div class="card-desc">协会官方新闻中心，政策解读/展会通知/行业数据/会员动态</div>
+        <div class="card-actions"><a href="http://www.cdmia.com.cn/news/" target="_blank" class="btn-go">新闻</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('http://www.mould.net.cn/news/','_blank')">
+      <div class="card-icon">📰</div>
+      <div class="card-info">
+        <div class="card-title">中模网 · 行业资讯</div>
+        <div class="card-desc">模具行业新闻聚合，企业动态/市场分析/技术趋势/政策法规</div>
+        <div class="card-actions"><a href="http://www.mould.net.cn/news/" target="_blank" class="btn-go">资讯</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.mw1950.com/','_blank')">
+      <div class="card-icon">🔩</div>
+      <div class="card-info">
+        <div class="card-title">金属加工在线</div>
+        <div class="card-desc">《金属加工》杂志旗下平台，模具加工/刀具/机床/切削液行业动态，覆盖模具全工艺链资讯</div>
+        <div class="card-actions"><a href="https://www.mw1950.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. 🏗️ 模具产业园/集群 🆕 -->
+<section id="cat-park">
+  <div class="cat-header">
+    <span class="cat-header-icon">🏗️</span>
+    <h2>模具产业园/集群</h2>
+    <span class="cat-count">1 个资源</span>
+    <a href="#" class="cat-more">v7.0 去空壳</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.mouldtop.cn/','_blank')">
+      <div class="card-badge hot">1500亩</div>
+      <div class="card-icon">🏗️</div>
+      <div class="card-info">
+        <div class="card-title">宁波模具产业园 (宁海)</div>
+        <div class="card-desc">总投资32亿，1500亩国家级模具产业园区，配备研发设计/加工检测/众创空间等服务平台</div>
+        <div class="card-actions"><a href="https://www.mouldtop.cn/" target="_blank" class="btn-go">园区官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14. 🌍 外贸/出海 🆕 -->
+<section id="cat-trade">
+  <div class="cat-header">
+    <span class="cat-header-icon">🌍</span>
+    <h2>外贸/出海</h2>
+    <span class="cat-count">4 个资源</span>
+    <a href="#" class="cat-more">🆕 全新类目</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.alibaba.com/','_blank')">
+      <div class="card-badge hot">全球B2B</div>
+      <div class="card-icon">🌐</div>
+      <div class="card-info">
+        <div class="card-title">阿里巴巴国际站</div>
+        <div class="card-desc">全球最大B2B跨境贸易平台，搜索"mold"覆盖200+国家买家，模具出口首选渠道</div>
+        <div class="card-actions"><a href="https://www.alibaba.com/" target="_blank" class="btn-go">国际站</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.made-in-china.com/','_blank')">
+      <div class="card-badge rec">中国制造</div>
+      <div class="card-icon">🇨🇳</div>
+      <div class="card-info">
+        <div class="card-title">中国制造网</div>
+        <div class="card-desc">中国供应商面向全球的专业B2B平台，模具/机械/五金品类丰富，外贸推广首选</div>
+        <div class="card-actions"><a href="https://www.made-in-china.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.tradekey.com/','_blank')">
+      <div class="card-icon">🤝</div>
+      <div class="card-info">
+        <div class="card-title">TradeKey</div>
+        <div class="card-desc">国际B2B贸易撮合平台，覆盖全球买家，搜索"mold"获取国际采购需求</div>
+        <div class="card-actions"><a href="https://www.tradekey.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.globalspec.com/','_blank')">
+      <div class="card-icon">🔍</div>
+      <div class="card-info">
+        <div class="card-title">GlobalSpec 工业采购</div>
+        <div class="card-desc">全球工业品B2B采购平台，模具/零部件/制造服务国际招标，面向欧美专业买家</div>
+        <div class="card-actions"><a href="https://www.globalspec.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15. 🎪 展会/大会 -->
+<section id="cat-expo">
+  <div class="cat-header">
+    <span class="cat-header-icon">🎪</span>
+    <h2>展会/大会</h2>
+    <span class="cat-count">5 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.dmcexpo.com/','_blank')">
+      <div class="card-badge hot">即将举办</div>
+      <div class="card-icon">🎯</div>
+      <div class="card-info">
+        <div class="card-title">DMC 中国国际模具展</div>
+        <div class="card-desc">全球规模最大模具专业展，2026年7.1-7.4上海虹桥，DMC2026倒计时中</div>
+        <div class="card-actions"><a href="https://www.dmcexpo.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.chinaplasonline.com/','_blank')">
+      <div class="card-icon">🏗️</div>
+      <div class="card-info">
+        <div class="card-title">CHINAPLAS 国际橡塑展</div>
+        <div class="card-desc">亚洲最大橡塑展，注塑模具/热流道/新材料/3D打印全产业链展示</div>
+        <div class="card-actions"><a href="https://www.chinaplasonline.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.cimtshow.com/','_blank')">
+      <div class="card-icon">⚙️</div>
+      <div class="card-info">
+        <div class="card-title">CIMT 中国国际机床展</div>
+        <div class="card-desc">全球四大机床展之一，模具加工设备/刀具/数控系统/检测仪器集中展示</div>
+        <div class="card-actions"><a href="https://www.cimtshow.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.amt-expo.com/','_blank')">
+      <div class="card-icon">🤖</div>
+      <div class="card-info">
+        <div class="card-title">AMTS 汽车制造技术与装备展</div>
+        <div class="card-desc">汽车模具/冲压/焊接/涂装全产业链，新能源汽车轻量化模具专题</div>
+        <div class="card-actions"><a href="https://www.amt-expo.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.messe-stuttgart.de/moulding-expo/','_blank')">
+      <div class="card-icon">🇩🇪</div>
+      <div class="card-info">
+        <div class="card-title">Moulding Expo (德国)</div>
+        <div class="card-desc">欧洲模具行业顶级展会，斯图加特展览中心举办，全球模具供应链交流平台</div>
+        <div class="card-actions"><a href="https://www.messe-stuttgart.de/moulding-expo/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16. 🏭 智慧管理/MES -->
+<section id="cat-mes">
+  <div class="cat-header">
+    <span class="cat-header-icon">🏭</span>
+    <h2>智慧管理/MES/数字工厂</h2>
+    <span class="cat-count">5 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://www.oureman.com/','_blank')">
+      <div class="card-badge rec">模具专用</div>
+      <div class="card-icon">⚙️</div>
+      <div class="card-info">
+        <div class="card-title">益模科技 · 模具MES</div>
+        <div class="card-desc">武汉益模，西门子全球首家模具ERP/MES集成伙伴。客户含麦格纳/安波福/海拉/一汽/格力/美的等数百家</div>
+        <div class="card-actions"><a href="https://www.oureman.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://findersoft.com/','_blank')">
+      <div class="card-badge new">台湾品牌</div>
+      <div class="card-icon">🇨🇳</div>
+      <div class="card-info">
+        <div class="card-title">方天软件 · 模具ERP</div>
+        <div class="card-desc">1996年创立，亚太区知名模具ERP/MES/PLM一体化方案商。『模具大师』品牌，专注模具/塑胶/五金行业</div>
+        <div class="card-actions"><a href="https://findersoft.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('http://www.moulderp.cn/','_blank')">
+      <div class="card-icon">💻</div>
+      <div class="card-info">
+        <div class="card-title">模具ERP系统</div>
+        <div class="card-desc">专为模具企业打造的ERP，生产排程/进度追踪/成本核算/外协管理一体化</div>
+        <div class="card-actions"><a href="http://www.moulderp.cn/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.hoteamsoft.com/','_blank')">
+      <div class="card-icon">🏢</div>
+      <div class="card-info">
+        <div class="card-title">华天软件 · MES</div>
+        <div class="card-desc">制造业MES系统，覆盖模具生产全流程：计划排产→工序报工→质量检测→设备管理</div>
+        <div class="card-actions"><a href="https://www.hoteamsoft.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.jiandaoyun.com/','_blank')">
+      <div class="card-badge new">零代码</div>
+      <div class="card-icon">📋</div>
+      <div class="card-info">
+        <div class="card-title">简道云 · 零代码生产管理</div>
+        <div class="card-desc">零代码搭建模具厂管理系统：订单跟踪/模具档案/设备巡检/质量报表，中小模具厂免费起步</div>
+        <div class="card-actions"><a href="https://www.jiandaoyun.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 17. 💼 招聘/人才/兼职 -->
+<section id="cat-job">
+  <div class="cat-header">
+    <span class="cat-header-icon">💼</span>
+    <h2>招聘/人才/兼职</h2>
+    <span class="cat-count">5 个资源</span>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://mj.68hr.com/','_blank')">
+      <div class="card-badge rec">模具专属</div>
+      <div class="card-icon">🎯</div>
+      <div class="card-info">
+        <div class="card-title">68HR · 模具人才网</div>
+        <div class="card-desc">专注模具行业招聘求职，覆盖模具设计/数控编程/钳工/项目管理等全岗位，企业直招+个人免费求职</div>
+        <div class="card-actions"><a href="https://mj.68hr.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.zhaopin.com/','_blank')">
+      <div class="card-icon">💼</div>
+      <div class="card-info">
+        <div class="card-title">智联招聘 · 综合搜索</div>
+        <div class="card-desc">搜索"模具设计""模具工程师""CNC编程"获取全行业模具相关职位与薪资参考</div>
+        <div class="card-actions"><a href="https://www.zhaopin.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.keytme.com/','_blank')">
+      <div class="card-badge hot">设计交易</div>
+      <div class="card-icon">⚡</div>
+      <div class="card-info">
+        <div class="card-title">启泰设计交易平台</div>
+        <div class="card-desc">专注模具设计外包交易，基于UG的"智一"智能设计系统，模具设计接单/发包/外包一站式平台</div>
+        <div class="card-actions"><a href="https://www.keytme.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.zbj.com/fw/?k=%E6%A8%A1%E5%85%B7','_blank')">
+      <div class="card-badge new">外包</div>
+      <div class="card-icon">🤝</div>
+      <div class="card-info">
+        <div class="card-title">猪八戒网 · 模具设计外包</div>
+        <div class="card-desc">搜索"模具设计"，海量在线外包需求：模具设计/3D建模/图纸转换/CAE分析</div>
+        <div class="card-actions"><a href="https://www.zbj.com/fw/?k=%E6%A8%A1%E5%85%B7" target="_blank" class="btn-go">接单</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.epwk.com/','_blank')">
+      <div class="card-icon">💻</div>
+      <div class="card-info">
+        <div class="card-title">一品威客 · 模具设计</div>
+        <div class="card-desc">搜索"模具设计"外包任务，UG/CAD/SolidWorks建模接单，自由职业模式</div>
+        <div class="card-actions"><a href="https://www.epwk.com/" target="_blank" class="btn-go">接单</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18. 🏗️ 模具加工机床/设备 -->
+<section id="cat-benchmark">
+  <div class="cat-header">
+    <span class="cat-header-icon">🏗️</span>
+    <h2>模具加工机床/检测设备</h2>
+    <span class="cat-count">7 个资源</span>
+    <a href="#" class="cat-more">v7.0 精简</a>
+  </div>
+  <div class="card-grid">
+    <!-- 国内 -->
+    <div class="tool-card" onclick="window.open('https://www.jingdiao.com/','_blank')">
+      <div class="card-badge new">国产替代</div>
+      <div class="card-icon">🇨🇳</div>
+      <div class="card-info">
+        <div class="card-title">北京精雕 (国产)</div>
+        <div class="card-desc">国产精密数控机床龙头，JDMRT系列五轴高速加工中心，模具精密加工国产替代首选</div>
+        <div class="card-actions"><a href="https://www.jingdiao.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.haitianprecision.com/','_blank')">
+      <div class="card-icon">🔧</div>
+      <div class="card-info">
+        <div class="card-title">海天精工 (国产)</div>
+        <div class="card-desc">A股上市大型数控机床，龙门加工中心/卧加系列覆盖大中小型模具加工需求</div>
+        <div class="card-actions"><a href="https://www.haitianprecision.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://hexagon.com.cn/','_blank')">
+      <div class="card-badge hot">检测巨头</div>
+      <div class="card-icon">📏</div>
+      <div class="card-info">
+        <div class="card-title">海克斯康 Hexagon (瑞典)</div>
+        <div class="card-desc">全球三坐标测量机霸主，模具零件精密检测/逆向工程/在线测量全方案，模具厂质控标配设备</div>
+        <div class="card-actions"><a href="https://hexagon.com.cn/" target="_blank" class="btn-go">中国官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.chotest.com/','_blank')">
+      <div class="card-badge new">国产替代</div>
+      <div class="card-icon">🔬</div>
+      <div class="card-info">
+        <div class="card-title">中图仪器 (国产)</div>
+        <div class="card-desc">国产精密测量龙头，三坐标/影像仪/激光跟踪仪/轮廓仪全覆盖，模具零件尺寸/形位公差全检测</div>
+        <div class="card-actions"><a href="https://www.chotest.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+    <!-- 国际 -->
+    <div class="tool-card" onclick="window.open('https://www.dmgmori.com/zh-cn','_blank')">
+      <div class="card-badge rec">全球顶级</div>
+      <div class="card-icon">🏗️</div>
+      <div class="card-info">
+        <div class="card-title">DMG MORI (德国/日本)</div>
+        <div class="card-desc">全球最大机床制造商，五轴加工中心LASERTEC系列模具加工方案，高速铣+激光纹理一体化</div>
+        <div class="card-actions"><a href="https://www.dmgmori.com/zh-cn" target="_blank" class="btn-go">中国官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.makino.com.cn/','_blank')">
+      <div class="card-badge hot">模具专精</div>
+      <div class="card-icon">⚡</div>
+      <div class="card-info">
+        <div class="card-title">牧野机床 Makino (日本)</div>
+        <div class="card-desc">模具高速加工标杆，V33i立加/F5立加专为精密模具设计，石墨电极加工+硬铣一体化</div>
+        <div class="card-actions"><a href="https://www.makino.com.cn/" target="_blank" class="btn-go">中国官网</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://www.gfms.com/zh-cn.html','_blank')">
+      <div class="card-badge rec">精密放电</div>
+      <div class="card-icon">⚡</div>
+      <div class="card-info">
+        <div class="card-title">GF加工方案 (瑞士)</div>
+        <div class="card-desc">AgieCharmilles电火花成形机/Mikron高速铣，模具行业EDM标配，瑞士精密加工标杆</div>
+        <div class="card-actions"><a href="https://www.gfms.com/zh-cn.html" target="_blank" class="btn-go">中国官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18.5 🧠 AI+模具 v6.1 -->
+<section id="cat-ai-mold">
+  <div class="cat-header">
+    <span class="cat-header-icon">🧠</span>
+    <h2>AI+模具</h2>
+    <span class="cat-count">2 个资源</span>
+    <a href="#" class="cat-more">v7.0 精炼</a>
+  </div>
+  <div class="card-grid">
+    <div class="tool-card" onclick="window.open('https://meviy.misumi.com.cn/','_blank')">
+      <div class="card-badge hot">AI即时报价</div>
+      <div class="card-icon">🤖</div>
+      <div class="card-info">
+        <div class="card-title">MISUMI meviy AI报价</div>
+        <div class="card-desc">上传3D模型→AI秒级自动报价+可制造性分析，颠覆传统模具零部件询价模式，最快1分钟出价</div>
+        <div class="card-actions"><a href="https://meviy.misumi.com.cn/" target="_blank" class="btn-go">立即体验</a></div>
+      </div>
+    </div>
+    <div class="tool-card" onclick="window.open('https://cn.haizol.com/','_blank')">
+      <div class="card-badge rec">AI智能体</div>
+      <div class="card-icon">🧠</div>
+      <div class="card-info">
+        <div class="card-title">海智在线 · AI采购智能体</div>
+        <div class="card-desc">非标零部件AI精准匹配+智能报价，工业互联网大赛获奖方案。自动理解图纸→推荐供应商→生成报价</div>
+        <div class="card-actions"><a href="https://cn.haizol.com/" target="_blank" class="btn-go">官网</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </div><!-- /.content-area -->
+</div><!-- /.main-wrap -->
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>🔩 模聚派 · 导航</h4>
+      <a href="#cat-course">专业课程</a><a href="#cat-creator">达人/KOL</a>
+      <a href="#cat-tool">软件工具</a><a href="#cat-model3d">3D模型库</a><a href="#cat-standard">行业标准</a><a href="#cat-robot">精密模具</a>
+    </div>
+    <div class="footer-col">
+      <h4>🏗️ 供应链</h4>
+      <a href="#cat-mall">电商采购</a><a href="#cat-material">行情交易</a><a href="#cat-heat">热/流/温控</a>
+      <a href="#cat-3dprint">3D打印</a><a href="#cat-used">二手交易</a><a href="#cat-company">知名企业</a><a href="#cat-park">产业园区</a>
+    </div>
+    <div class="footer-col">
+      <h4>📊 商业决策</h4>
+      <a href="#cat-report">行业报告</a><a href="#cat-portal">专业门户</a>
+      <a href="#cat-news">行业资讯</a><a href="#cat-trade">外贸出海</a><a href="#cat-expo">展会活动</a>
+    </div>
+    <div class="footer-col">
+      <h4>🚀 拓展</h4>
+      <a href="#cat-mes">智慧管理</a><a href="#cat-job">招聘人才</a>
+      <a href="#cat-benchmark">机床/检测</a><a href="#cat-ai-mold">AI+模具</a>
+      <a href="https://www.jlc.com/" target="_blank">嘉立创</a>
+      <a href="https://www.keytme.com/" target="_blank">启泰智能</a>
+      <a href="https://www.vision-tool.com.cn/" target="_blank">中泰模具</a>
+      <a href="https://www.mysteel.com/" target="_blank">我的钢铁</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>模聚派 · 模具行业AI聚合导航平台 v7.0 | 单页面清理/域名修正/空壳删除/非核心软件去除 | 宁缺毋滥·只留真实网站 | 更新时间：2026-06-04</p>
+  </div>
+</footer>
+
+<!-- Bottom Nav (Mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="#cat-tool" class="bottom-nav-item"><span class="bn-icon">🛠</span>软件</a>
+    <a href="#cat-mall" class="bottom-nav-item"><span class="bn-icon">🛒</span>采购</a>
+    <a href="#cat-material" class="bottom-nav-item"><span class="bn-icon">📐</span>行情</a>
+    <a href="#cat-report" class="bottom-nav-item"><span class="bn-icon">📊</span>报告</a>
+    <a href="#top" class="bottom-nav-item" onclick="window.scrollTo({top:0,behavior:'smooth'});return false"><span class="bn-icon">🏠</span>顶部</a>
+  </div>
+</nav>
+
+<script>
+// ===== Search Engine =====
+let currentEngine = 'baidu';
+const engineUrls = {
+  baidu: 'https://www.baidu.com/s?wd=',
+  bing: 'https://cn.bing.com/search?q=',
+  google: 'https://www.google.com/search?q=',
+  weixin: 'https://weixin.sogou.com/weixin?type=2&query=',
+  bilibili: 'https://search.bilibili.com/all?keyword=',
+  mysteel: 'https://www.mysteel.com/search?keyword=',
+  '1688': 'https://s.1688.com/selloffer/offer_search.htm?keywords=',
+  douyin: 'https://www.douyin.com/search/',
+};
+
+function setEngine(e, btn) {
+  currentEngine = e;
+  document.querySelectorAll('#searchEngines button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!q) return;
+  if (currentEngine === 'insite') {
+    doSiteSearch(q);
+    return;
+  }
+  window.open(engineUrls[currentEngine] + encodeURIComponent(q), '_blank');
+}
+
+function doSiteSearch(query) {
+  // 搜索所有卡片标题和描述
+  const cards = document.querySelectorAll('.tool-card, .ad-inline');
+  let firstMatch = null;
+  let matchCount = 0;
+  // 先移除之前的亮点
+  document.querySelectorAll('.search-highlight').forEach(el => el.classList.remove('search-highlight'));
+  cards.forEach(card => {
+    const title = (card.querySelector('.card-title,.ad-inline-title')?.textContent || '').toLowerCase();
+    const desc = (card.querySelector('.card-desc,.ad-inline-desc')?.textContent || '').toLowerCase();
+    const match = title.includes(query) || desc.includes(query);
+    card.style.display = match ? '' : 'none';
+    if (match) {
+      matchCount++;
+      card.classList.add('search-highlight');
+      if (!firstMatch) firstMatch = card;
+    }
+  });
+  // 显示哪些section有匹配
+  document.querySelectorAll('section[id]').forEach(sec => {
+    const visibleCards = sec.querySelectorAll('.tool-card[style*="display:"],.tool-card:not([style*="display: none"])').length;
+    const hiddenCards = sec.querySelectorAll('.tool-card[style*="display: none"]').length;
+    sec.style.display = (visibleCards > 0 || !sec.querySelector('.tool-card')) ? '' : 'none';
+  });
+  // 滚动到第一个匹配
+  if (firstMatch) {
+    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  alert(matchCount > 0 ? `找到 ${matchCount} 个匹配资源` : '未找到匹配资源，请尝试其他关键词。输入"清除"恢复全部显示。');
+  if (query === '清除' || query === '重置') {
+    cards.forEach(c => { c.style.display = ''; c.classList.remove('search-highlight'); });
+    document.querySelectorAll('section[id]').forEach(s => s.style.display = '');
+  }
+}
+
+// ===== Sidebar Active =====
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const target = document.querySelector(`.sidebar-nav a[href="#${entry.target.id}"]`);
+      if (target) target.classList.add('active');
+    }
+  });
+}, { rootMargin: '-80px 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// ===== Smooth scroll for sidebar =====
+document.querySelectorAll('.sidebar-nav a, .main-nav a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ===== Mobile Nav Toggle =====
+function toggleMobileNav() {
+  const btn = document.querySelector('.mobile-toggle');
+  const overlay = document.getElementById('mobileNavOverlay');
+  const panel = document.getElementById('mobileNavPanel');
+  const isOpen = btn.classList.contains('open');
+  if (isOpen) { closeMobileNav(); return; }
+  btn.classList.add('open');
+  overlay.classList.add('open');
+  panel.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileNav() {
+  document.querySelector('.mobile-toggle').classList.remove('open');
+  document.getElementById('mobileNavOverlay').classList.remove('open');
+  document.getElementById('mobileNavPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ===== DMC Countdown =====
+(function updateCountdown() {
+  const dmcDate = new Date('2026-07-01T09:00:00+08:00');
+  const now = new Date();
+  const diff = Math.ceil((dmcDate - now) / (1000 * 60 * 60 * 24));
+  let text;
+  if (diff > 0) text = diff + '天';
+  else if (diff === 0) text = '今天开展！';
+  else text = '已开幕';
+  ['dmcCountdown', 'dmcCountdown2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  });
+})();
+</script>
+
+</body>
+</html>

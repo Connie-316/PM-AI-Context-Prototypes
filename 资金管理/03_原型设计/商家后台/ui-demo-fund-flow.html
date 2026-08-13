@@ -1,0 +1,1597 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 03_原型设计/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>资金管理 - 商家管理平台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #333; font-size: 13px; }
+
+    /* ===== 顶部导航 ===== */
+    .topbar { height: 56px; background: #1A1A1A; display: flex; align-items: center; padding: 0 20px; gap: 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+    .topbar-logo { display: flex; align-items: center; gap: 8px; }
+    .logo-icon { width: 32px; height: 32px; background: #1664FF; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 700; }
+    .logo-text { color: #fff; font-size: 15px; font-weight: 600; }
+    .topbar-nav { display: flex; gap: 24px; flex: 1; margin-left: 32px; }
+    .nav-item { color: rgba(255,255,255,0.65); font-size: 14px; cursor: pointer; padding: 4px 0; border-bottom: 2px solid transparent; }
+    .nav-item.active { color: #fff; border-bottom-color: #1664FF; }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .topbar-phone { color: rgba(255,255,255,0.65); font-size: 13px; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.85); font-size: 13px; }
+    .user-avatar { width: 32px; height: 32px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+    /* ===== 左侧固定目录 ===== */
+    .sidebar { width: 240px; background: #262626; position: fixed; top: 56px; left: 0; bottom: 0; overflow-y: auto; z-index: 90; }
+    .sidebar::-webkit-scrollbar { width: 6px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    .menu-section { padding: 8px 0 4px; }
+    .menu-title { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; padding: 8px 16px 6px; }
+    .menu-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 13px; color: rgba(255,255,255,0.65); cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+    .menu-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .menu-item.active { color: #fff; background: rgba(22,100,255,0.2); border-left-color: #1664FF; }
+    .menu-icon { width: 14px; height: 14px; flex-shrink: 0; }
+    .menu-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 6px 16px; }
+    .menu-section-h { font-size: 11px; color: rgba(255,255,255,0.45); padding: 12px 16px 6px; display: flex; align-items: center; gap: 6px; }
+    .menu-section-h svg { width: 12px; height: 12px; }
+
+    /* ===== 主内容区 ===== */
+    .main { margin-left: 240px; margin-top: 56px; padding: 20px; min-height: calc(100vh - 56px); }
+
+    /* ===== 页面标题 ===== */
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .page-title-wrap { display: flex; align-items: center; gap: 10px; }
+    .page-title { font-size: 18px; font-weight: 600; color: #1F1F1F; }
+    .page-subtitle { font-size: 12px; color: #8C8C8C; margin-top: 2px; }
+    .page-actions { display: flex; gap: 8px; }
+
+    /* ===== 顶部入口卡片 ===== */
+    .entry-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .entry-card { background: #fff; border-radius: 8px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+    .entry-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: #1664FF; }
+    .entry-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .entry-card-title { font-size: 14px; font-weight: 600; color: #1F1F1F; display: flex; align-items: center; gap: 8px; }
+    .entry-card-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .entry-card-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; }
+    .entry-card-desc { font-size: 12px; color: #595959; line-height: 1.6; min-height: 36px; }
+    .entry-card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px dashed #F0F0F0; }
+    .entry-card-count { font-size: 11px; color: #8C8C8C; }
+    .entry-card-link { font-size: 12px; color: #1664FF; display: flex; align-items: center; gap: 2px; }
+
+    /* ===== 模块容器 ===== */
+    .module { background: #fff; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
+    .module-head { padding: 14px 20px; border-bottom: 1px solid #F0F0F0; display: flex; align-items: center; justify-content: space-between; }
+    .module-title { font-size: 15px; font-weight: 600; color: #1F1F1F; display: flex; align-items: center; gap: 8px; }
+    .module-title .num { background: #1664FF; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 3px; font-weight: 500; }
+    .module-meta { font-size: 12px; color: #8C8C8C; }
+    .module-body { padding: 16px 20px; }
+
+    /* ===== 筛选区 ===== */
+    .filter-card { background: #fff; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; margin-bottom: 10px; }
+    .filter-row:last-child { margin-bottom: 0; }
+    .filter-item { display: flex; align-items: center; gap: 6px; }
+    .filter-label { font-size: 12px; color: #595959; white-space: nowrap; min-width: 64px; }
+    .filter-input { padding: 6px 10px; border: 1px solid #D9D9D9; border-radius: 4px; font-size: 12px; width: 150px; outline: none; background: #fff; }
+    .filter-input:focus { border-color: #1664FF; }
+    .filter-select { padding: 6px 10px; border: 1px solid #D9D9D9; border-radius: 4px; font-size: 12px; min-width: 120px; outline: none; background: #fff; }
+    .filter-date { padding: 6px 8px; border: 1px solid #D9D9D9; border-radius: 4px; font-size: 12px; width: 110px; outline: none; }
+    .filter-btn-group { display: flex; gap: 8px; }
+    .btn { padding: 6px 14px; border-radius: 4px; font-size: 12px; cursor: pointer; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s; }
+    .btn-primary { background: #1664FF; color: #fff; border-color: #1664FF; }
+    .btn-primary:hover { background: #4080FF; border-color: #4080FF; }
+    .btn-secondary { background: #fff; color: #595959; border-color: #D9D9D9; }
+    .btn-secondary:hover { border-color: #1664FF; color: #1664FF; }
+    .btn-ghost { background: transparent; color: #1664FF; border-color: transparent; padding: 6px 8px; }
+    .btn-ghost:hover { background: #E8F0FF; }
+    .filter-group-label { font-size: 11px; color: #1664FF; font-weight: 600; display: flex; align-items: center; gap: 4px; min-width: 64px; }
+    .filter-group-label::before { content: ''; width: 4px; height: 4px; background: #1664FF; border-radius: 50%; }
+
+    /* ===== 汇总卡 ===== */
+    .summary-cards { display: grid; gap: 12px; margin-bottom: 16px; }
+    .summary-cards.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .summary-cards.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .summary-card { background: #FAFAFA; border: 1px solid #F0F0F0; border-radius: 6px; padding: 14px 16px; }
+    .summary-card .label { font-size: 12px; color: #8C8C8C; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+    .summary-card .value { font-size: 22px; font-weight: 600; color: #1F1F1F; }
+    .summary-card .delta { font-size: 11px; color: #8C8C8C; margin-top: 4px; }
+    .summary-card.income { border-left: 3px solid #52C41A; }
+    .summary-card.expense { border-left: 3px solid #FF4D4F; }
+    .summary-card.net { border-left: 3px solid #1664FF; }
+    .summary-card.warn { border-left: 3px solid #FAAD14; }
+    .summary-card .value.income-color { color: #52C41A; }
+    .summary-card .value.expense-color { color: #FF4D4F; }
+    .summary-card .value.warn-color { color: #FAAD14; }
+
+    /* ===== 工具栏 ===== */
+    .toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #FAFAFA; border-bottom: 1px solid #F0F0F0; }
+    .toolbar-left { display: flex; align-items: center; gap: 12px; }
+    .toolbar-right { display: flex; align-items: center; gap: 8px; }
+    .toolbar-info { font-size: 12px; color: #595959; }
+    .toolbar-info .num { color: #1664FF; font-weight: 600; }
+    .toolbar-tabs { display: flex; gap: 4px; }
+    .toolbar-tab { padding: 4px 10px; font-size: 12px; color: #595959; cursor: pointer; border-radius: 4px; transition: all 0.15s; }
+    .toolbar-tab:hover { background: #F0F0F0; }
+    .toolbar-tab.active { background: #E8F0FF; color: #1664FF; }
+
+    /* ===== 表格 ===== */
+    .table-box { background: #fff; overflow-x: auto; }
+    .table-head { display: flex; padding: 10px 16px; background: #FAFAFA; border-bottom: 1px solid #E5E5E5; font-size: 12px; font-weight: 600; color: #595959; }
+    .th { display: flex; align-items: center; white-space: nowrap; padding: 0 8px; }
+    .th:first-child { padding-left: 0; }
+    .th.right { justify-content: flex-end; }
+    .th.center { justify-content: center; }
+
+    .tr { display: flex; padding: 10px 16px; border-bottom: 1px solid #F5F5F5; align-items: center; transition: background 0.1s; }
+    .tr:hover { background: #FAFAFA; }
+    .td { flex: 1; font-size: 12px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; display: flex; align-items: center; }
+    .td:first-child { padding-left: 0; }
+    .td.right { justify-content: flex-end; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .td.center { justify-content: center; }
+    .td.mono { font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace; font-size: 11px; color: #1664FF; cursor: pointer; }
+    .td.mono:hover { text-decoration: underline; }
+    .td.muted { color: #8C8C8C; }
+
+    /* ===== 状态 pill ===== */
+    .pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; line-height: 18px; }
+    .pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+    .pill-income { background: #F6FFED; color: #389E0D; border: 1px solid #B7EB8F; }
+    .pill-income::before { background: #52C41A; }
+    .pill-expense { background: #FFF1F0; color: #CF1322; border: 1px solid #FFA39E; }
+    .pill-expense::before { background: #FF4D4F; }
+    .pill-received { background: #F6FFED; color: #389E0D; border: 1px solid #B7EB8F; }
+    .pill-received::before { background: #52C41A; }
+    .pill-reversed { background: #FFF2E8; color: #D4380D; border: 1px solid #FFBB96; }
+    .pill-reversed::before { background: #FA541C; }
+    .pill-bad-debt { background: #F5F5F5; color: #595959; border: 1px solid #D9D9D9; }
+    .pill-bad-debt::before { background: #8C8C8C; }
+    .pill-refunded { background: #E6F4FF; color: #1664FF; border: 1px solid #91CAFF; }
+    .pill-refunded::before { background: #1664FF; }
+    .pill-failed { background: #FFF1F0; color: #CF1322; border: 1px solid #FFA39E; }
+    .pill-failed::before { background: #FF4D4F; }
+    .pill-pending { background: #FFFBE6; color: #D48806; border: 1px solid #FFE58F; }
+    .pill-pending::before { background: #FAAD14; }
+    .pill-processing { background: #E6F4FF; color: #1664FF; border: 1px solid #91CAFF; }
+    .pill-processing::before { background: #1664FF; }
+
+    .pill-payment-online { background: #E6F4FF; color: #1664FF; border: 1px solid #91CAFF; }
+    .pill-payment-online::before { display: none; }
+    .pill-payment-credit { background: #F9F0FF; color: #531DAB; border: 1px solid #D3ADF7; }
+    .pill-payment-credit::before { display: none; }
+    .pill-payment-offline { background: #FFF7E6; color: #D46B08; border: 1px solid #FFD591; }
+    .pill-payment-offline::before { display: none; }
+
+    .pill-cat-standard { background: #F0F5FF; color: #1D39C4; border: 1px solid #ADC6FF; }
+    .pill-cat-standard::before { display: none; }
+    .pill-cat-casting { background: #FFF0F6; color: #C41D7F; border: 1px solid #FFADD2; }
+    .pill-cat-casting::before { display: none; }
+    .pill-cat-software { background: #E6FFFB; color: #08979C; border: 1px solid #87E8DE; }
+    .pill-cat-software::before { display: none; }
+    .pill-cat-other { background: #F5F5F5; color: #595959; border: 1px solid #D9D9D9; }
+    .pill-cat-other::before { display: none; }
+
+    .pill-channel-mini { background: #E6F4FF; color: #1664FF; border: 1px solid #91CAFF; }
+    .pill-channel-mini::before { display: none; }
+    .pill-channel-pc { background: #F0F5FF; color: #1D39C4; border: 1px solid #ADC6FF; }
+    .pill-channel-pc::before { display: none; }
+    .pill-channel-offline { background: #FFF7E6; color: #D46B08; border: 1px solid #FFD591; }
+    .pill-channel-offline::before { display: none; }
+
+    .pill-type-cancel { background: #FFF7E6; color: #D46B08; border: 1px solid #FFD591; }
+    .pill-type-cancel::before { display: none; }
+    .pill-type-partial { background: #E6F4FF; color: #1664FF; border: 1px solid #91CAFF; }
+    .pill-type-partial::before { display: none; }
+    .pill-type-full { background: #F9F0FF; color: #531DAB; border: 1px solid #D3ADF7; }
+    .pill-type-full::before { display: none; }
+    .pill-type-adjust { background: #F5F5F5; color: #595959; border: 1px solid #D9D9D9; }
+    .pill-type-adjust::before { display: none; }
+
+    /* ===== 操作链接 ===== */
+    .op-link { color: #1664FF; font-size: 12px; cursor: pointer; margin-right: 8px; }
+    .op-link:hover { text-decoration: underline; }
+    .op-link.danger { color: #FF4D4F; }
+
+    /* ===== 字段说明区 ===== */
+    .doc-section { background: #fff; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
+    .doc-head { padding: 12px 20px; background: #FAFAFA; border-bottom: 1px solid #F0F0F0; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+    .doc-head:hover { background: #F5F5F5; }
+    .doc-title { font-size: 14px; font-weight: 600; color: #1F1F1F; display: flex; align-items: center; gap: 8px; }
+    .doc-toggle { font-size: 12px; color: #8C8C8C; transition: transform 0.2s; }
+    .doc-toggle.open { transform: rotate(180deg); }
+    .doc-body { padding: 16px 20px; display: none; }
+    .doc-body.open { display: block; }
+
+    /* ===== 字段表 ===== */
+    .field-table { width: 100%; border-collapse: collapse; }
+    .field-table th { background: #FAFAFA; padding: 8px 12px; text-align: left; font-size: 12px; color: #595959; font-weight: 600; border-bottom: 1px solid #E5E5E5; }
+    .field-table td { padding: 8px 12px; font-size: 12px; color: #333; border-bottom: 1px solid #F0F0F0; vertical-align: top; }
+    .field-table tr:hover td { background: #FAFAFA; }
+    .field-table code { background: #F5F5F5; padding: 1px 6px; border-radius: 3px; font-size: 11px; color: #1664FF; font-family: 'SF Mono', 'Monaco', monospace; }
+    .field-table .req { color: #FF4D4F; font-size: 11px; font-weight: 600; }
+    .field-table .opt { color: #8C8C8C; font-size: 11px; }
+    .field-table .key { color: #FA8C16; font-size: 11px; font-weight: 600; }
+    .field-table .note-col { color: #595959; max-width: 380px; }
+
+    .field-group-h { font-size: 13px; font-weight: 600; color: #1F1F1F; padding: 12px 0 8px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F0F0F0; margin-bottom: 8px; margin-top: 12px; }
+    .field-group-h:first-child { margin-top: 0; }
+    .field-group-h .num { background: #1664FF; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 3px; }
+    .field-group-h .meta { font-size: 11px; color: #8C8C8C; font-weight: 400; margin-left: auto; }
+
+    /* ===== 状态机图 ===== */
+    .state-machine { padding: 16px 0; }
+    .state-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .state-box { background: #fff; border: 2px solid #1664FF; color: #1664FF; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 500; min-width: 100px; text-align: center; }
+    .state-box.income { border-color: #52C41A; color: #389E0D; background: #F6FFED; }
+    .state-box.expense { border-color: #FF4D4F; color: #CF1322; background: #FFF1F0; }
+    .state-box.terminal { border-style: dashed; }
+    .state-arrow { color: #8C8C8C; font-size: 14px; }
+    .state-legend { display: flex; gap: 16px; margin-top: 12px; font-size: 11px; color: #8C8C8C; flex-wrap: wrap; }
+    .state-legend-item { display: flex; align-items: center; gap: 4px; }
+    .state-legend-item .swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* ===== 公式说明 ===== */
+    .formula-list { display: flex; flex-direction: column; gap: 10px; }
+    .formula-item { display: flex; gap: 12px; padding: 10px 12px; background: #FAFAFA; border-radius: 6px; border-left: 3px solid #1664FF; }
+    .formula-name { font-size: 13px; font-weight: 600; color: #1F1F1F; min-width: 100px; }
+    .formula-expr { flex: 1; font-family: 'SF Mono', 'Monaco', monospace; font-size: 12px; color: #1664FF; background: #fff; padding: 4px 8px; border-radius: 3px; border: 1px solid #E5E5E5; }
+    .formula-note { font-size: 11px; color: #8C8C8C; flex: 1; }
+
+    /* ===== 全局说明区 tabs ===== */
+    .doc-tabs { display: flex; gap: 2px; background: #FAFAFA; padding: 4px; border-radius: 6px; margin-bottom: 16px; }
+    .doc-tab { padding: 6px 14px; font-size: 12px; color: #595959; cursor: pointer; border-radius: 4px; transition: all 0.15s; }
+    .doc-tab:hover { background: #fff; }
+    .doc-tab.active { background: #fff; color: #1664FF; font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .doc-tab-content { display: none; }
+    .doc-tab-content.active { display: block; }
+
+    /* ===== 锚点偏移 ===== */
+    [id] { scroll-margin-top: 80px; }
+
+    /* ===== 面包屑 ===== */
+    .breadcrumb { font-size: 12px; color: #8C8C8C; margin-bottom: 8px; }
+    .breadcrumb .sep { margin: 0 4px; }
+    .breadcrumb .current { color: #1F1F1F; }
+
+    /* ===== 状态说明 callout ===== */
+    .callout { display: flex; gap: 10px; padding: 10px 12px; background: #E6F4FF; border: 1px solid #91CAFF; border-radius: 6px; margin: 12px 0; font-size: 12px; color: #1F1F1F; }
+    .callout-icon { width: 16px; height: 16px; color: #1664FF; flex-shrink: 0; margin-top: 1px; }
+    .callout-warn { background: #FFFBE6; border-color: #FFE58F; }
+    .callout-warn .callout-icon { color: #D48806; }
+    .callout-success { background: #F6FFED; border-color: #B7EB8F; }
+    .callout-success .callout-icon { color: #389E0D; }
+
+    /* ===== 销售统计 dim 切换 ===== */
+    .dim-bar { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
+    .dim-bar .lbl { font-size: 12px; color: #595959; margin-right: 4px; font-weight: 600; }
+    .dim-btn { padding: 5px 12px; font-size: 12px; color: #595959; cursor: pointer; border: 1px solid #D9D9D9; background: #fff; border-radius: 4px; transition: all 0.15s; }
+    .dim-btn.active { background: #E8F0FF; color: #1664FF; border-color: #91CAFF; }
+    .dim-btn:hover:not(.active) { border-color: #1664FF; color: #1664FF; }
+
+    .time-frame-bar { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: #FFFBE6; border: 1px solid #FFE58F; border-radius: 6px; margin-bottom: 12px; font-size: 12px; }
+    .time-frame-bar .icon { color: #D48806; }
+    .time-frame-bar .label-text { color: #1F1F1F; }
+    .time-frame-bar .label-text strong { color: #D48806; }
+
+    /* ===== 列宽 ===== */
+    .w-flow-id { flex: 0 0 150px; }
+    .w-time { flex: 0 0 140px; }
+    .w-dir { flex: 0 0 70px; justify-content: center; }
+    .w-amount { flex: 0 0 120px; justify-content: flex-end; }
+    .w-order { flex: 0 0 130px; }
+    .w-customer { flex: 0 0 180px; }
+    .w-cat { flex: 0 0 90px; justify-content: center; }
+    .w-paymethod { flex: 0 0 100px; justify-content: center; }
+    .w-status { flex: 0 0 100px; justify-content: center; }
+    .w-op { flex: 0 0 110px; justify-content: center; }
+    .w-type { flex: 0 0 130px; justify-content: center; }
+    .w-reason { flex: 0 0 160px; }
+    .w-origamount { flex: 0 0 120px; justify-content: flex-end; }
+    .w-origpay { flex: 0 0 110px; justify-content: center; }
+    .w-channel { flex: 0 0 100px; justify-content: center; }
+
+    /* 销售统计 */
+    .w-dim { flex: 0 0 220px; }
+    .w-orders { flex: 0 0 100px; justify-content: flex-end; }
+    .w-sales { flex: 0 0 130px; justify-content: flex-end; }
+    .w-refundcount { flex: 0 0 90px; justify-content: flex-end; }
+    .w-refundamt { flex: 0 0 120px; justify-content: flex-end; }
+    .w-net { flex: 0 0 130px; justify-content: flex-end; }
+
+    /* ===== 翻页 ===== */
+    .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #FAFAFA; border-top: 1px solid #F0F0F0; }
+    .pagination-info { font-size: 12px; color: #8C8C8C; }
+    .pagination-ctrl { display: flex; gap: 4px; }
+    .page-btn { min-width: 28px; height: 28px; padding: 0 8px; border: 1px solid #D9D9D9; background: #fff; border-radius: 4px; font-size: 12px; color: #595959; cursor: pointer; }
+    .page-btn.active { background: #1664FF; color: #fff; border-color: #1664FF; }
+    .page-btn:hover:not(.active):not(:disabled) { border-color: #1664FF; color: #1664FF; }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===== 数字颜色 ===== */
+    .num-income { color: #389E0D; font-weight: 600; }
+    .num-expense { color: #CF1322; font-weight: 600; }
+    .num-muted { color: #8C8C8C; }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-icon">启</div>
+      <div class="logo-text">启泰数智 · 商家管理平台</div>
+    </div>
+    <div class="topbar-nav">
+      <div class="nav-item">工作台</div>
+      <div class="nav-item">订单</div>
+      <div class="nav-item">商品</div>
+      <div class="nav-item active">财务</div>
+      <div class="nav-item">客户</div>
+      <div class="nav-item">仓配</div>
+      <div class="nav-item">数据</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-phone">400-xxx-xxxx</div>
+      <div class="topbar-user">
+        <div class="user-avatar">V</div>
+        <span>Victoria</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 左侧固定目录 -->
+  <div class="sidebar">
+    <div class="menu-section">
+      <div class="menu-section-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        资金管理
+      </div>
+      <a class="menu-item" href="#sec-overview">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg>
+        概览
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        三大模块
+      </div>
+      <a class="menu-item" href="#sec-flow">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+        资金流水
+      </a>
+      <a class="menu-item" href="#sec-sales">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>
+        销售统计
+      </a>
+      <a class="menu-item" href="#sec-expense">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        支出统计
+      </a>
+    </div>
+
+    <div class="menu-divider"></div>
+
+    <div class="menu-section">
+      <div class="menu-section-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        数据字典
+      </div>
+      <a class="menu-item" href="#sec-fields">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        字段字典（7 组）
+      </a>
+      <a class="menu-item" href="#sec-enums">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        状态枚举
+      </a>
+      <a class="menu-item" href="#sec-formulas">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        统计公式
+      </a>
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="main">
+
+    <div class="page-header">
+      <div>
+        <div class="breadcrumb">财务 <span class="sep">/</span> 收付管理 <span class="sep">/</span> <span class="current">资金流水 · 销售统计 · 支出统计</span></div>
+        <div class="page-title-wrap">
+          <div class="page-title">资金管理</div>
+        </div>
+        <div class="page-subtitle">资金流水（30 字段）· 销售统计（4 维度 · 双时间口径）· 支出统计（12 字段）</div>
+      </div>
+    </div>
+
+    <!-- ===== 顶部入口卡 ===== -->
+    <div id="sec-overview">
+      <div class="entry-cards">
+        <div class="entry-card" onclick="document.getElementById('sec-flow').scrollIntoView()">
+          <div class="entry-card-head">
+            <div class="entry-card-title"><span class="dot" style="background:#52C41A"></span>资金流水</div>
+            <div class="entry-card-icon" style="background:#52C41A">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+            </div>
+          </div>
+          <div class="entry-card-desc">每笔资金动作的真实记录。基于订单状态触发，30 字段分 7 组，覆盖 4 个时间维度。</div>
+          <div class="entry-card-foot">
+            <div class="entry-card-count">30 字段 / 7 组</div>
+            <div class="entry-card-link">进入查看 →</div>
+          </div>
+        </div>
+
+        <div class="entry-card" onclick="document.getElementById('sec-sales').scrollIntoView()">
+          <div class="entry-card-head">
+            <div class="entry-card-title"><span class="dot" style="background:#1664FF"></span>销售统计</div>
+            <div class="entry-card-icon" style="background:#1664FF">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>
+            </div>
+          </div>
+          <div class="entry-card-desc">聚合视图，按时间/客户/商品分类/支付方式/渠道多维拆分。<strong>铸件支持双时间口径</strong>。</div>
+          <div class="entry-card-foot">
+            <div class="entry-card-count">4 维度 · 双时间口径</div>
+            <div class="entry-card-link">进入查看 →</div>
+          </div>
+        </div>
+
+        <div class="entry-card" onclick="document.getElementById('sec-expense').scrollIntoView()">
+          <div class="entry-card-head">
+            <div class="entry-card-title"><span class="dot" style="background:#FF4D4F"></span>支出统计</div>
+            <div class="entry-card-icon" style="background:#FF4D4F">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+          </div>
+          <div class="entry-card-desc">聚焦"钱出去了"的所有记录。4 种退款类型 × 4 种退款状态，12 字段明细追踪。</div>
+          <div class="entry-card-foot">
+            <div class="entry-card-count">12 字段 · 4×4 状态</div>
+            <div class="entry-card-link">进入查看 →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 模块一：资金流水 -->
+    <!-- ============================================================== -->
+    <div id="sec-flow" class="module">
+      <div class="module-head">
+        <div class="module-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2.5"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+          资金流水
+          <span class="num">模块 01</span>
+        </div>
+        <div class="module-meta">30 字段 / 7 组 · 收支明细页 · 待支付不计入</div>
+      </div>
+
+      <!-- 筛选区 -->
+      <div class="module-body" style="padding-bottom: 0;">
+        <div class="filter-card" style="margin-bottom: 0;">
+          <div class="filter-row">
+            <div class="filter-item">
+              <div class="filter-label">流水编号</div>
+              <input class="filter-input" placeholder="LSyyyymmdd..." />
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">关联订单</div>
+              <input class="filter-input" placeholder="SOI-..." />
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">客户/企业</div>
+              <select class="filter-select">
+                <option>全部客户</option>
+                <option>启泰智能科技</option>
+                <option>东莞富鼎模具</option>
+                <option>佛山精工模具</option>
+                <option>深圳华联精密</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">商品分类</div>
+              <select class="filter-select">
+                <option>全部分类</option>
+                <option>标准件</option>
+                <option>铸件</option>
+                <option>软件</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">支付方式</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>在线支付</option>
+                <option>账期支付</option>
+                <option>线下打款</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">渠道</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>小程序端</option>
+                <option>PC端</option>
+                <option>线下</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-row">
+            <div class="filter-item">
+              <div class="filter-label">入账时间</div>
+              <input class="filter-date" value="2026-06-01" />
+              <span style="color:#BFBFBF">至</span>
+              <input class="filter-date" value="2026-07-13" />
+            </div>
+            <div class="filter-btn-group" style="margin-left: auto;">
+              <button class="btn btn-secondary">重置</button>
+              <button class="btn btn-primary">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                搜索
+              </button>
+              <button class="btn btn-secondary">导出 Excel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 汇总卡 -->
+      <div class="module-body" style="padding-top: 16px;">
+        <div class="summary-cards cols-3">
+          <div class="summary-card income">
+            <div class="label">本月收入合计</div>
+            <div class="value income-color">¥386,420.00</div>
+            <div class="delta">共 89 笔</div>
+          </div>
+          <div class="summary-card expense">
+            <div class="label">本月支出合计</div>
+            <div class="value expense-color">¥12,580.00</div>
+            <div class="delta">共 6 笔</div>
+          </div>
+          <div class="summary-card net">
+            <div class="label">本月净收入</div>
+            <div class="value">¥373,840.00</div>
+            <div class="delta">= 收入 - 支出</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <strong>取数逻辑：</strong>资金流水记录的是「钱真的到账/出账」的事件。
+            <span class="pill pill-pending" style="margin: 0 4px;">待支付</span> /
+            <span class="pill pill-pending" style="margin: 0 4px;">线下打款审核中</span>等订单状态<strong>不</strong>进入资金流水。
+            账期支付 = 客户实际打款时才入账，不是额度占用时。
+          </div>
+        </div>
+
+        <!-- 工具栏 -->
+        <div class="toolbar" style="border-radius: 8px 8px 0 0; border: 1px solid #F0F0F0; border-bottom: none;">
+          <div class="toolbar-left">
+            <div class="toolbar-info">共 <span class="num">12,458</span> 条流水</div>
+            <div class="toolbar-tabs">
+              <div class="toolbar-tab active">全部</div>
+              <div class="toolbar-tab">仅收入</div>
+              <div class="toolbar-tab">仅支出</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 列表（9 列：原型字段） -->
+        <div class="table-box" style="border: 1px solid #F0F0F0; border-top: none; border-radius: 0 0 8px 8px;">
+          <div class="table-head">
+            <div class="th w-flow-id">流水编号</div>
+            <div class="th w-time">入账/退款时间</div>
+            <div class="th w-dir">方向</div>
+            <div class="th w-amount right">金额（元）</div>
+            <div class="th w-order">关联订单</div>
+            <div class="th w-customer">客户</div>
+            <div class="th w-cat">分类</div>
+            <div class="th w-paymethod">支付方式</div>
+            <div class="th w-status">状态</div>
+            <div class="th w-op center">操作</div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260711001</div>
+            <div class="td w-time">2026-07-11 09:15:23</div>
+            <div class="td w-dir"><span class="pill pill-income">收入</span></div>
+            <div class="td w-amount num-income">+4,128.00</div>
+            <div class="td w-order mono">S2607041056</div>
+            <div class="td w-customer">东莞市富鼎模具有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-standard">标准件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-status"><span class="pill pill-received">已入账</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260711002</div>
+            <div class="td w-time">2026-07-10 16:42:11</div>
+            <div class="td w-dir"><span class="pill pill-income">收入</span></div>
+            <div class="td w-amount num-income">+1,959.00</div>
+            <div class="td w-order mono">S2607041970</div>
+            <div class="td w-customer">东莞市富鼎模具有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-standard">标准件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-status"><span class="pill pill-received">已入账</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260711003</div>
+            <div class="td w-time">2026-07-10 14:08:55</div>
+            <div class="td w-dir"><span class="pill pill-income">收入</span></div>
+            <div class="td w-amount num-income">+46,000.00</div>
+            <div class="td w-order mono">S2606291335</div>
+            <div class="td w-customer">惠州市瑞万五金模具有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-casting">铸件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-credit">账期支付</span></div>
+            <div class="td w-status"><span class="pill pill-received">已入账</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260709004</div>
+            <div class="td w-time">2026-07-09 11:30:08</div>
+            <div class="td w-dir"><span class="pill pill-income">收入</span></div>
+            <div class="td w-amount num-income">+99.00</div>
+            <div class="td w-order mono">S2607059348</div>
+            <div class="td w-customer">—</div>
+            <div class="td w-cat"><span class="pill pill-cat-standard">标准件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-offline">线下打款</span></div>
+            <div class="td w-status"><span class="pill pill-received">已入账</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260709015</div>
+            <div class="td w-time">2026-07-09 10:22:33</div>
+            <div class="td w-dir"><span class="pill pill-expense">支出</span></div>
+            <div class="td w-amount num-expense">-380.00</div>
+            <div class="td w-order mono">S2607021456</div>
+            <div class="td w-customer">东莞市泰祥科技有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-standard">标准件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-status"><span class="pill pill-refunded">已退款</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260708008</div>
+            <div class="td w-time">2026-07-08 17:05:47</div>
+            <div class="td w-dir"><span class="pill pill-expense">支出</span></div>
+            <div class="td w-amount num-expense">-4,128.00</div>
+            <div class="td w-order mono">S2606289871</div>
+            <div class="td w-customer">东莞市富鼎模具有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-standard">标准件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-status"><span class="pill pill-refunded">已退款</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260707012</div>
+            <div class="td w-time">2026-07-07 16:32:18</div>
+            <div class="td w-dir"><span class="pill pill-expense">支出</span></div>
+            <div class="td w-amount num-expense">-2,500.00</div>
+            <div class="td w-order mono">S2606254561</div>
+            <div class="td w-customer">深圳市恒达精密模具有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-software">软件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-status"><span class="pill pill-failed">退款失败</span></div>
+            <div class="td w-op"><span class="op-link">详情</span><span class="op-link danger">重新退款</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260706009</div>
+            <div class="td w-time">2026-07-06 10:18:42</div>
+            <div class="td w-dir"><span class="pill pill-income">收入</span></div>
+            <div class="td w-amount num-income">+23,800.00</div>
+            <div class="td w-order mono">S2606200342</div>
+            <div class="td w-customer">东莞市富鼎模具有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-casting">铸件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-credit">账期支付</span></div>
+            <div class="td w-status"><span class="pill pill-bad-debt">坏账</span></div>
+            <div class="td w-op"><span class="op-link">详情</span><span class="op-link">查看勾销</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260705003</div>
+            <div class="td w-time">2026-07-05 09:45:21</div>
+            <div class="td w-dir"><span class="pill pill-income">收入</span></div>
+            <div class="td w-amount num-income">+128,500.00</div>
+            <div class="td w-order mono">S2606120001</div>
+            <div class="td w-customer">启泰智能科技有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-standard">标准件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-status"><span class="pill pill-reversed">已冲销</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">LS20260704018</div>
+            <div class="td w-time">2026-07-04 11:22:09</div>
+            <div class="td w-dir"><span class="pill pill-income">收入</span></div>
+            <div class="td w-amount num-income">+8,560.00</div>
+            <div class="td w-order mono">S2606281456</div>
+            <div class="td w-customer">深圳华联精密模具有限公司</div>
+            <div class="td w-cat"><span class="pill pill-cat-software">软件</span></div>
+            <div class="td w-paymethod"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-status"><span class="pill pill-received">已入账</span></div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <!-- 翻页 -->
+          <div class="pagination">
+            <div class="pagination-info">第 1-10 条 / 共 12,458 条</div>
+            <div class="pagination-ctrl">
+              <button class="page-btn" disabled>‹</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">4</button>
+              <button class="page-btn">5</button>
+              <button class="page-btn">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 模块二：销售统计 -->
+    <!-- ============================================================== -->
+    <div id="sec-sales" class="module">
+      <div class="module-head">
+        <div class="module-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1664FF" stroke-width="2.5"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>
+          销售统计
+          <span class="num" style="background:#1664FF">模块 02</span>
+        </div>
+        <div class="module-meta">4 维度 · 铸件双时间口径 · 实时聚合（不落表）</div>
+      </div>
+
+      <div class="module-body">
+        <!-- 维度切换 -->
+        <div class="dim-bar">
+          <span class="lbl">统计维度：</span>
+          <button class="dim-btn">按时间</button>
+          <button class="dim-btn active">按客户</button>
+          <button class="dim-btn">按商品分类</button>
+          <button class="dim-btn">按支付方式</button>
+          <button class="dim-btn">按渠道</button>
+        </div>
+
+        <!-- 时间口径说明（铸件特殊） -->
+        <div class="time-frame-bar">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="label-text">当前时间口径：<strong>支付时间</strong>（铸件可切换为"客户来图时间"）</span>
+          <button class="btn btn-ghost" style="margin-left:auto;">切换口径</button>
+        </div>
+
+        <!-- 筛选区 -->
+        <div class="filter-card" style="margin-bottom: 16px;">
+          <div class="filter-row">
+            <div class="filter-item">
+              <div class="filter-label">时间范围</div>
+              <input class="filter-date" value="2026-06-01" />
+              <span style="color:#BFBFBF">至</span>
+              <input class="filter-date" value="2026-07-13" />
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">商品分类</div>
+              <select class="filter-select">
+                <option>全部（标准件+铸件+软件）</option>
+                <option>标准件</option>
+                <option>铸件</option>
+                <option>软件</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">支付方式</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>在线支付</option>
+                <option>账期支付</option>
+                <option>线下打款</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">渠道</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>小程序端</option>
+                <option>PC端</option>
+                <option>线下</option>
+              </select>
+            </div>
+            <div class="filter-btn-group" style="margin-left: auto;">
+              <button class="btn btn-secondary">重置</button>
+              <button class="btn btn-primary">搜索</button>
+              <button class="btn btn-secondary">导出 Excel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 汇总卡（4 张，砍掉客单价/退款率） -->
+        <div class="summary-cards cols-4">
+          <div class="summary-card income">
+            <div class="label">销售总额</div>
+            <div class="value income-color">¥1,182,600</div>
+            <div class="delta">93 笔订单</div>
+          </div>
+          <div class="summary-card expense">
+            <div class="label">退款总额</div>
+            <div class="value expense-color">¥60,100</div>
+            <div class="delta">7 笔退款</div>
+          </div>
+          <div class="summary-card warn">
+            <div class="label">坏账金额</div>
+            <div class="value warn-color">¥67,500</div>
+            <div class="delta">已从销售剔除</div>
+          </div>
+          <div class="summary-card net">
+            <div class="label">净销售额</div>
+            <div class="value">¥1,055,000</div>
+            <div class="delta">= 销售 - 退款 - 坏账</div>
+          </div>
+        </div>
+
+        <div class="callout callout-warn">
+          <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <strong>统计口径：</strong>销售总额 = <span class="pill pill-received">已入账</span> 的钱，<strong>不含</strong>待支付/未支付/已冲销。
+            <span class="pill pill-bad-debt">坏账</span>单独展示，从销售总额剔除。
+            <strong>铸件</strong>支持"来图时间"和"支付时间"双口径，其他分类按"支付时间"统计。
+          </div>
+        </div>
+
+        <!-- 列表（6 列：砍掉客单价/退款率/趋势） -->
+        <div class="table-box" style="border: 1px solid #F0F0F0; border-radius: 8px;">
+          <div class="table-head">
+            <div class="th w-dim">客户/企业</div>
+            <div class="th w-orders right">销售订单数</div>
+            <div class="th w-sales right">销售总额</div>
+            <div class="th w-refundcount right">退款笔数</div>
+            <div class="th w-refundamt right">退款总额</div>
+            <div class="th w-net right">净销售额</div>
+            <div class="th w-op center">操作</div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-dim"><strong>启泰智能科技有限公司</strong></div>
+            <div class="td w-orders">38</div>
+            <div class="td w-sales num-income">¥386,500</div>
+            <div class="td w-refundcount">4</div>
+            <div class="td w-refundamt num-expense">¥36,300</div>
+            <div class="td w-net"><strong>¥350,200</strong></div>
+            <div class="td w-op"><span class="op-link">客户详情</span><span class="op-link">订单列表</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-dim"><strong>东莞富鼎模具有限公司</strong></div>
+            <div class="td w-orders">25</div>
+            <div class="td w-sales num-income">¥248,600</div>
+            <div class="td w-refundcount">2</div>
+            <div class="td w-refundamt num-expense">¥18,200</div>
+            <div class="td w-net"><strong>¥230,400</strong></div>
+            <div class="td w-op"><span class="op-link">客户详情</span><span class="op-link">订单列表</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-dim"><strong>深圳华联精密模具有限公司</strong></div>
+            <div class="td w-orders">12</div>
+            <div class="td w-sales num-income">¥285,400</div>
+            <div class="td w-refundcount">0</div>
+            <div class="td w-refundamt num-muted">¥0</div>
+            <div class="td w-net"><strong>¥285,400</strong></div>
+            <div class="td w-op"><span class="op-link">客户详情</span><span class="op-link">订单列表</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-dim"><strong>佛山精工模具有限公司</strong></div>
+            <div class="td w-orders">18</div>
+            <div class="td w-sales num-income">¥156,800</div>
+            <div class="td w-refundcount">1</div>
+            <div class="td w-refundamt num-expense">¥5,600</div>
+            <div class="td w-net"><strong>¥151,200</strong></div>
+            <div class="td w-op"><span class="op-link">客户详情</span><span class="op-link">订单列表</span></div>
+          </div>
+
+          <div class="tr" style="background:#FAFAFA;">
+            <div class="td w-dim"><strong>合计</strong></div>
+            <div class="td w-orders"><strong>93</strong></div>
+            <div class="td w-sales"><strong>¥1,182,600</strong></div>
+            <div class="td w-refundcount"><strong>7</strong></div>
+            <div class="td w-refundamt"><strong style="color:#CF1322">¥60,100</strong></div>
+            <div class="td w-net"><strong>¥1,055,000</strong></div>
+            <div class="td w-op"></div>
+          </div>
+        </div>
+
+        <!-- 销售统计 - 按商品分类说明（铸件特殊） -->
+        <div style="margin-top: 20px; padding: 14px 16px; background: #E6F4FF; border: 1px solid #91CAFF; border-radius: 6px; font-size: 12px; color: #1F1F1F;">
+          <strong style="color:#1664FF">📌 按商品分类维度说明：</strong>
+          <table style="margin-top: 8px; width: 100%; font-size: 12px;">
+            <tr>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5; width: 120px;"><strong>全部</strong></td>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5;">= 标准件 + 铸件 + 软件（3 类汇总）</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5;"><strong>标准件</strong></td>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5;">现货销售，只看"支付时间"维度</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5;"><strong>铸件</strong></td>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5;">定制销售，<strong style="color:#D46B08">支持 2 个时间维度</strong>：① 客户来图时间（看订单实际需求）② 支付时间（看实际入账）</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5;"><strong>软件</strong></td>
+              <td style="padding: 4px 8px; background: #fff; border: 1px solid #E5E5E5;">虚拟商品，只看"支付时间"维度</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 模块三：支出统计（退款） -->
+    <!-- ============================================================== -->
+    <div id="sec-expense" class="module">
+      <div class="module-head">
+        <div class="module-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2.5"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          支出统计
+          <span class="num" style="background:#FF4D4F">模块 03</span>
+        </div>
+        <div class="module-meta">12 字段 · 4 种退款类型 × 4 种退款状态</div>
+      </div>
+
+      <div class="module-body">
+        <!-- 筛选区 -->
+        <div class="filter-card" style="margin-bottom: 16px;">
+          <div class="filter-row">
+            <div class="filter-item">
+              <div class="filter-label">退款单号</div>
+              <input class="filter-input" placeholder="RF-..." />
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">关联原订单</div>
+              <input class="filter-input" placeholder="SOI-..." />
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">客户/企业</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>启泰智能</option>
+                <option>东莞富鼎</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">商品分类</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>标准件</option>
+                <option>铸件</option>
+                <option>软件</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">退款类型</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>客户取消已支付订单</option>
+                <option>售后部分退款</option>
+                <option>售后全额退款</option>
+                <option>平台调账</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-row">
+            <div class="filter-item">
+              <div class="filter-label">退款状态</div>
+              <select class="filter-select">
+                <option>全部</option>
+                <option>待退款</option>
+                <option>退款中</option>
+                <option>已退款</option>
+                <option>退款失败</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">退款时间</div>
+              <input class="filter-date" value="2026-06-01" />
+              <span style="color:#BFBFBF">至</span>
+              <input class="filter-date" value="2026-07-13" />
+            </div>
+            <div class="filter-btn-group" style="margin-left: auto;">
+              <button class="btn btn-secondary">重置</button>
+              <button class="btn btn-primary">搜索</button>
+              <button class="btn btn-secondary">导出 Excel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 汇总卡 -->
+        <div class="summary-cards cols-4">
+          <div class="summary-card expense">
+            <div class="label">退款总额</div>
+            <div class="value expense-color">¥12,580.00</div>
+            <div class="delta">共 6 笔</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">待处理</div>
+            <div class="value warn-color">2</div>
+            <div class="delta">待退款 1 · 退款中 1</div>
+          </div>
+          <div class="summary-card warn">
+            <div class="label">退款失败</div>
+            <div class="value warn-color">1</div>
+            <div class="delta">需人工重试</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">涉及订单数</div>
+            <div class="value">5</div>
+            <div class="delta">按 order_id 去重</div>
+          </div>
+        </div>
+
+        <!-- 列表（12 列：砍掉商品名称/分类） -->
+        <div class="table-box" style="border: 1px solid #F0F0F0; border-radius: 8px;">
+          <div class="table-head">
+            <div class="th w-flow-id">退款单号</div>
+            <div class="th w-time">退款时间</div>
+            <div class="th w-type">退款类型</div>
+            <div class="th w-status">退款状态</div>
+            <div class="th w-amount right">退款金额</div>
+            <div class="th w-origamount right">原支付金额</div>
+            <div class="th w-order">关联原订单</div>
+            <div class="th w-origpay">原支付方式</div>
+            <div class="th w-customer">客户/企业</div>
+            <div class="th w-reason">退款原因</div>
+            <div class="th w-op center">操作</div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260709015</div>
+            <div class="td w-time">2026-07-09 10:22:33</div>
+            <div class="td w-type"><span class="pill pill-type-partial">售后部分退款</span></div>
+            <div class="td w-status"><span class="pill pill-refunded">已退款</span></div>
+            <div class="td w-amount num-expense">-380.00</div>
+            <div class="td w-origamount num-muted">3,500.00</div>
+            <div class="td w-order mono">S2607021456</div>
+            <div class="td w-origpay"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-customer">东莞市泰祥科技</div>
+            <div class="td w-reason">型号不符</div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260708008</div>
+            <div class="td w-time">2026-07-08 17:05:47</div>
+            <div class="td w-type"><span class="pill pill-type-full">售后全额退款</span></div>
+            <div class="td w-status"><span class="pill pill-refunded">已退款</span></div>
+            <div class="td w-amount num-expense">-4,128.00</div>
+            <div class="td w-origamount num-muted">4,128.00</div>
+            <div class="td w-order mono">S2606289871</div>
+            <div class="td w-origpay"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-customer">东莞市富鼎模具</div>
+            <div class="td w-reason">质量问题</div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260707012</div>
+            <div class="td w-time">2026-07-07 16:32:18</div>
+            <div class="td w-type"><span class="pill pill-type-cancel">客户取消</span></div>
+            <div class="td w-status"><span class="pill pill-failed">退款失败</span></div>
+            <div class="td w-amount num-expense">-2,500.00</div>
+            <div class="td w-origamount num-muted">2,500.00</div>
+            <div class="td w-order mono">S2606254561</div>
+            <div class="td w-origpay"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-customer">深圳市恒达精密</div>
+            <div class="td w-reason">客户取消（系统自动）</div>
+            <div class="td w-op"><span class="op-link">详情</span><span class="op-link danger">重新退款</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260706005</div>
+            <div class="td w-time">2026-07-06 14:18:52</div>
+            <div class="td w-type"><span class="pill pill-type-cancel">客户取消</span></div>
+            <div class="td w-status"><span class="pill pill-refunded">已退款</span></div>
+            <div class="td w-amount num-expense">-1,200.00</div>
+            <div class="td w-origamount num-muted">1,200.00</div>
+            <div class="td w-order mono">S2606240089</div>
+            <div class="td w-origpay"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-customer">中山市佳荣模塑</div>
+            <div class="td w-reason">客户取消（系统自动）</div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260705003</div>
+            <div class="td w-time">2026-07-05 09:45:21</div>
+            <div class="td w-type"><span class="pill pill-type-full">售后全额退款</span></div>
+            <div class="td w-status"><span class="pill pill-refunded">已退款</span></div>
+            <div class="td w-amount num-expense">-3,372.00</div>
+            <div class="td w-origamount num-muted">3,372.00</div>
+            <div class="td w-order mono">S2606230156</div>
+            <div class="td w-origpay"><span class="pill pill-payment-offline">线下打款</span></div>
+            <div class="td w-customer">东莞市泰祥科技</div>
+            <div class="td w-reason">型号不符</div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260704009</div>
+            <div class="td w-time">2026-07-04 11:22:09</div>
+            <div class="td w-type"><span class="pill pill-type-adjust">平台调账</span></div>
+            <div class="td w-status"><span class="pill pill-refunded">已退款</span></div>
+            <div class="td w-amount num-expense">-1,000.00</div>
+            <div class="td w-origamount num-muted">5,200.00</div>
+            <div class="td w-order mono">S2606210467</div>
+            <div class="td w-origpay"><span class="pill pill-payment-credit">账期支付</span></div>
+            <div class="td w-customer">东莞市富鼎模具</div>
+            <div class="td w-reason">调账-补差</div>
+            <div class="td w-op"><span class="op-link">详情</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260713008</div>
+            <div class="td w-time">2026-07-13 08:15:00</div>
+            <div class="td w-type"><span class="pill pill-type-partial">售后部分退款</span></div>
+            <div class="td w-status"><span class="pill pill-pending">待退款</span></div>
+            <div class="td w-amount num-expense">-4,200.00</div>
+            <div class="td w-origamount num-muted">18,500.00</div>
+            <div class="td w-order mono">S2607080161</div>
+            <div class="td w-origpay"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-customer">启泰智能科技</div>
+            <div class="td w-reason">质量问题</div>
+            <div class="td w-op"><span class="op-link">详情</span><span class="op-link">催促处理</span></div>
+          </div>
+
+          <div class="tr">
+            <div class="td w-flow-id mono">RF20260713009</div>
+            <div class="td w-time">2026-07-13 09:22:00</div>
+            <div class="td w-type"><span class="pill pill-type-partial">售后部分退款</span></div>
+            <div class="td w-status"><span class="pill pill-processing">退款中</span></div>
+            <div class="td w-amount num-expense">-7,500.00</div>
+            <div class="td w-origamount num-muted">22,000.00</div>
+            <div class="td w-order mono">S2607100172</div>
+            <div class="td w-origpay"><span class="pill pill-payment-online">在线支付</span></div>
+            <div class="td w-customer">启泰智能科技</div>
+            <div class="td w-reason">型号不符</div>
+            <div class="td w-op"><span class="op-link">详情</span><span class="op-link">查看进度</span></div>
+          </div>
+
+          <div class="pagination">
+            <div class="pagination-info">第 1-8 条 / 共 8 条</div>
+            <div class="pagination-ctrl">
+              <button class="page-btn" disabled>‹</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn" disabled>›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 全局数据字典 -->
+    <!-- ============================================================== -->
+    <div class="doc-section">
+      <div class="doc-head" onclick="toggleDoc('doc-global')">
+        <div class="doc-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1664FF" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+          全局数据字典
+          <span style="font-size:11px;color:#8C8C8C;font-weight:400;margin-left:8px;">3 模块共用 · 字段定义 7 组 / 状态枚举 / 统计公式</span>
+        </div>
+        <div class="doc-toggle open" id="toggle-doc-global">▼</div>
+      </div>
+      <div class="doc-body open" id="doc-global">
+        <div class="doc-tabs">
+          <div class="doc-tab active" data-tab="tab-fields" onclick="switchTab('tab-fields')">字段字典（7 组 / 30 个）</div>
+          <div class="doc-tab" data-tab="tab-enums" onclick="switchTab('tab-enums')">状态枚举</div>
+          <div class="doc-tab" data-tab="tab-formulas" onclick="switchTab('tab-formulas')">统计公式</div>
+        </div>
+
+        <!-- 字段字典 -->
+        <div class="doc-tab-content active" id="tab-fields">
+          <div style="font-size:12px;color:#8C8C8C;margin-bottom:12px;">
+            数据库表 <code style="background:#F5F5F5;padding:1px 6px;border-radius:3px;color:#1664FF">fund_flow</code> 全部字段，按 7 组分类。
+            <span class="req">*</span> = 必填 / <span class="opt">○</span> = 可选 / <span class="key">KEY</span> = 主键
+          </div>
+
+          <!-- ① 核心标识 -->
+          <div class="field-group-h">
+            <span class="num">①</span> 核心标识
+            <span class="meta">主键 / 业务单据号</span>
+          </div>
+          <table class="field-table">
+            <thead>
+              <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>flow_id</code></td><td>流水ID</td><td>bigint</td><td><span class="key">KEY</span></td><td>数据库主键，自增</td></tr>
+              <tr><td><code>flow_no</code></td><td>流水编号</td><td>string(20)</td><td><span class="req">*</span></td><td>业务可读。规则：<code>LS + yyyymmdd + 序号</code>，如 <code>LS20260711001</code></td></tr>
+            </tbody>
+          </table>
+
+          <!-- ② 资金信息 -->
+          <div class="field-group-h">
+            <span class="num">②</span> 资金信息
+            <span class="meta">钱本身</span>
+          </div>
+          <table class="field-table">
+            <thead>
+              <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>direction</code></td><td>资金方向</td><td>enum</td><td><span class="req">*</span></td><td><code>income</code> 收入 / <code>expense</code> 支出（退款）</td></tr>
+              <tr><td><code>flow_type</code></td><td>资金类型</td><td>enum</td><td><span class="req">*</span></td><td><code>order_payment</code> 订单收款 / <code>order_refund</code> 订单退款 / <code>adjustment</code> 调账</td></tr>
+              <tr><td><code>amount</code></td><td>金额</td><td>decimal(15,2)</td><td><span class="req">*</span></td><td><strong>永远正数</strong>，方向靠 <code>direction</code> 字段</td></tr>
+              <tr><td><code>currency</code></td><td>货币</td><td>string(8)</td><td><span class="opt">○</span></td><td>默认 CNY（人民币）</td></tr>
+              <tr><td><code>fee</code></td><td>手续费</td><td>decimal(15,2)</td><td><span class="opt">○</span></td><td>如支付宝提现费、退款手续费</td></tr>
+              <tr><td><code>actual_amount</code></td><td>实际到账</td><td>decimal(15,2)</td><td><span class="opt">○</span></td><td>= <code>amount</code> - <code>fee</code>。一般等于 amount，除非扣手续费</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ③ 关联实体 -->
+          <div class="field-group-h">
+            <span class="num">③</span> 关联实体
+            <span class="meta">连出去追溯</span>
+          </div>
+          <table class="field-table">
+            <thead>
+              <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>order_id</code></td><td>关联订单号</td><td>string(20)</td><td><span class="req">*</span></td><td>一笔流水一定挂着一个订单</td></tr>
+              <tr><td><code>payment_id</code></td><td>关联支付单号</td><td>string(20)</td><td><span class="req">*</span></td><td>收入时填本笔支付单；支出时填<strong>原支付单</strong>（不是新生成的）</td></tr>
+              <tr><td><code>refund_id</code></td><td>关联退款单号</td><td>string(20)</td><td><span class="opt">○</span></td><td>仅 <code>direction=expense</code> 时填，收入时为空</td></tr>
+              <tr><td><code>settlement_id</code></td><td>关联结算单号</td><td>string(20)</td><td><span class="opt">○</span></td><td>已纳入某期结算时挂上</td></tr>
+              <tr><td><code>statement_id</code></td><td>关联对账单号</td><td>string(20)</td><td><span class="opt">○</span></td><td>对账后挂上</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ④ 业务维度 -->
+          <div class="field-group-h">
+            <span class="num">④</span> 业务维度
+            <span class="meta">GROUP BY 字段 · 销售统计用</span>
+          </div>
+          <table class="field-table">
+            <thead>
+              <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>customer_id</code></td><td>客户ID</td><td>string(20)</td><td><span class="req">*</span></td><td>客户主数据 ID</td></tr>
+              <tr><td><code>customer_name</code></td><td>客户名称</td><td>string(100)</td><td><span class="req">*</span></td><td>冗余存储，列表展示不用 JOIN</td></tr>
+              <tr><td><code>sku_id</code></td><td>商品/SKU ID</td><td>string(20)</td><td><span class="opt">○</span></td><td>商品主数据 ID</td></tr>
+              <tr><td><code>sku_name</code></td><td>商品名称</td><td>string(100)</td><td><span class="opt">○</span></td><td>冗余存储</td></tr>
+              <tr><td><code>category</code></td><td>商品分类</td><td>enum</td><td><span class="req">*</span></td><td><code>standard</code> 标准件 / <code>casting</code> 铸件 / <code>software</code> 软件 / <code>other</code> 其他</td></tr>
+              <tr><td><code>channel</code></td><td>订单来源渠道</td><td>enum</td><td><span class="req">*</span></td><td><code>miniprogram</code> 小程序端 / <code>pc</code> PC端 / <code>offline</code> 线下</td></tr>
+              <tr><td><code>pay_method</code></td><td>支付方式</td><td>enum</td><td><span class="req">*</span></td><td><code>online</code> 在线支付（支付宝+微信）/ <code>credit_period</code> 账期支付 / <code>offline</code> 线下打款</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ⑤ 时间字段 -->
+          <div class="field-group-h">
+            <span class="num">⑤</span> 时间字段
+            <span class="meta">对账必备 · 4 个时间维度</span>
+          </div>
+          <table class="field-table">
+            <thead>
+              <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>biz_time</code></td><td>业务时间</td><td>datetime</td><td><span class="req">*</span></td><td>订单创建时间</td></tr>
+              <tr><td><code>pay_time</code></td><td>支付时间</td><td>datetime</td><td><span class="req">*</span></td><td>客户付了款的时间</td></tr>
+              <tr><td><code>fund_time</code></td><td>入账时间</td><td>datetime</td><td><span class="req">*</span></td><td><strong>钱实际到账</strong>。在线支付 ≈ pay_time；线下打款 = 财务审核通过时间；账期 = 客户实际打款时间</td></tr>
+              <tr><td><code>refund_time</code></td><td>退款时间</td><td>datetime</td><td><span class="opt">○</span></td><td>仅 <code>direction=expense</code> 时填</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ⑥ 状态字段 -->
+          <div class="field-group-h">
+            <span class="num">⑥</span> 状态字段
+            <span class="meta">资金状态 / 对账状态</span>
+          </div>
+          <table class="field-table">
+            <thead>
+              <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>fund_status</code></td><td>资金状态</td><td>enum</td><td><span class="req">*</span></td><td>5 个值：<code>received</code> 已入账 / <code>reversed</code> 已冲销 / <code>bad_debt</code> 坏账 / <code>refunded</code> 已退款 / <code>failed</code> 退款失败</td></tr>
+              <tr><td><code>reconcile_status</code></td><td>对账状态</td><td>enum</td><td><span class="opt">○</span></td><td><code>unreconciled</code> 未对账 / <code>matched</code> 已匹配 / <code>abnormal</code> 异常（需人工介入）</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ⑦ 审计字段 -->
+          <div class="field-group-h">
+            <span class="num">⑦</span> 审计字段
+            <span class="meta">谁在什么时候建的</span>
+          </div>
+          <table class="field-table">
+            <thead>
+              <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>created_by</code></td><td>创建人</td><td>string(50)</td><td><span class="opt">○</span></td><td>系统自动生成则填 <code>system</code></td></tr>
+              <tr><td><code>created_at</code></td><td>创建时间</td><td>datetime</td><td><span class="req">*</span></td><td>流水记录创建时间（≠ 入账时间）</td></tr>
+              <tr><td><code>updated_by</code></td><td>修改人</td><td>string(50)</td><td><span class="opt">○</span></td><td>最后修改人</td></tr>
+              <tr><td><code>updated_at</code></td><td>修改时间</td><td>datetime</td><td><span class="req">*</span></td><td>最后修改时间</td></tr>
+              <tr><td><code>remark</code></td><td>备注</td><td>string(500)</td><td><span class="opt">○</span></td><td>调账时必填原因；坏账时记"已坏账勾销 by 财务XXX"</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 状态枚举 -->
+        <div class="doc-tab-content" id="tab-enums">
+          <h3 style="font-size:13px;font-weight:600;margin:8px 0 12px;color:#1F1F1F;">资金状态机（5 个枚举值）</h3>
+          <div class="state-machine">
+            <div class="state-row">
+              <div class="state-box income">received<br><span style="font-size:10px;color:#8C8C8C">已入账</span></div>
+              <span class="state-arrow">── 全额退款完成 ──→</span>
+              <div class="state-box income terminal">reversed<br><span style="font-size:10px;color:#8C8C8C">已冲销</span></div>
+            </div>
+            <div class="state-row">
+              <div class="state-box income">received<br><span style="font-size:10px;color:#8C8C8C">已入账</span></div>
+              <span class="state-arrow">── 账期 30 天到期未还 ──→</span>
+              <div class="state-box income terminal" style="border-color:#8C8C8C;color:#595959;background:#F5F5F5">bad_debt<br><span style="font-size:10px;color:#8C8C8C">坏账</span></div>
+              <span style="color:#8C8C8C;font-size:11px;margin-left:12px;">（财务手动勾销，无需审批）</span>
+            </div>
+            <div class="state-row">
+              <div class="state-box expense">pending<br><span style="font-size:10px;color:#8C8C8C">待退款</span></div>
+              <span class="state-arrow">── 退款发起 ──→</span>
+              <div class="state-box expense">processing<br><span style="font-size:10px;color:#8C8C8C">退款中</span></div>
+              <span class="state-arrow">──→</span>
+              <div class="state-box expense terminal">refunded<br><span style="font-size:10px;color:#8C8C8C">已退款</span></div>
+            </div>
+            <div class="state-row">
+              <div class="state-box expense">processing<br><span style="font-size:10px;color:#8C8C8C">退款中</span></div>
+              <span class="state-arrow">── 通道返回失败 ──→</span>
+              <div class="state-box expense terminal">failed<br><span style="font-size:10px;color:#8C8C8C">退款失败</span></div>
+              <span style="color:#8C8C8C;font-size:11px;margin-left:12px;">（需人工重试）</span>
+            </div>
+          </div>
+
+          <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;color:#1F1F1F;">订单状态 → 资金动作 映射</h3>
+          <table class="field-table">
+            <thead>
+              <tr><th>业务事件</th><th>记流水？</th><th>方向</th><th>金额</th><th>资金状态</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>订单创建（待支付）</td><td>❌ 不记</td><td>—</td><td>—</td><td>钱没动</td></tr>
+              <tr><td>支付成功（在线：支付宝/微信）</td><td>✅ 记一笔</td><td>收入</td><td>实付金额</td><td><code>received</code></td></tr>
+              <tr><td>支付成功（线下，财务审核通过）</td><td>✅ 记一笔</td><td>收入</td><td>实付金额</td><td><code>received</code></td></tr>
+              <tr><td>账期支付 - 客户实际打款</td><td>✅ 记一笔</td><td>收入</td><td>实付金额</td><td><code>received</code></td></tr>
+              <tr><td>订单取消（未支付）</td><td>❌ 不记</td><td>—</td><td>—</td><td>钱没动</td></tr>
+              <tr><td>订单取消（已支付）</td><td>✅ 记一笔</td><td>支出</td><td>原支付金额</td><td><code>refunded</code></td></tr>
+              <tr><td>部分退款（售后）</td><td>✅ 记一笔</td><td>支出</td><td>本次退款金额</td><td><code>refunded</code></td></tr>
+              <tr><td>全额退款（售后）</td><td>✅ 记一笔</td><td>支出</td><td>原支付金额</td><td><code>refunded</code></td></tr>
+              <tr><td>财务调账（补收/补退）</td><td>✅ 记一笔</td><td>收入/支出</td><td>调账金额</td><td><code>received</code> / <code>reversed</code></td></tr>
+              <tr><td>坏账勾销（账期到期未还）</td><td>✏️ 修改</td><td>收入</td><td>—</td><td><code>received</code> → <code>bad_debt</code></td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-warn" style="margin-top:16px;">
+            <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div>
+              <strong>关键点：</strong>部分退款时，原支付那笔<strong>收入记录不改</strong>，只新增一条支出流水。两行并存，统计时 SUM(收入) - SUM(支出) 就拿到净收入。
+              不要在原记录上做"净额"计算，否则对账时找不到原始入账金额。
+            </div>
+          </div>
+
+          <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;color:#1F1F1F;">其他枚举值</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:#595959;">商品分类（category）</div>
+              <ul style="font-size:12px;color:#333;line-height:1.8;list-style:none;padding-left:0;">
+                <li><code>standard</code> 标准件（现货）</li>
+                <li><code>casting</code> 铸件（定制，<strong>双时间口径</strong>）</li>
+                <li><code>software</code> 软件（虚拟商品）</li>
+                <li><code>other</code> 其他</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:#595959;">渠道（channel）</div>
+              <ul style="font-size:12px;color:#333;line-height:1.8;list-style:none;padding-left:0;">
+                <li><code>miniprogram</code> 小程序端</li>
+                <li><code>pc</code> PC端</li>
+                <li><code>offline</code> 线下</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:#595959;">支付方式（pay_method）</div>
+              <ul style="font-size:12px;color:#333;line-height:1.8;list-style:none;padding-left:0;">
+                <li><code>online</code> 在线支付（支付宝 + 微信）</li>
+                <li><code>credit_period</code> 账期支付（到期结算才入账）</li>
+                <li><code>offline</code> 线下打款（财务审核通过才入账）</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:#595959;">资金类型（flow_type）</div>
+              <ul style="font-size:12px;color:#333;line-height:1.8;list-style:none;padding-left:0;">
+                <li><code>order_payment</code> 订单收款</li>
+                <li><code>order_refund</code> 订单退款</li>
+                <li><code>adjustment</code> 财务调账</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:#595959;">退款类型（refund_type）</div>
+              <ul style="font-size:12px;color:#333;line-height:1.8;list-style:none;padding-left:0;">
+                <li><code>cancel_paid</code> 客户取消已支付订单</li>
+                <li><code>refund_partial</code> 售后部分退款</li>
+                <li><code>refund_full</code> 售后全额退款</li>
+                <li><code>adjustment</code> 平台/财务调账</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:#595959;">对账状态（reconcile_status）</div>
+              <ul style="font-size:12px;color:#333;line-height:1.8;list-style:none;padding-left:0;">
+                <li><code>unreconciled</code> 未对账</li>
+                <li><code>matched</code> 已匹配</li>
+                <li><code>abnormal</code> 异常（人工介入）</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 统计公式 -->
+        <div class="doc-tab-content" id="tab-formulas">
+          <h3 style="font-size:13px;font-weight:600;margin:8px 0 12px;color:#1F1F1F;">销售统计公式（基于资金流水实时聚合）</h3>
+          <div class="formula-list">
+            <div class="formula-item">
+              <div class="formula-name">销售总额</div>
+              <div class="formula-expr">SUM(amount WHERE direction=income AND fund_status=received)</div>
+              <div class="formula-note">只算已入账的钱，剔除坏账</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-name">坏账金额</div>
+              <div class="formula-expr">SUM(amount WHERE direction=income AND fund_status=bad_debt)</div>
+              <div class="formula-note">账期到期未还 + 财务已勾销</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-name">退款总额</div>
+              <div class="formula-expr">SUM(amount WHERE direction=expense AND fund_status=refunded)</div>
+              <div class="formula-note">只算已退款成功的，failed/pending 不算</div>
+            </div>
+            <div class="formula-item" style="border-left-color:#1664FF;background:#E6F4FF;">
+              <div class="formula-name" style="color:#1664FF">⭐ 净销售额</div>
+              <div class="formula-expr">销售总额 - 退款总额 - 坏账金额</div>
+              <div class="formula-note">老板最该看的数字</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-name">成交订单数</div>
+              <div class="formula-expr">COUNT(DISTINCT order_id WHERE direction=income AND fund_status=received)</div>
+              <div class="formula-note">按 order_id 去重</div>
+            </div>
+          </div>
+
+          <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;color:#1F1F1F;">销售统计 - 时间口径（铸件特殊）</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="padding: 12px; background: #E6F4FF; border-radius: 6px; border-left: 3px solid #1664FF;">
+              <div style="font-size:13px;font-weight:600;color:#1664FF;margin-bottom:6px;">支付时间（默认）</div>
+              <div style="font-family: 'SF Mono', 'Monaco', monospace; font-size: 11px; color: #1F1F1F; background: #fff; padding: 6px 8px; border-radius: 3px; border: 1px solid #E5E5E5;">fund_time</div>
+              <div style="font-size:11px;color:#595959;margin-top:6px;">钱实际到账的时间。用于：财务对账、销售入账统计</div>
+              <div style="font-size:11px;color:#389E0D;margin-top:6px;"><strong>适用：</strong>标准件 / 软件 / 铸件（入账视角）</div>
+            </div>
+            <div style="padding: 12px; background: #FFFBE6; border-radius: 6px; border-left: 3px solid #FAAD14;">
+              <div style="font-size:13px;font-weight:600;color:#D48806;margin-bottom:6px;">客户来图时间（铸件专用）</div>
+              <div style="font-family: 'SF Mono', 'Monaco', monospace; font-size: 11px; color: #1F1F1F; background: #fff; padding: 6px 8px; border-radius: 3px; border: 1px solid #E5E5E5;">order.drawing_received_at</div>
+              <div style="font-size:11px;color:#595959;margin-top:6px;">铸件客户提交图纸的时间。用于：销售订单需求时点统计</div>
+              <div style="font-size:11px;color:#D48806;margin-top:6px;"><strong>适用：</strong>仅铸件</div>
+            </div>
+          </div>
+
+          <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;color:#1F1F1F;">支出统计公式</h3>
+          <div class="formula-list">
+            <div class="formula-item">
+              <div class="formula-name">退款总额</div>
+              <div class="formula-expr">SUM(amount WHERE direction=expense AND fund_status=refunded)</div>
+              <div class="formula-note">只算已退款成功的</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-name">退款笔数</div>
+              <div class="formula-expr">COUNT(* WHERE direction=expense)</div>
+              <div class="formula-note">含待退款/失败/成功所有状态</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-name">涉及订单数</div>
+              <div class="formula-expr">COUNT(DISTINCT order_id WHERE direction=expense)</div>
+              <div class="formula-note">按 order_id 去重</div>
+            </div>
+          </div>
+
+          <div class="callout callout-warn" style="margin-top:20px;">
+            <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div>
+              <strong>特别说明：</strong>
+              <ol style="margin: 4px 0 0 16px; padding: 0; line-height: 1.8;">
+                <li>所有 <code>amount</code> 字段都是<strong>正数</strong>，方向靠 <code>direction</code> 区分</li>
+                <li>「待支付」订单<strong>不</strong>进入资金流水</li>
+                <li>账期支付 = <strong>客户实际打款</strong>才入账</li>
+                <li>线下打款 = 财务<strong>审核通过</strong>才入账</li>
+                <li>坏账勾销 = 账期 30 天到期 + 财务手动操作，<strong>不需要审批</strong></li>
+                <li>催收回款 = <strong>新建</strong>一条 <code>received</code> 流水，不挂回原支付单</li>
+                <li>部分退款 = <strong>原收入记录不改</strong>，只新增一条支出流水</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== 文档折叠 =====
+    function toggleDoc(id) {
+      const body = document.getElementById(id);
+      const toggle = document.getElementById('toggle-' + id);
+      if (body.classList.contains('open')) {
+        body.classList.remove('open');
+        toggle.classList.remove('open');
+      } else {
+        body.classList.add('open');
+        toggle.classList.add('open');
+      }
+    }
+
+    // ===== tab 切换 =====
+    function switchTab(tabId) {
+      document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.doc-tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.doc-tab[data-tab="${tabId}"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // ===== 滚动监听，高亮当前目录项 =====
+    const sections = ['sec-overview', 'sec-flow', 'sec-sales', 'sec-expense', 'sec-fields', 'sec-enums', 'sec-formulas'];
+    const menuItems = document.querySelectorAll('.sidebar .menu-item');
+
+    function updateActiveMenu() {
+      const scrollTop = window.scrollY + 100;
+      let current = sections[0];
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollTop) {
+          current = id;
+        }
+      }
+      menuItems.forEach(item => {
+        item.classList.remove('active');
+        const href = item.getAttribute('href');
+        if (href === '#' + current) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveMenu);
+    updateActiveMenu();
+
+    // ===== 销售统计维度切换 =====
+    document.querySelectorAll('.dim-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.dim-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // ===== 工具栏 tab 切换 =====
+    document.querySelectorAll('.toolbar-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const siblings = this.parentElement.querySelectorAll('.toolbar-tab');
+        siblings.forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
