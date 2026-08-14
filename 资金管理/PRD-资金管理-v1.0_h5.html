@@ -1,0 +1,533 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资金管理 PRD v1.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f6f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        .doc-header {
+            background: linear-gradient(135deg, #1664FF 0%, #0958D9 100%);
+            color: #fff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .doc-header h1 { font-size: 28px; margin-bottom: 16px; }
+        .doc-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+        .doc-meta-item { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 4px; font-size: 13px; }
+
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #E8F0FF;
+        }
+        .section h3 { font-size: 16px; color: #1664FF; margin: 20px 0 12px 0; }
+        .section h4 { font-size: 14px; color: #333; margin: 16px 0 8px 0; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+        th, td { padding: 10px 12px; text-align: left; border: 1px solid #E5E5E5; }
+        th { background: #F7F8FA; font-weight: 600; }
+        tr:hover td { background: #FAFAFA; }
+
+        ul, ol { padding-left: 20px; margin: 8px 0; }
+        li { margin-bottom: 6px; font-size: 14px; }
+
+        .highlight { background: #FFFDE7; border: 1px solid #FFE58F; border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .warning { background: #FFF1F0; border: 1px solid #FFCCC7; border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+        .info { background: #E8F0FF; border: 1px solid #91CAFF; border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+        .flow-block { background: #F7F8FA; border-radius: 8px; padding: 16px; margin: 12px 0; font-family: "SF Mono", Consolas, monospace; font-size: 12px; line-height: 1.8; white-space: pre-wrap; overflow-x: auto; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 12px 0; }
+        .card { background: #F7F8FA; border-radius: 8px; padding: 16px; }
+        .card-title { font-size: 12px; color: #8C8C8C; }
+        .card-value { font-size: 14px; font-weight: 600; }
+
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .tag-red { background: #FFF0F0; color: #F5222D; }
+        .tag-orange { background: #FFF7E6; color: #FA8C16; }
+        .tag-yellow { background: #FFFBE6; color: #FAAD14; }
+        .tag-blue { background: #E8F0FF; color: #1664FF; }
+        .tag-green { background: #F6FFED; color: #52C41A; }
+        .tag-gray { background: #F5F5F5; color: #8C8C8C; }
+
+        .checklist { list-style: none; padding: 0; }
+        .checklist li { padding: 8px 0; border-bottom: 1px solid #F0F0F0; }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist li:before { content: "☐ "; color: #8C8C8C; }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .section { padding: 16px; }
+            .card-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="doc-header">
+            <h1>💰 资金管理 PRD</h1>
+            <div class="doc-meta">
+                <span class="doc-meta-item">📌 v1.0</span>
+                <span class="doc-meta-item">👤 Victoria（PM）</span>
+                <span class="doc-meta-item">📅 2026-07-13</span>
+                <span class="doc-meta-item">⏳ 进行中</span>
+            </div>
+            <p style="margin-top:16px;opacity:0.9;font-size:14px;">资金流水 / 销售统计 / 支出统计 3 个模块。解决资金流水与收支明细混淆、销售统计口径不统一、坏账无独立管理路径这3个长期存在的问题。配套原型：<code>ui-demo-fund-flow.html</code>（03_原型设计/商家后台/）</p>
+        </div>
+
+        <div class="section">
+            <h2>文档信息</h2>
+            <table>
+                <tr><th>字段</th><th>内容</th></tr>
+                <tr><td>文档名称</td><td>资金管理（含资金流水 / 销售统计 / 支出统计 3 模块）</td></tr>
+                <tr><td>版本</td><td>v1.0</td></tr>
+                <tr><td>作者</td><td>Victoria（PM）</td></tr>
+                <tr><td>创建日期</td><td>2026-07-13</td></tr>
+                <tr><td>状态</td><td>进行中</td></tr>
+                <tr><td>配套原型</td><td><code>ui-demo-fund-flow.html</code>（03_原型设计/商家后台/）</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>1. 背景与目标</h2>
+            <h3>1.1 背景</h3>
+            <p>启泰数智模具配件 B2B 商城，财务模块长期存在 3 个问题：</p>
+            <ol>
+                <li><strong>资金流水 vs 收支明细混淆</strong>——历史做法是把"订单列表"硬塞进收支明细页，待支付、已取消的订单都列出来，最后对账对不上。</li>
+                <li><strong>销售统计口径不统一</strong>——铸件是定制品（按客户来图时间组织生产），标准件是现货（按支付时间算），但旧系统一律按"订单创建时间"统计，账期客户差异巨大。</li>
+                <li><strong>坏账没有管理路径</strong>——账期客户到期未还款，过去只能人工 Excel 标记，销售总额虚高，无法反映真实回款。</li>
+            </ol>
+            <h3>1.2 上线后影响</h3>
+            <ul>
+                <li>财务对账准确率从约 70% 提升到 95%+</li>
+                <li>销售统计支持"按支付时间/来图时间"双口径，铸件销售时点判断更准</li>
+                <li>坏账独立标记，老板看报表不被虚高数字误导</li>
+                <li>退款失败可追踪可重试，减少资金风险</li>
+            </ul>
+            <h3>1.3 目标</h3>
+            <table>
+                <tr><th>#</th><th>目标</th><th>衡量指标</th></tr>
+                <tr><td>1</td><td>收支明细页只展示"钱真发生过"的事件</td><td>待支付/已取消订单不出现</td></tr>
+                <tr><td>2</td><td>销售统计支持 4 维度 + 铸件双时间口径</td><td>按时间/客户/商品/支付方式/渠道均可拆分</td></tr>
+                <tr><td>3</td><td>坏账有独立状态机和操作路径</td><td>财务可手动勾销，销售总额自动剔除</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>2. 用户角色与故事</h2>
+            <table>
+                <tr><th>角色</th><th>身份</th><th>用户故事</th></tr>
+                <tr><td><strong>财务</strong></td><td>启泰财务岗位</td><td>查看每笔收支 → 客户取消的退款能跟踪到原支付单 → 账期坏账手动勾销</td></tr>
+                <tr><td><strong>销售</strong></td><td>启泰销售/销售管理</td><td>按客户/渠道看销售排行 → 铸件按来图时间看真实需求 → 客户取消的订单可追溯</td></tr>
+                <tr><td><strong>运营/管理层</strong></td><td>启泰运营 + 老板</td><td>看本月净销售（含坏账剔除）→ 按商品分类看各品类销售 → 异常退款快速定位</td></tr>
+                <tr><td><strong>研发</strong></td><td>启泰研发 + DBA</td><td>30 字段 7 组清晰建模 → 状态机可测试 → 统计公式可 SQL 复现</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>3. 功能需求</h2>
+
+            <h3>3.1 模块一：资金流水（fund_flow）</h3>
+            <h4>3.1.1 功能描述</h4>
+            <p>展示每一笔"钱真实发生过"的事件，<strong>待支付、已取消的订单不计入</strong>。收支明细页是商家最常用的对账入口。</p>
+
+            <h4>3.1.2 字段说明（数据库表 fund_flow，30 字段 / 7 组）</h4>
+            <table>
+                <tr><th>组</th><th>字段</th><th>类型</th><th>必填</th><th>含义</th></tr>
+                <tr><td rowspan="2"><strong>①核心标识</strong></td><td>flow_id</td><td>bigint</td><td>KEY</td><td>主键，自增</td></tr>
+                <tr><td>flow_no</td><td>string(20)</td><td>*</td><td>业务编号，规则 LS + yyyymmdd + 序号，如 LS20260711001</td></tr>
+                <tr><td rowspan="6"><strong>②资金信息</strong></td><td>direction</td><td>enum</td><td>*</td><td>income 收入 / expense 支出</td></tr>
+                <tr><td>flow_type</td><td>enum</td><td>*</td><td>order_payment / order_refund / adjustment</td></tr>
+                <tr><td>amount</td><td>decimal(15,2)</td><td>*</td><td><strong>永远正数</strong>，方向靠 direction</td></tr>
+                <tr><td>currency</td><td>string(8)</td><td>○</td><td>默认 CNY</td></tr>
+                <tr><td>fee</td><td>decimal(15,2)</td><td>○</td><td>手续费</td></tr>
+                <tr><td>actual_amount</td><td>decimal(15,2)</td><td>○</td><td>amount - fee</td></tr>
+                <tr><td rowspan="5"><strong>③关联实体</strong></td><td>order_id</td><td>string(20)</td><td>*</td><td>关联订单号</td></tr>
+                <tr><td>payment_id</td><td>string(20)</td><td>*（催收回款场景除外，见§4.1，不挂原支付单）</td><td>收入填本笔支付单；支出填<strong>原支付单</strong></td></tr>
+                <tr><td>refund_id</td><td>string(20)</td><td>○</td><td>仅 direction=expense 时填</td></tr>
+                <tr><td>settlement_id</td><td>string(20)</td><td>○</td><td>已纳入结算时挂上</td></tr>
+                <tr><td>statement_id</td><td>string(20)</td><td>○</td><td>对账后挂上</td></tr>
+                <tr><td rowspan="7"><strong>④业务维度</strong></td><td>customer_id</td><td>string(20)</td><td>*</td><td>客户 ID</td></tr>
+                <tr><td>customer_name</td><td>string(100)</td><td>*</td><td>冗余存储</td></tr>
+                <tr><td>sku_id</td><td>string(20)</td><td>○</td><td>商品/SKU ID</td></tr>
+                <tr><td>sku_name</td><td>string(100)</td><td>○</td><td>冗余存储</td></tr>
+                <tr><td>category</td><td>enum</td><td>*</td><td>standard / casting / software / other</td></tr>
+                <tr><td>channel</td><td>enum</td><td>*</td><td>miniprogram / pc / offline</td></tr>
+                <tr><td>pay_method</td><td>enum</td><td>*</td><td>online / credit_period / offline</td></tr>
+                <tr><td rowspan="4"><strong>⑤时间字段</strong></td><td>biz_time</td><td>datetime</td><td>*</td><td>订单创建时间</td></tr>
+                <tr><td>pay_time</td><td>datetime</td><td>*</td><td>客户付了款的时间</td></tr>
+                <tr><td>fund_time</td><td>datetime</td><td>*</td><td><strong>钱实际到账</strong>。线下 = 财务审核通过；账期 = 客户实际打款</td></tr>
+                <tr><td>refund_time</td><td>datetime</td><td>○</td><td>仅 expense 时填</td></tr>
+                <tr><td rowspan="2"><strong>⑥状态字段</strong></td><td>fund_status</td><td>enum</td><td>*</td><td>received / reversed / bad_debt / refunded / failed / pending / processing（2026-08-08补充：后两个是退款流程中会用到的状态，原枚举漏写，§7.4验收标准的查询语句已经在用这两个值）</td></tr>
+                <tr><td>reconcile_status</td><td>enum</td><td>○</td><td>unreconciled / matched / abnormal</td></tr>
+                <tr><td rowspan="5"><strong>⑦审计字段</strong></td><td>created_by</td><td>string(50)</td><td>○</td><td>系统自动生成填 system</td></tr>
+                <tr><td>created_at</td><td>datetime</td><td>*</td><td>创建时间</td></tr>
+                <tr><td>updated_by</td><td>string(50)</td><td>○</td><td>最后修改人</td></tr>
+                <tr><td>updated_at</td><td>datetime</td><td>*</td><td>最后修改时间</td></tr>
+                <tr><td>remark</td><td>string(500)</td><td>○</td><td>备注（调账/坏账时必填）</td></tr>
+            </table>
+
+            <h4>3.1.3 列表页字段（9 列）</h4>
+            <table>
+                <tr><th>#</th><th>字段</th><th>展示</th><th>来源字段</th></tr>
+                <tr><td>1</td><td>流水编号</td><td>蓝色 mono 字体，点击看详情</td><td>flow_no</td></tr>
+                <tr><td>2</td><td>入账/退款时间</td><td>时间降序</td><td>fund_time</td></tr>
+                <tr><td>3</td><td>方向</td><td>🟢收入 / 🔴支出 pill</td><td>direction</td></tr>
+                <tr><td>4</td><td>金额</td><td>收入 + 绿，支出 - 红</td><td>amount + direction</td></tr>
+                <tr><td>5</td><td>关联订单</td><td>蓝色 mono 字体，跳转订单详情</td><td>order_id</td></tr>
+                <tr><td>6</td><td>客户</td><td>文本</td><td>customer_name</td></tr>
+                <tr><td>7</td><td>分类</td><td>标签 pill</td><td>category</td></tr>
+                <tr><td>8</td><td>支付方式</td><td>彩色 pill</td><td>pay_method</td></tr>
+                <tr><td>9</td><td>状态</td><td>5 种颜色 pill</td><td>fund_status</td></tr>
+            </table>
+
+            <h4>3.1.4 筛选条件</h4>
+            <ul>
+                <li>流水编号、关联订单号（精确匹配）</li>
+                <li>客户/企业、商品分类、支付方式、渠道</li>
+                <li>资金方向（全部/收入/支出）</li>
+                <li>入账时间（日期范围）</li>
+            </ul>
+
+            <h4>3.1.5 工具栏 Tab</h4>
+            <p>全部 / 仅收入 / 仅支出</p>
+
+            <h4>3.1.6 规则约束</h4>
+            <ul>
+                <li>amount 永远正数，方向靠 direction，<strong>不能用正负号</strong>——对账会乱</li>
+                <li>列表底部导出 Excel 按当前筛选条件导出</li>
+                <li>待支付、已取消的订单<strong>不进入</strong>资金流水表</li>
+            </ul>
+
+            <h4>3.1.7 异常情况</h4>
+            <table>
+                <tr><th>场景</th><th>处理方式</th></tr>
+                <tr><td>线下打款凭证模糊</td><td>财务审核失败，原支付单状态改"审核失败"，可重新提交</td></tr>
+                <tr><td>退款通道返回失败</td><td>fund_status 置为 failed，操作栏显示"重新退款"按钮</td></tr>
+                <tr><td>财务勾销坏账</td><td>收入行 fund_status 从 received 改为 bad_debt，记 remark 留痕</td></tr>
+            </table>
+
+            <h3>3.2 模块二：销售统计</h3>
+            <h4>3.2.1 功能描述</h4>
+            <p>聚合视图，<strong>不落表</strong>，实时从 fund_flow SELECT GROUP BY 计算。按 4 个维度拆分统计，支持铸件的双时间口径切换。</p>
+
+            <h4>3.2.2 统计维度（4 个）</h4>
+            <table>
+                <tr><th>维度</th><th>维度值</th><th>备注</th></tr>
+                <tr><td>按时间</td><td>2026-07 / 2026-W28 / 2026-07-13 等</td><td>默认按"支付时间"；铸件可切"来图时间"</td></tr>
+                <tr><td>按客户</td><td>客户名</td><td></td></tr>
+                <tr><td>按商品分类</td><td><strong>全部</strong>（标准件+铸件+软件）/ 标准件 / 铸件 / 软件 / 其他</td><td>"全部" = 3 类合计</td></tr>
+                <tr><td>按支付方式</td><td>在线支付 / 账期支付 / 线下打款</td><td></td></tr>
+                <tr><td>按渠道</td><td>小程序端 / PC端 / 线下</td><td></td></tr>
+            </table>
+
+            <h4>3.2.3 时间口径（铸件特殊）</h4>
+            <table>
+                <tr><th>口径</th><th>字段</th><th>适用分类</th><th>用途</th></tr>
+                <tr><td>支付时间（默认）</td><td>fund_time</td><td>全部</td><td>财务对账、销售入账统计</td></tr>
+                <tr><td>客户来图时间</td><td>order.drawing_received_at</td><td><strong>仅铸件</strong></td><td>销售订单需求时点统计</td></tr>
+            </table>
+            <p>切换"来图时间"时：标准件/软件仍按 fund_time 统计（不可切换）；铸件改按 drawing_received_at 统计。</p>
+            <div class="warning">⚠️ <strong>风险提示（2026-08-08）</strong>：order.drawing_received_at 字段是否已存在于订单表，§8.2标注"待确认"。这条口径切换功能和对应的验收标准目前当作已确定功能在描述，实际是否能实现取决于这个字段存不存在，评审时需要向研发确认，不要当成已落地功能对待。</div>
+
+            <h4>3.2.4 汇总卡（4 张）</h4>
+            <table>
+                <tr><th>卡片</th><th>公式</th></tr>
+                <tr><td>销售总额</td><td>SUM(amount WHERE direction=income AND fund_status=received)</td></tr>
+                <tr><td>退款总额</td><td>SUM(amount WHERE direction=expense AND fund_status=refunded)</td></tr>
+                <tr><td>坏账金额</td><td>SUM(amount WHERE direction=income AND fund_status=bad_debt)</td></tr>
+                <tr><td>净销售额</td><td>销售总额 - 退款总额（坏账已通过fund_status=received的筛选条件被排除，不需要在这里再减一次；2026-08-08修正：原公式"销售总额-退款总额-坏账金额"重复扣减了坏账，导致净销售额被低估）</td></tr>
+            </table>
+
+            <h4>3.2.5 列表字段（6 列）</h4>
+            <table>
+                <tr><th>#</th><th>字段</th><th>公式</th></tr>
+                <tr><td>1</td><td>维度值</td><td>GROUP BY 的 key</td></tr>
+                <tr><td>2</td><td>销售订单数</td><td>COUNT(DISTINCT order_id WHERE direction=income AND fund_status=received)</td></tr>
+                <tr><td>3</td><td>销售总额</td><td>同汇总卡</td></tr>
+                <tr><td>4</td><td>退款笔数</td><td>COUNT(* WHERE direction=expense AND fund_status=refunded)</td></tr>
+                <tr><td>5</td><td>退款总额</td><td>同汇总卡</td></tr>
+                <tr><td>6</td><td>净销售额</td><td>销售总额 - 退款总额（同§3.2.4修正，坏账不重复扣减）</td></tr>
+            </table>
+            <p>最后一行"合计"汇总所有维度行。</p>
+
+            <h4>3.2.6 规则约束</h4>
+            <ul>
+                <li>销售总额只算 received 的钱，<strong>不包含</strong> pending / reversed / bad_debt</li>
+                <li>退款总额只算 refunded 的，<strong>不包含</strong> failed / pending</li>
+                <li>部分退款的订单按 1 笔算，金额按实际退款算</li>
+                <li>全额退款的订单：原收入改 reversed，新支出记 refunded，<strong>不计入</strong>销售总额</li>
+            </ul>
+
+            <h4>3.2.7 异常情况</h4>
+            <table>
+                <tr><th>场景</th><th>处理方式</th></tr>
+                <tr><td>铸件无来图时间（标准件/软件订单）</td><td>不可切换到"来图时间"维度，仅"支付时间"</td></tr>
+                <tr><td>维度切换后某分类无数据</td><td>显示空状态"暂无符合条件的数据"</td></tr>
+                <tr><td>切换时间口径后总数变化</td><td>顶部汇总卡实时更新，列表同步刷新</td></tr>
+            </table>
+
+            <h3>3.3 模块三：支出统计</h3>
+            <h4>3.3.1 功能描述</h4>
+            <p>聚焦"钱出去了"的所有记录。展示所有退款的明细，区分 4 种退款类型 × 4 种退款状态。</p>
+
+            <h4>3.3.2 列表字段（11 列）</h4>
+            <table>
+                <tr><th>#</th><th>字段</th><th>展示</th><th>来源</th></tr>
+                <tr><td>1</td><td>退款单号</td><td>蓝色 mono</td><td>refund_id（关联）</td></tr>
+                <tr><td>2</td><td>退款时间</td><td>时间降序</td><td>refund_time</td></tr>
+                <tr><td>3</td><td>退款类型</td><td>4 色 pill</td><td>refund_type</td></tr>
+                <tr><td>4</td><td>退款状态</td><td>4 色 pill</td><td>fund_status</td></tr>
+                <tr><td>5</td><td>退款金额</td><td>红色，右对齐</td><td>amount + direction=expense</td></tr>
+                <tr><td>6</td><td>原支付金额</td><td>灰色，参考用</td><td>原 payment.amount</td></tr>
+                <tr><td>7</td><td>关联原订单</td><td>蓝色 mono，跳转</td><td>order_id</td></tr>
+                <tr><td>8</td><td>原支付方式</td><td>彩色 pill</td><td>原 pay_method</td></tr>
+                <tr><td>9</td><td>客户/企业</td><td>文本</td><td>customer_name</td></tr>
+                <tr><td>10</td><td>退款原因</td><td>客户填的或系统生成</td><td>remark</td></tr>
+                <tr><td>11</td><td>操作</td><td>详情 / 重试 / 催促</td><td>—</td></tr>
+            </table>
+
+            <h4>3.3.3 退款类型（4 种）</h4>
+            <table>
+                <tr><th>枚举值</th><th>中文</th><th>触发场景</th></tr>
+                <tr><td>cancel_paid</td><td>客户取消已支付订单</td><td>客户在订单未发货前取消，自动触发</td></tr>
+                <tr><td>refund_partial</td><td>售后部分退款</td><td>售后申请部分商品退款</td></tr>
+                <tr><td>refund_full</td><td>售后全额退款</td><td>售后申请全部商品退款</td></tr>
+                <tr><td>adjustment</td><td>平台/财务调账</td><td>财务手动补差</td></tr>
+            </table>
+
+            <h4>3.3.4 退款状态（4 种）</h4>
+            <table>
+                <tr><th>枚举值</th><th>中文</th><th>含义</th></tr>
+                <tr><td>pending</td><td>待退款</td><td>退款单创建，等待通道处理</td></tr>
+                <tr><td>processing</td><td>退款中</td><td>通道处理中</td></tr>
+                <tr><td>refunded</td><td>已退款</td><td>退款成功</td></tr>
+                <tr><td>failed</td><td>退款失败</td><td>通道返回失败，需人工重试</td></tr>
+            </table>
+
+            <h4>3.3.5 汇总卡（4 张）</h4>
+            <table>
+                <tr><th>卡片</th><th>公式</th></tr>
+                <tr><td>退款总额</td><td>SUM(amount WHERE direction=expense AND fund_status=refunded)</td></tr>
+                <tr><td>待处理</td><td>COUNT(* WHERE direction=expense AND fund_status IN (pending, processing))</td></tr>
+                <tr><td>退款失败</td><td>COUNT(* WHERE direction=expense AND fund_status=failed)</td></tr>
+                <tr><td>涉及订单数</td><td>COUNT(DISTINCT order_id WHERE direction=expense)</td></tr>
+            </table>
+
+            <h4>3.3.6 规则约束</h4>
+            <ul>
+                <li>部分退款：原 payment_id 关联的收入记录<strong>不修改</strong>，只新增一条支出流水</li>
+                <li>全额退款：原收入记录 fund_status 改 reversed，同时新增一条支出 refunded</li>
+                <li>退款失败可点击"重新退款"重试，成功后状态置 refunded</li>
+                <li>退款原因必填（客户填的或系统自动）</li>
+            </ul>
+
+            <h4>3.3.7 异常情况</h4>
+            <table>
+                <tr><th>场景</th><th>处理方式</th></tr>
+                <tr><td>退款失败</td><td>操作栏显示"重新退款"按钮，财务可手动重试</td></tr>
+                <tr><td>平台调账退款</td><td>refund_type=adjustment，退款原因填"调账-补差"等</td></tr>
+                <tr><td>多次部分退款</td><td>每笔退款单独立存在，按时间倒序排列</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>4. 核心流程</h2>
+            <h3>4.1 资金流水触发规则（关键）</h3>
+            <div class="flow-block">订单创建（待支付）     → ❌ 不记流水
+订单创建（已支付）     → ❌ 不记流水
+支付成功（在线）       → ✅ income / received
+支付成功（线下，审核通过）→ ✅ income / received
+账期支付 - 客户实际打款 → ✅ income / received
+订单取消（未支付）     → ❌ 不记流水
+订单取消（已支付）     → ✅ expense / refunded
+售后部分退款           → ✅ expense / refunded（原收入记录不改）
+售后全额退款           → ✅ expense / refunded + 原收入 → reversed
+财务调账（补收）       → ✅ income / received
+财务调账（补退）       → ✅ expense / refunded
+坏账勾销（账期到期）   → ✏️ income: received → bad_debt（财务直接做，无审批）
+催收回款（坏账已勾销后）→ ✅ 新建 income / received（不挂原支付单）</div>
+
+            <h3>4.2 坏账勾销流程</h3>
+            <div class="flow-block">账期 30 天到期 → 客户未还 → 财务点击「坏账勾销」按钮
+   ↓
+fund_flow: fund_status = received → bad_debt
+remark = "已坏账勾销 by 财务XXX" + 时间戳
+   ↓
+销售统计：销售总额自动剔除该笔 → 进入"坏账金额"卡</div>
+            <p><strong>关键决策：</strong></p>
+            <ul>
+                <li>账期 30 天到期即可勾销</li>
+                <li><strong>不需审批</strong>，财务直接做</li>
+                <li>勾销后不可逆（除非走特殊恢复流程，留痕）</li>
+            </ul>
+
+            <h3>4.3 部分退款流程</h3>
+            <div class="flow-block">客户申请售后部分退款
+   ↓
+创建 refund 记录，refund_type = refund_partial
+   ↓
+创建支出流水：direction=expense, fund_status=refunded
+   amount = 本次退款金额（原收入记录不改）
+   ↓
+统计：销售总额 = SUM(received) - 不变
+      退款总额 += 本次退款金额
+      净销售额 = 销售 - 退款（坏账不重复扣减，见§3.2.4）</div>
+            <p><strong>为什么不改原收入？</strong> 对账时要找到原始入账金额，原记录 + 后续支出记录可推算净额。</p>
+        </div>
+
+        <div class="section">
+            <h2>5. 数据结构</h2>
+            <h3>5.1 资金流水表 fund_flow</h3>
+            <p>详见 3.1.2 字段说明。</p>
+            <p><strong>唯一索引：</strong></p>
+            <ul>
+                <li>flow_id（主键）</li>
+                <li>flow_no（业务编号唯一）</li>
+                <li>(order_id, direction, fund_status, refund_id)（避免同一笔支付/退款事件被重复记账；2026-08-11修正：原来是(order_id, direction, fund_status)三个字段，会导致同一订单的第二次部分退款insert时唯一索引冲突失败——因为两次退款的order_id/direction=expense/fund_status=refunded完全相同，只有refund_id不同。见§3.3.7"多次部分退款"场景，每笔退款是独立记录。income方向的记录refund_id为空，不受影响）</li>
+            </ul>
+            <p><strong>查询索引：</strong></p>
+            <ul>
+                <li>(customer_id, fund_time) 客户维度</li>
+                <li>(category, channel, fund_time) 销售统计聚合</li>
+                <li>(fund_status, fund_time) 状态筛选</li>
+            </ul>
+
+            <h3>5.2 关联实体</h3>
+            <table>
+                <tr><th>关联表</th><th>关联字段</th><th>备注</th></tr>
+                <tr><td>order</td><td>order_id</td><td>订单主数据</td></tr>
+                <tr><td>payment</td><td>payment_id</td><td>支付单（收入用本笔，支出用原）</td></tr>
+                <tr><td>refund</td><td>refund_id</td><td>退款单（仅支出时）</td></tr>
+                <tr><td>settlement</td><td>settlement_id</td><td>结算单（可选）</td></tr>
+                <tr><td>statement</td><td>statement_id</td><td>对账单（可选）</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>6. 非功能性需求</h2>
+            <table>
+                <tr><th>类型</th><th>要求</th></tr>
+                <tr><td><strong>数据准确性</strong></td><td>amount 永远正数，由 direction 区分方向；对账时不允许正负号混用</td></tr>
+                <tr><td><strong>性能</strong></td><td>收支明细列表查询响应 &lt; 500ms（10w 行内）；销售统计聚合 &lt; 2s</td></tr>
+                <tr><td><strong>可扩展性</strong></td><td>资金状态机可扩展（新增状态不影响历史数据）</td></tr>
+                <tr><td><strong>可追溯</strong></td><td>所有修改留痕（updated_by / updated_at / remark）</td></tr>
+                <tr><td><strong>权限</strong></td><td>财务可勾销坏账；销售/运营只读，不可修改资金状态</td></tr>
+                <tr><td><strong>审计</strong></td><td>关键操作（坏账勾销、调账）必须填 remark 留痕</td></tr>
+                <tr><td><strong>兼容性</strong></td><td>旧版"按订单创建时间"销售统计保留为高级筛选，不影响新版默认</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>7. 验收标准</h2>
+            <h3>7.1 资金流水验收</h3>
+            <ul class="checklist">
+                <li>待支付、已取消的订单<strong>不出现</strong>在收支明细页</li>
+                <li>列表展示 9 列字段，与原型一致</li>
+                <li>"仅收入/仅支出" Tab 切换正确</li>
+                <li>导出 Excel 按当前筛选条件</li>
+                <li>流水编号格式 LSyyyymmddXXXXX 唯一</li>
+            </ul>
+            <h3>7.2 销售统计验收</h3>
+            <ul class="checklist">
+                <li>4 个维度（按时间/客户/商品分类/支付方式/渠道）切换正常</li>
+                <li>铸件可切换"支付时间/来图时间"双口径，标准件/软件不可切换</li>
+                <li>"全部" = 标准件 + 铸件 + 软件 三类汇总</li>
+                <li>坏账金额从销售总额中剔除，不重复计入</li>
+                <li>净销售额 = 销售总额 - 退款总额（坏账不重复扣减，见§3.2.4修正说明）</li>
+                <li>最后一行"合计"汇总所有维度行</li>
+            </ul>
+            <h3>7.3 支出统计验收</h3>
+            <ul class="checklist">
+                <li>11 列字段展示与原型一致</li>
+                <li>4 种退款类型 × 4 种退款状态 全部覆盖</li>
+                <li>退款失败显示"重新退款"按钮</li>
+                <li>部分退款时原收入记录不变</li>
+                <li>退款原因必填</li>
+            </ul>
+            <h3>7.4 数据一致性验收</h3>
+            <ul class="checklist">
+                <li>同一订单的"部分退款"产生独立的支出流水，原收入记录 fund_status 保持 received</li>
+                <li>同一订单的"全额退款"产生一条支出 + 原收入改 reversed</li>
+                <li>账期客户实际打款才产生 received 流水，账期台账扣减额度同步</li>
+                <li>坏账勾销后销售统计自动剔除该笔</li>
+                <li>催收回款新建独立 received 流水，不挂回原支付单</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>8. 风险与待定</h2>
+            <h3>8.1 已决策</h3>
+            <table>
+                <tr><th>问题</th><th>决策</th></tr>
+                <tr><td>账期入账时机</td><td>客户实际打款时入账（<strong>不</strong>是额度占用时）</td></tr>
+                <tr><td>坏账勾销时机</td><td>账期 30 天到期即可</td></tr>
+                <tr><td>坏账勾销审批</td><td>财务直接做，<strong>不需要审批</strong></td></tr>
+                <tr><td>退款失败处理</td><td>状态置 failed，操作栏"重新退款"</td></tr>
+                <tr><td>渠道含义</td><td>小程序端 / PC端 / 线下（<strong>不</strong>是分销渠道）</td></tr>
+            </table>
+            <h3>8.2 待研发确认</h3>
+            <table>
+                <tr><th>问题</th><th>状态</th></tr>
+                <tr><td>order.drawing_received_at 字段是否已存在</td><td>待确认</td></tr>
+                <tr><td>账期台账扣减额度的同步机制</td><td>待研发设计</td></tr>
+                <tr><td>退款通道异常的统一处理逻辑</td><td>待研发设计</td></tr>
+                <tr><td>历史数据迁移方案（按订单创建时间 → 按支付时间）</td><td>待 DBA 评估</td></tr>
+            </table>
+            <h3>8.3 后续迭代</h3>
+            <ul>
+                <li>v1.1：账期台账独立模块</li>
+                <li>v1.2：对账中心（基于 reconcile_status 异常列表）</li>
+                <li>v1.3：发票管理</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>9. 变更记录</h2>
+            <table>
+                <tr><th>日期</th><th>版本</th><th>变更内容</th><th>作者</th></tr>
+                <tr><td>2026-07-13</td><td>v1.0</td><td>
+                    初始版本，对齐 3 模块字段 / 状态机 / 统计公式：
+                    <ul>
+                        <li>资金流水 30 字段 / 7 组（对齐 资金流水_收支明细_字段全解.html 原型）</li>
+                        <li>销售统计 4 维度 + 铸件双时间口径</li>
+                        <li>支出统计 11 字段 + 4×4 状态</li>
+                        <li>新增 bad_debt 坏账状态 + 财务勾销流程（无审批）</li>
+                        <li>渠道明确为"小程序端/PC端/线下"</li>
+                        <li>支付方式简化为 3 大类（在线/账期/线下）</li>
+                        <li>砍掉销售统计的客单价、退款率、趋势图（对齐最新指示）</li>
+                    </ul>
+                </td><td>Victoria</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>10. 配套文档</h2>
+            <ul>
+                <li><strong>原型</strong>：ui-demo-fund-flow.html（03_原型设计/商家后台/）</li>
+                <li><strong>字段定义参考</strong>：资金流水_收支明细_字段全解.html（早期字段草案，⚠️ 2026-08-08更新：账期支付入账时机等规则已被本PRD §8.1推翻——本PRD以"客户实际打款时入账"为准，HTML里"额度占用时即入账"的说法是旧版，pay_method/category枚举也已不同，仅作历史参考，不可直接照抄）</li>
+                <li><strong>状态机图、公式、枚举</strong>：见原型底部"全局数据字典"折叠面板</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
