@@ -337,7 +337,19 @@ T+0（基准到期）──────────── 移入「已超时Tab 
         </div>
 
         <div class="section">
-            <h2>5. 验收标准</h2>
+            <h2>5. 非功能性需求</h2>
+            <table>
+                <tr><th>类型</th><th>要求</th></tr>
+                <tr><td>性能</td><td>预警扫描单次不超过5秒</td></tr>
+                <tr><td>实时性</td><td>剩余时间倒计时每分钟刷新；后端 API 返回 deadline Unix 时间戳，前端自算；倒计时归零时若页面正在展示，前端主动调接口触发流转；后端60分钟扫描兜底保证所有过期订单均被流转，不依赖前端在线</td></tr>
+                <tr><td>扫描策略</td><td>常规每60分钟扫描一次；剩余时间≤2h的订单放入加速队列，每10分钟补扫一次，降低通知延迟</td></tr>
+                <tr><td>可用性</td><td>钉钉通知送达率≥99%</td></tr>
+                <tr><td>兼容性</td><td>Chrome/Edge/Safari</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>6. 验收标准</h2>
             <ul class="checklist">
                 <li>☐ 待发货列表显示4级风险预警标签（🚨⚠️⏰📋）</li>
                 <li>☐ 剩余时间倒计时实时更新，颜色跟随等级</li>
@@ -364,7 +376,7 @@ T+0（基准到期）──────────── 移入「已超时Tab 
         </div>
 
         <div class="section">
-            <h2>6. 已确认事项（v2.2）</h2>
+            <h2>7. 已确认事项（v2.2）</h2>
             <table>
                 <tr><th>序号</th><th>事项</th><th>状态</th></tr>
                 <tr><td>1</td><td><strong>预警基准按商品类型分档</strong>：铸件=预计发货日；非标件=预计发货日（兜底）；标准件-库存=订单创建+1天；标准件-PO采购=PO 订单供应商交期；软件不进预警池（付款后自动发邮箱，状态=已发货）</td><td><span class="tag tag-green">✅</span></td></tr>
@@ -388,7 +400,7 @@ T+0（基准到期）──────────── 移入「已超时Tab 
         </div>
 
         <div class="section">
-            <h2>7. 变更记录</h2>
+            <h2>8. 变更记录</h2>
             <table>
                 <tr><th>日期</th><th>版本</th><th>变更内容</th><th>作者</th></tr>
                 <tr><td>2026-06-23</td><td>v0.1</td><td>初始版本</td><td>产品经理</td></tr>
@@ -406,7 +418,7 @@ T+0（基准到期）──────────── 移入「已超时Tab 
         </div>
 
         <div class="section">
-            <h2>8. 原型说明</h2>
+            <h2>9. 原型说明</h2>
             <div class="highlight">
                 <p><strong>原型文件：</strong><code>03_原型设计/商家后台/01_待发货列表_发货预警.html</code></p>
                 <p style="margin-top:8px;"><strong>入口文件：</strong><code>03_原型设计/发货超时预警_商家端_产品门户.html</code></p>
