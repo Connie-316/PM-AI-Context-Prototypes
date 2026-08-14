@@ -1,0 +1,422 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 02_PRD/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发货超时预警功能 PRD v2.2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f6f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        .doc-header {
+            background: linear-gradient(135deg, #1664FF 0%, #0958D9 100%);
+            color: #fff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .doc-header h1 { font-size: 28px; margin-bottom: 16px; }
+        .doc-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+        .doc-meta-item { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 4px; font-size: 13px; }
+
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #E8F0FF;
+        }
+        .section h3 { font-size: 16px; color: #1664FF; margin: 20px 0 12px 0; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+        th, td { padding: 10px 12px; text-align: left; border: 1px solid #E5E5E5; }
+        th { background: #F7F8FA; font-weight: 600; }
+        tr:hover td { background: #FAFAFA; }
+
+        ul, ol { padding-left: 20px; margin: 8px 0; }
+        li { margin-bottom: 6px; font-size: 14px; }
+
+        .highlight { background: #FFFDE7; border: 1px solid #FFE58F; border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .warning { background: #FFF1F0; border: 1px solid #FFCCC7; border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+        .info { background: #E8F0FF; border: 1px solid #91CAFF; border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+        .flow-block { background: #F7F8FA; border-radius: 8px; padding: 16px; margin: 12px 0; font-family: "SF Mono", Consolas, monospace; font-size: 12px; line-height: 1.8; white-space: pre-wrap; overflow-x: auto; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 12px 0; }
+        .card { background: #F7F8FA; border-radius: 8px; padding: 16px; }
+        .card-title { font-size: 12px; color: #8C8C8C; }
+        .card-value { font-size: 20px; font-weight: 600; }
+
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .tag-red { background: #FFF0F0; color: #F5222D; }
+        .tag-orange { background: #FFF7E6; color: #FA8C16; }
+        .tag-yellow { background: #FFFBE6; color: #FAAD14; }
+        .tag-blue { background: #E8F0FF; color: #1664FF; }
+        .tag-green { background: #F6FFED; color: #52C41A; }
+        .tag-gray { background: #F5F5F5; color: #8C8C8C; }
+        .tag-purple { background: #F9F0FF; color: #722ED1; }
+        .tag-amber { background: #FFFBE6; color: #D48806; }
+
+        .risk-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 12px 0; }
+        .risk-item { padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; }
+        .risk-item.red { background: #FFF0F0; color: #F5222D; }
+        .risk-item.orange { background: #FFF7E6; color: #FA8C16; }
+        .risk-item.yellow { background: #FFFBE6; color: #FAAD14; }
+        .risk-item.blue { background: #E8F0FF; color: #1664FF; }
+        .risk-item.gray { background: #F5F5F5; color: #8C8C8C; }
+        .risk-item .time { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+
+        .baseline-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
+        .baseline-item { padding: 12px; border-radius: 8px; font-size: 13px; }
+        .baseline-item .type { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+        .baseline-item .rule { color: #595959; }
+        .baseline-item.cast { background: #FFF7E6; border-left: 3px solid #FA8C16; }
+        .baseline-item.custom { background: #FFF1F0; border-left: 3px solid #EB2F96; }
+        .baseline-item.stock { background: #E8F0FF; border-left: 3px solid #1664FF; }
+        .baseline-item.po { background: #E6FFFB; border-left: 3px solid #13C2C2; }
+        .baseline-item.software { background: #F9F0FF; border-left: 3px solid #722ED1; }
+
+        .checklist { list-style: none; padding: 0; }
+        .checklist li { padding: 8px 0; border-bottom: 1px solid #F0F0F0; }
+        .checklist li:last-child { border-bottom: none; }
+
+        .bottom-nav { position: fixed; bottom: 20px; right: 20px; }
+        .nav-btn { width: 44px; height: 44px; border-radius: 50%; background: #1664FF; color: #fff; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 12px rgba(22,100,255,0.3); display: flex; align-items: center; justify-content: center; }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .section { padding: 16px; }
+            .card-grid { grid-template-columns: 1fr 1fr; }
+            .risk-grid { grid-template-columns: repeat(2, 1fr); }
+            .baseline-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="doc-header">
+            <h1>📦 发货超时预警功能 PRD</h1>
+            <div class="doc-meta">
+                <span class="doc-meta-item">📌 v2.2</span>
+                <span class="doc-meta-item">👤 产品经理</span>
+                <span class="doc-meta-item">📅 2026-08-11</span>
+                <span class="doc-meta-item">⏳ 待研发交接</span>
+            </div>
+            <p style="margin-top:16px;opacity:0.9;font-size:14px;">帮助跟单员及时处理即将超时的待发货订单，通过按商品类型分档预警、分级 ActionCard 通知、处理记录等功能，降低订单超时发货率。</p>
+        </div>
+
+        <div class="section">
+            <h2>1. 背景与目标</h2>
+            <h3>1.1 背景</h3>
+            <p>跟单员每天处理大量待发货订单，靠人工巡查哪些即将超时，效率低、容易遗漏。超时后才被发现，错过最佳处理时机。</p>
+            <div class="highlight" style="margin-top:16px;">
+                <strong>现有后台能力：</strong>
+                <ul style="margin-top:8px;">
+                    <li>已有「待发货列表」，含 待发货/已超时/今日发货 三个Tab</li>
+                    <li>仓库和跟单员都在同一个钉钉群</li>
+                </ul>
+            </div>
+            <div class="warning" style="margin-top:12px;">
+                <strong>现有不足：</strong>
+                <ul style="margin-top:8px;">
+                    <li>没有预警通知，靠人工巡查</li>
+                    <li>没有分级风险标识</li>
+                    <li>没有超时处理记录</li>
+                </ul>
+            </div>
+            <h3>1.2 上线后影响</h3>
+            <div class="card-grid">
+                <div class="card"><div class="card-title">超时发货率</div><div class="card-value">↓ 下降</div></div>
+                <div class="card"><div class="card-title">客户投诉率</div><div class="card-value">↓ 下降</div></div>
+                <div class="card"><div class="card-title">处理效率</div><div class="card-value">↑ 提升</div></div>
+            </div>
+            <h3>1.3 目标（v2.0 重构）</h3>
+            <ol>
+                <li><strong>按商品类型分档预警</strong>：铸件/非标件=预计发货日；标准件-库存=订单创建+1天；标准件-PO采购=PO 订单供应商交期；<strong>软件订单不进入预警池</strong>（付款后自动发邮箱，状态=已发货）</li>
+                <li><strong>分级处理</strong>：按剩余时间分为4级，红色紧急优先</li>
+                <li><strong>钉钉通知（统一一套）</strong>：4 级 ActionCard 卡片，emoji 区分等级，合并规则按等级生效；<strong>取消"提前催办"双轨机制</strong></li>
+                <li><strong>交期管理</strong>：待发货 Tab 提供"修改交期"入口（走审核列表模块），本 PRD 不重复开发弹窗/审批</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>2. 用户角色与故事</h2>
+            <table>
+                <tr><th>角色</th><th>身份</th><th>用户故事</th></tr>
+                <tr><td>跟单员</td><td>负责跟单的人员</td><td>想要&lt;看到哪些订单即将超时&gt;，以便&lt;优先处理紧急订单&gt;</td></tr>
+                <tr><td>仓库人员</td><td>仓库打包发货</td><td>想要&lt;实时知道哪些单需要优先发货&gt;，以便&lt;提前准备货物&gt;</td></tr>
+                <tr><td>商家管理员</td><td>老板/主管</td><td>想要&lt;掌握整体超时风险&gt;，以便&lt;监控团队情况&gt;</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>3. 功能需求</h2>
+            <h3>3.1 功能拆解清单（v2.0，18 条）</h3>
+            <table>
+                <tr><th>#</th><th>功能模块</th><th>功能名称</th><th>功能描述</th><th>优先级</th></tr>
+                <tr><td>1</td><td>预警引擎</td><td>风险等级计算</td><td>按商品类型分档计算剩余时间，判定4级风险（详见 §3.2.1）</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>2</td><td>预警引擎</td><td>预警升级规则</td><td>单向升级：低→中→高→紧急，每等级只通知1次；修改交期后允许等级回落并清零通知记录</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>3</td><td>预警引擎</td><td>定时扫描</td><td>每60分钟扫描所有待发货订单（不含软件），计算风险等级</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>4</td><td>预警引擎</td><td>软件订单过滤</td><td>软件订单（自动发邮箱）不进入预警池，状态=已发货</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>5</td><td>预警引擎</td><td>标准件分档</td><td>标准件按"是否有PO订单"自动分档：有PO→PO 交期；无PO→订单创建+1天</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>6</td><td>钉钉通知</td><td>4级 ActionCard</td><td>4级统一 ActionCard 卡片，emoji 区分等级（🚨⚠️⏰📋），群消息推送</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>7</td><td>钉钉通知</td><td>预警合并策略</td><td>🚨不合并 / ⚠️按跟单员合并 / ⏰按仓库合并 / 📋全部合并1条</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>8</td><td>待发货Tab</td><td>风险预警列</td><td>新增「风险预警」列，显示4级色块标签</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>9</td><td>待发货Tab</td><td>剩余时间列</td><td>新增「剩余时间」列，倒计时格式</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>10</td><td>待发货Tab</td><td>列表排序</td><td>风险等级高→低置顶，同等级内按剩余时间升序</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>11</td><td>待发货Tab</td><td>修改交期入口</td><td>操作列"修改交期"按钮，点击跳转至【审核列表-修改交期】流程</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>12</td><td>已超时Tab</td><td>处理状态列</td><td>新增「处理状态」列（待处理/处理中；确认发货后从列表消失）</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>13</td><td>已超时Tab</td><td>处理记录弹窗</td><td>点击查看+新增处理时间线</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>14</td><td>已超时Tab</td><td>超时原因记录</td><td>点击「标记处理」必填超时原因</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>15</td><td>预警引擎</td><td>防重复发货提交</td><td>发货确认时校验订单状态：已发货/已取消二次提交拦截；并发场景后端通过状态机+分布式锁保证只成功一次</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>16</td><td>订单详情</td><td>修改交期入口</td><td>订单详情页基础信息区提供"修改交期"按钮，点击跳转至【审核列表-修改交期】流程</td><td><span class="tag tag-red">Must</span></td></tr>
+                <tr><td>17</td><td>今日发货Tab</td><td>商品类型列</td><td>新增「商品类型」列（标准件/铸件/软件/非标件）</td><td><span class="tag tag-blue">Should</span></td></tr>
+                <tr><td>18</td><td>统计指标</td><td>数据统计</td><td>展示各风险级别订单数量统计</td><td><span class="tag tag-blue">Should</span></td></tr>
+            </table>
+
+            <h3>3.2 风险等级预警（v2.0 按商品类型分档）</h3>
+            <div class="info">
+                <strong>🎯 核心变化：预警基准从 2 类扩展到 5 类（软件不进池）</strong>
+            </div>
+
+            <h3>基准一览</h3>
+            <div class="baseline-grid">
+                <div class="baseline-item cast">
+                    <div class="type">🔧 铸件</div>
+                    <div class="rule">基准 = <strong>预计发货日</strong>（供应商交期+客户交期共同确定，可通过"修改交期"调整）</div>
+                </div>
+                <div class="baseline-item custom">
+                    <div class="type">🛠️ 非标件</div>
+                    <div class="rule">基准 = <strong>预计发货日</strong>（兜底方案；TODO 待业务确认是否按"委外/现货"细分）</div>
+                </div>
+                <div class="baseline-item stock">
+                    <div class="type">📦 标准件-库存件</div>
+                    <div class="rule">基准 = <strong>订单创建时间 + 1 天</strong>（无PO订单即视为库存件）</div>
+                </div>
+                <div class="baseline-item po">
+                    <div class="type">📑 标准件-PO采购</div>
+                    <div class="rule">基准 = <strong>PO 订单供应商交期</strong>（有PO订单即用对应PO的应到货日）</div>
+                </div>
+                <div class="baseline-item software">
+                    <div class="type">💿 软件</div>
+                    <div class="rule"><strong>不进入预警池</strong>（付款后自动发邮箱，状态=已发货）</div>
+                </div>
+            </div>
+
+            <div class="warning" style="margin-top:12px;">
+                <strong>⚠️ 铸件/非标件无交期时的兜底规则（v2.1 补充）：</strong>客户交期/供应商交期必须填写，若未填写则暂按"订单创建+7天"兜底计算；跟单员补录交期后，系统自动切换回正常的"预计发货日"基准，重新计算剩余时间和风险等级。
+            </div>
+
+            <h3>风险等级定义</h3>
+            <div class="risk-grid">
+                <div class="risk-item red"><div class="time">≤2h</div><div>🚨 紧急</div></div>
+                <div class="risk-item orange"><div class="time">2-8h</div><div>⚠️ 高风险</div></div>
+                <div class="risk-item yellow"><div class="time">8-12h</div><div>⏰ 中风险</div></div>
+                <div class="risk-item blue"><div class="time">12-72h</div><div>📋 低风险</div></div>
+                <div class="risk-item gray"><div class="time">&gt;72h</div><div>— 无需提醒</div></div>
+            </div>
+
+            <h3>提醒时间点</h3>
+            <p>剩余时间 ≤ 72小时（3天）：开始提醒</p>
+            <p>通知触发时机（与等级入口对齐）：<strong>12小时（进入中风险）、8小时（进入高风险）、2小时（进入紧急）</strong></p>
+            <div class="info" style="margin-top:8px;">
+                <strong>v2.0 删除 4h 触发点：</strong>4h 落在高风险(2-8h)区间内，非等级入口，v2.0 统一机制下不再单独触发通知，该时间点为 v1.x 提前催办机制残留。
+            </div>
+
+            <h3>升级规则</h3>
+            <div class="flow-block">状态单向升级：低 → 中 → 高 → 紧急（不可回落）
+每等级只通知1次，不重复打扰
+超时后移入「已超时」Tab，不再触发新等级预警</div>
+            <div class="highlight" style="margin-top:8px;">
+                <strong>修改交期后的处理：</strong>
+                <ul style="margin-top:8px;">
+                    <li>以新基准（预计发货日/PO交期）重新起算剩余时间</li>
+                    <li>等级<strong>可降低</strong>（允许从高等级回落至低等级）</li>
+                    <li>已发送的通知记录清零，按新基准重新触发各等级通知</li>
+                    <li>已超时订单：若新剩余时间&gt;72h，<strong>自动从「已超时 Tab」流回「待发货 Tab」</strong></li>
+                </ul>
+            </div>
+
+            <h3>已超时Tab排序规则</h3>
+            <div class="flow-block">第1排序（绝对优先）：按逾期时长降序（超时越久越靠前）
+第2排序（同逾期时长时）：按处理状态（待处理 &gt; 处理中）
+注：第1排序绝对优先，处理状态仅在逾期时长完全相同时作为次要参考</div>
+
+            <h3>3.3 钉钉群通知（v2.0 统一一套机制）</h3>
+            <div class="info">
+                <strong>🔔 重要变更：</strong>v1.x 的"提前催办"双轨机制已<strong>移除</strong>，只保留一套基于剩余时间触发的钉钉群通知。所有等级均使用同一种 ActionCard 卡片，<strong>emoji 区分等级</strong>（钉钉机器人不支持设置卡片背景色）。
+            </div>
+
+            <table>
+                <tr><th>等级</th><th>emoji</th><th>合并规则</th><th>@策略</th></tr>
+                <tr><td>🚨 紧急</td><td>🚨</td><td>不合并，逐条发送</td><td>不@</td></tr>
+                <tr><td>⚠️ 高风险</td><td>⚠️</td><td>按跟单员合并</td><td>不@</td></tr>
+                <tr><td>⏰ 中风险</td><td>⏰</td><td>按仓库合并</td><td>不@</td></tr>
+                <tr><td>📋 低风险</td><td>📋</td><td>全部合并1条</td><td>不@</td></tr>
+            </table>
+
+            <div class="highlight" style="margin-top:12px;">
+                <strong>升级衔接：</strong>单向升级（低→中→高→紧急），每等级只发1次，升级到新等级时按新等级的合并规则重新发。同等级内不重复推送。修改交期后等级可回落，已发通知记录清零重新积累。
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>4. 核心流程</h2>
+            <h3>4.1 系统预警流程</h3>
+            <div class="flow-block">定时任务启动(每60分钟)
+    ↓
+查询待发货订单（软件订单已自动发货，不在池中）
+    ↓
+按商品类型分档确定基准：
+  铸件 → 预计发货日
+  非标件 → 预计发货日（兜底）
+  标准件-有PO → PO 订单供应商交期
+  标准件-无PO → 订单创建+1天
+  软件 → 跳过
+    ↓
+计算剩余时间 = 基准 - 当前时间
+    ↓
+┌─────────────────────────────┐
+│ 剩余时间 ≤ 72h?（在预警范围内）│
+│   └─ ≤ 2h? → 🚨紧急        │
+│   └─ ≤ 8h? → ⚠️高风险     │
+│   └─ ≤ 12h? → ⏰中风险    │
+│   └─ ≤ 72h? → 📋低风险    │
+│ 否则 → 无预警               │
+└─────────────────────────────┘
+    ↓
+该等级已通知过? → 跳过通知
+    ↓
+未通知 → 发送钉钉 ActionCard → 记录notified_levels
+    ↓
+更新列表显示</div>
+            <div class="warning" style="margin-top:8px;">
+                <strong>⚠️ 补充说明（v2.1）：</strong>流程图里"铸件"/"非标件"分支的基准都写"预计发货日"，但这个基准来自客户/供应商交期，交期没填的情况下走§3.2.2的兜底规则——暂按"订单创建+7天"计算，等跟单员补录交期后系统自动切换回正常规则。实现时这两个分支要加一个"有没有交期"的判断，没有交期时走兜底基准，避免漏掉这条分支。
+            </div>
+
+            <h3>4.2 订单发货完整生命周期（v2.0）</h3>
+            <div class="flow-block">订单创建
+（基准按商品类型分档；铸件/非标件=预计发货日，标准件-库存=订单创建+1天，标准件-PO采购=PO 交期；软件→已发货，不进池）
+    │
+    ▼
+系统定时扫描（每60分钟，软件订单跳过）
+    │
+    ▼
+T-72h（距基准72小时）────── 📋 低风险预警开始
+    │
+    ▼
+T-12h ──────────────────── ⏰ 中风险预警
+    │
+    ▼
+T-8h ───────────────────── ⚠️ 高风险预警
+    │
+    ▼
+T-2h ───────────────────── 🚨 紧急预警
+    │
+    ▼
+T+0（基准到期）──────────── 移入「已超时Tab - 待处理」
+    │
+    ▼
+跟单员处理
+    ├── 点击「发货」→ 状态校验 → 确认发货 → 订单从列表消失
+    ├── 点击「标记处理」→ 选择原因 → 处理中 → 后续点击「发货」→ 订单从列表消失
+    └── 点击「修改交期」→ 跳转审核列表 → 通过后新交期剩余时间&gt;72h → 自动流回待发货 Tab（重新积累通知）</div>
+        </div>
+
+        <div class="section">
+            <h2>5. 验收标准</h2>
+            <ul class="checklist">
+                <li>☐ 待发货列表显示4级风险预警标签（🚨⚠️⏰📋）</li>
+                <li>☐ 剩余时间倒计时实时更新，颜色跟随等级</li>
+                <li>☐ 红色紧急订单在列表最前面</li>
+                <li>☐ 钉钉群推送4级 ActionCard 卡片（emoji 区分，群消息可见，不@）</li>
+                <li>☐ 同等级不重复通知；修改交期后通知记录清零，重新起算</li>
+                <li>☐ 已超时Tab只显示待处理/处理中；确认发货后订单消失</li>
+                <li>☐ 超时原因必填</li>
+                <li>☐ 处理记录可查看时间线</li>
+                <li>☐ 点击「确认发货」后自动移出预警列表</li>
+                <li>☐ 防重复发货：已发货/已取消订单二次提交被拦截，并发场景下后端只成功一次</li>
+                <li>☐ <strong>[v2.0]</strong> 软件订单不进入预警池，付款后状态=已发货</li>
+                <li>☐ <strong>[v2.0]</strong> 标准件按"是否有PO订单"分档：有PO→PO 交期；无PO→订单创建+1天</li>
+                <li>☐ <strong>[v2.2修正]</strong> 待发货/已超时 Tab 操作列均有"修改交期"按钮，点击跳转审核列表（<strong>不限商品类型</strong>，标准件/铸件/非标件均支持，软件不进池不涉及）；修改后系统实时重算风险等级</li>
+                <li>☐ <strong>[v2.0]</strong> 修改交期后，已超时订单若新剩余时间&gt;72h 自动流回待发货 Tab</li>
+                <li>☐ <strong>[v2.0]</strong> 钉钉通知只保留1套机制（无"提前催办"双轨），每等级按对应合并规则发</li>
+                <li>☐ <strong>[v2.0]</strong> 处理记录弹窗中"新增处理记录"下拉无"退款处理"选项</li>
+                <li>☐ 预警合并规则正确（🚨不合并/⚠️按跟单员/⏰按仓库/📋全合并）</li>
+                <li>☐ [v1.6] 今日发货Tab显示商品类型标签（标准件/铸件/软件/非标件）</li>
+            </ul>
+            <div class="info" style="margin-top:12px;">
+                <strong>ℹ️ v2.2 修正说明：</strong>此前 §5 同时存在 [v2.0] "所有Tab不限类型均支持修改交期" 和 [v1.7] "仅标准件/铸件支持修改交期" 两条互相矛盾的验收标准——v1.7 是旧条目遗留，非标件同样在预警池内理应同样支持，v2.2 已合并为准确表述（上方已用 <strong>[v2.2修正]</strong> 标出）。
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>6. 已确认事项（v2.2）</h2>
+            <table>
+                <tr><th>序号</th><th>事项</th><th>状态</th></tr>
+                <tr><td>1</td><td><strong>预警基准按商品类型分档</strong>：铸件=预计发货日；非标件=预计发货日（兜底）；标准件-库存=订单创建+1天；标准件-PO采购=PO 订单供应商交期；软件不进预警池（付款后自动发邮箱，状态=已发货）</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>2</td><td><strong>标准件分档判断依据</strong>：下单时看该明细行是否挂 PO 订单，有 PO→PO 交期，无 PO→订单创建+1天</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>3</td><td><strong>非标件基准兜底</strong>：先用"预计发货日"作为兜底写入 v2.0，待业务确认是否按"委外/现货"细分</td><td><span class="tag tag-amber">🟡 兜底</span></td></tr>
+                <tr><td>4</td><td>预警扫描频率：60分钟</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>5</td><td><strong>钉钉通知统一一套机制</strong>：取消"提前催办"双轨；只保留"剩余时间触发 + 等级升级时触发"，每等级按对应合并规则发；所有卡片均为 ActionCard，emoji 区分等级</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>6</td><td>钉钉通知 @策略：4 个等级均不@个人/不@所有人</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>7</td><td>站内信和短信通知去掉</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>8</td><td>钉钉群已存在，Webhook由开发人员配置</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>9</td><td>已超时Tab只显示待处理/处理中的未发货订单；确认发货后订单从列表消失</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>10</td><td>分批次发货支持：已发商品不可重复勾选，部分发货订单保留发货按钮</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>11</td><td>商品类型（标准件/铸件/软件/非标件）由系统字段区分，不存在混合订单</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>12</td><td>已超时Tab顶部统计（今日超时N条/本周超时N条/待处理N条）为系统已有逻辑，本次不改动</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>13</td><td><strong>修改交期走审核列表模块</strong>：本 PRD 只提供"修改交期"按钮入口，弹窗/审批/状态机由审核列表模块 PRD 负责；订单详情页基础信息区同步加"修改交期"按钮</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>14</td><td><strong>修改交期后行为</strong>：① 重新计算剩余时间 ② 重算风险等级 ③ 已发出的通知记录清零 ④ 已超时订单若新剩余时间&gt;72h 自动流回待发货 Tab ⑤ 客户侧不通知</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>15</td><td><strong>退款相关功能全部移除</strong>：v1.x 的退款按钮/选项/弹窗/状态流转在 v2.0 中不再包含</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>16</td><td>"买家延期"作为超时原因保留（与退款功能无关，是业务客观状态）</td><td><span class="tag tag-green">✅</span></td></tr>
+                <tr><td>17</td><td><strong>铸件/非标件无交期时的兜底规则（v2.1）</strong>：客户/供应商交期未填写时，暂按"订单创建+7天"计算预警基准；跟单员补录交期后，系统自动切换回正常的"预计发货日"基准，重新计算剩余时间和风险等级</td><td><span class="tag tag-green">✅</span></td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>7. 变更记录</h2>
+            <table>
+                <tr><th>日期</th><th>版本</th><th>变更内容</th><th>作者</th></tr>
+                <tr><td>2026-06-23</td><td>v0.1</td><td>初始版本</td><td>产品经理</td></tr>
+                <tr><td>2026-06-24</td><td>v1.0</td><td>按PRD标准模板重写</td><td>产品经理</td></tr>
+                <tr><td>2026-06-24</td><td>v1.1</td><td>简化弹窗字段，改为状态流转+弹窗对应表格</td><td>产品经理</td></tr>
+                <tr><td>2026-06-24</td><td>v1.2</td><td>补充高/中/低风险卡片格式；补充合并卡片格式；明确扫描范围</td><td>产品经理</td></tr>
+                <tr><td>2026-06-26</td><td>v1.5</td><td>回退修正：预警基准恢复为"订单创建时间+7天"；阈值恢复为≤2h/2-8h/8-12h/12-72h</td><td>产品经理</td></tr>
+                <tr><td>2026-07-14</td><td>v1.6</td><td>补充商品类型差异化超时基准（标准件/铸件）；新增功能10「修改交期」；提前催办改为超时时间基准；修正已确认事项；移除退款流程；明确已超时排序优先级</td><td>产品经理</td></tr>
+                <tr><td>2026-07-14</td><td>v1.7</td><td>确认5条业务决策：标准件支持修改交期；修改后重新起算；铸件无交期按标准件兜底；移除电话催办改钉钉+周末预警；已超时Tab只显示未发货订单</td><td>产品经理</td></tr>
+                <tr><td>2026-07-14</td><td>v1.8</td><td>去掉周末预警规则；标记处理支持多次；修正§1.3/§2.1等多处描述错误；分批次发货说明；版本同步PRD v1.8</td><td>产品经理</td></tr>
+                <tr><td>2026-07-16</td><td>v2.0</td><td><strong>核心重构</strong>：①预警基准 2 类→5 类（按商品类型分档，软件不进池）②钉钉通知双轨→单轨（ActionCard + emoji）③修改交期轻量化，走审核列表④订单详情加"修改交期"入口⑤退款相关全部清理⑥新增防重复发货⑦已超时订单改交期后自动回流⑧功能拆解 15→18 条</td><td>产品经理</td></tr>
+                <tr><td>2026-08-10</td><td>v2.1</td><td>补充铸件/非标件无交期时的兜底规则说明（此前只在§3正文出现，§4.1流程图和§7确认事项表都没同步）——流程图加补充说明；已确认事项新增 #17</td><td>产品经理</td></tr>
+                <tr><td>2026-08-11</td><td><strong>v2.2</strong></td><td>修正§6验收标准两条互相矛盾的"修改交期"条目——v1.7遗留旧条目只写"标准件和铸件均可修改交期"，跟v2.0新条目"所有Tab、不限类型均支持"冲突（非标件同样在预警池内理应同样支持），已合并为准确表述</td><td>产品经理</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>8. 原型说明</h2>
+            <div class="highlight">
+                <p><strong>原型文件：</strong><code>03_原型设计/商家后台/01_待发货列表_发货预警.html</code></p>
+                <p style="margin-top:8px;"><strong>入口文件：</strong><code>03_原型设计/发货超时预警_商家端_产品门户.html</code></p>
+                <p style="margin-top:8px;">原型包含完整的页面交互，可直接在浏览器打开查看效果。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="返回顶部">↑</button>
+    </div>
+</body>
+</html>

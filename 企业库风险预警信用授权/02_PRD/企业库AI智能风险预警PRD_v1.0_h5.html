@@ -1,0 +1,509 @@
+<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块的 02_PRD/ 目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业库AI智能风险预警 PRD</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f6f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        /* 顶部信息卡 */
+        .doc-header {
+            background: linear-gradient(135deg, #1664FF 0%, #0958D9 100%);
+            color: #fff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .doc-header h1 { font-size: 28px; margin-bottom: 16px; }
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .doc-meta span { display: flex; align-items: center; gap: 6px; }
+
+        /* 章节标题 */
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #E8F0FF;
+        }
+        .section h3 {
+            font-size: 16px;
+            color: #1664FF;
+            margin: 20px 0 12px 0;
+        }
+        .section h4 {
+            font-size: 14px;
+            color: #333;
+            margin: 16px 0 8px 0;
+        }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border: 1px solid #E5E5E5;
+        }
+        th { background: #F7F8FA; font-weight: 600; color: #333; }
+        tr:hover { background: #FAFAFA; }
+
+        /* 列表 */
+        ul, ol { padding-left: 20px; margin: 8px 0; }
+        li { margin-bottom: 6px; font-size: 14px; }
+
+        /* 高亮框 */
+        .highlight {
+            background: #FFFDE7;
+            border: 1px solid #FFE58F;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .highlight-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #D48806;
+            margin-bottom: 8px;
+        }
+        .highlight ul { margin: 0; }
+
+        /* 警告框 */
+        .warning {
+            background: #FFF1F0;
+            border: 1px solid #FFCCC7;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 13px;
+            color: #CF1322;
+        }
+
+        /* 流程代码块 */
+        .flow-block {
+            background: #F7F8FA;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            font-family: "SF Mono", Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        /* 标签 */
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .tag-s { background: #F5222D; color: #fff; }
+        .tag-a { background: #FA8C16; color: #fff; }
+        .tag-b { background: #FAAD14; color: #fff; }
+        .tag-c { background: #52C41A; color: #fff; }
+        .tag-d { background: #8C8C8C; color: #fff; }
+
+        /* 卡片网格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .card {
+            background: #F7F8FA;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .card-title { font-size: 12px; color: #8C8C8C; margin-bottom: 4px; }
+        .card-value { font-size: 20px; font-weight: 600; color: #333; }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #1664FF;
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(22,100,255,0.3);
+            transition: transform 0.2s;
+        }
+        .nav-btn:hover { transform: scale(1.1); }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .doc-header { padding: 24px 20px; }
+            .doc-header h1 { font-size: 22px; }
+            .section { padding: 16px; }
+            table { font-size: 12px; }
+            .card-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 文档信息 -->
+        <div class="doc-header">
+            <h1>🏢 企业库AI智能风险预警与信用授权</h1>
+            <div class="doc-meta">
+                <span>📋 PRD v1.0</span>
+                <span>👤 PM</span>
+                <span>📅 2026-06-20</span>
+                <span>⏳ 进行中</span>
+            </div>
+        </div>
+
+        <!-- 1. 背景与目标 -->
+        <div class="section" id="section-1">
+            <h2>1. 背景与目标</h2>
+
+            <h3>1.1 背景</h3>
+            <p>模具行业客户信用问题突出，存在以下痛点：</p>
+            <ul>
+                <li><strong>逾期问题</strong>：客户账期拖延不还，实际付款经常比约定账期晚</li>
+                <li><strong>诉讼风险</strong>：部分企业被起诉，存在法律纠纷</li>
+                <li><strong>缺乏管理</strong>：缺乏系统化的企业信用管理工具</li>
+                <li><strong>信息分散</strong>：企业信息分散在多个渠道，难以综合评估</li>
+            </ul>
+
+            <h3>1.2 上线后影响</h3>
+            <table>
+                <tr><th>影响对象</th><th>影响内容</th></tr>
+                <tr><td><strong>业务</strong></td><td>提前通知客户逾期情况，便于业务员及时跟进催账</td></tr>
+                <tr><td><strong>财务</strong></td><td>实时掌握客户付款情况，减少坏账风险</td></tr>
+                <tr><td><strong>运营</strong></td><td>系统化管理企业信用，减少人工统计工作</td></tr>
+                <tr><td><strong>老板/管理人员</strong></td><td>随时查看要账进度及业务跟踪情况</td></tr>
+                <tr><td><strong>整体业务</strong></td><td>规避后续合作风险，减轻供应商货款拖欠问题</td></tr>
+            </table>
+
+            <h3>1.3 目标</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">信用量化</div>
+                    <div class="card-value">4维度评分体系</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">风险预警</div>
+                    <div class="card-value">三级预警</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">动态调整</div>
+                    <div class="card-value">实时反映变化</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">流程可视化</div>
+                    <div class="card-value">透明可追溯</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 用户角色 -->
+        <div class="section" id="section-2">
+            <h2>2. 用户角色与故事</h2>
+            <table>
+                <tr><th>角色</th><th>身份</th><th>用户故事</th></tr>
+                <tr><td><strong>运营</strong></td><td>平台管理员</td><td>管理企业库、配置评分权重、处理预警，系统性管理客户信用</td></tr>
+                <tr><td><strong>财务</strong></td><td>财务人员</td><td>查看客户授信额度和账期，及时发现逾期，安排催账</td></tr>
+                <tr><td><strong>业务员</strong></td><td>销售/业务</td><td>了解客户信用状况和预警，提前跟进客户、规避风险</td></tr>
+                <tr><td><strong>老板</strong></td><td>高层管理</td><td>查看整体信用风险状况、要账进度，做出业务决策</td></tr>
+                <tr><td><strong>管理员</strong></td><td>系统管理员</td><td>配置权限、通知方式，确保系统正常运行</td></tr>
+            </table>
+        </div>
+
+        <!-- 3. 功能需求 -->
+        <div class="section" id="section-3">
+            <h2>3. 功能需求</h2>
+
+            <h3>3.1 企业库管理</h3>
+            <h4>企业列表功能</h4>
+            <ul>
+                <li><strong>企业搜索</strong>：按企业名称、统一信用码搜索</li>
+                <li><strong>筛选</strong>：按信用等级（S/A/B/C/D）、业务线、预警状态筛选</li>
+                <li><strong>统计卡片</strong>：展示S/A/B/C/D企业数量、授信总额、逾期率</li>
+                <li><strong>列表展示</strong>：显示企业名称、信用等级、信用分、授信额度、预警状态</li>
+                <li><strong>批量操作</strong>：批量授信、批量通知、批量导出</li>
+            </ul>
+
+            <h4>企业来源</h4>
+            <table>
+                <tr><th>来源</th><th>方式</th></tr>
+                <tr><td>客户注册</td><td>平台注册后自动同步进入企业库</td></tr>
+                <tr><td>后台创建</td><td>运营手动创建商户主账号</td></tr>
+                <tr><td>批量导入</td><td>Excel一次性导入已有客户</td></tr>
+            </table>
+
+            <h3>3.2 信用评分</h3>
+
+            <div class="highlight">
+                <div class="highlight-title">⚠️ 权重可配置</div>
+                可以调整任意维度的占比，可以设置某维度为0%
+            </div>
+
+            <h4>评分维度（4维度，总分100分）</h4>
+            <table>
+                <tr><th>维度</th><th>名称</th><th>权重</th><th>评分项</th><th>数据来源</th></tr>
+                <tr><td>维度一</td><td>企业资质</td><td>30%</td><td>注册资本、成立年限、员工规模</td><td>企查查API（自动）+ 人工修改</td></tr>
+                <tr><td>维度二</td><td>经营状况</td><td>25%</td><td>年营收</td><td>人工录入</td></tr>
+                <tr><td>维度三</td><td>平台行为</td><td>30%</td><td>下单情况、账期支付、履约率</td><td>平台系统（自动）</td></tr>
+                <tr><td>维度四</td><td>业务风险</td><td>15%</td><td>产品风险等级</td><td>运营手动配置</td></tr>
+            </table>
+
+            <h4>信用等级</h4>
+            <table>
+                <tr><th>等级</th><th>分数</th><th>账期</th><th>倍率</th><th>审批</th></tr>
+                <tr><td><span class="tag tag-s">S</span></td><td>90-100分</td><td>120天</td><td>2倍</td><td>自动通过</td></tr>
+                <tr><td><span class="tag tag-a">A</span></td><td>80-89分</td><td>90天</td><td>1.5倍</td><td>自动通过</td></tr>
+                <tr><td><span class="tag tag-b">B</span></td><td>70-79分</td><td>60天</td><td>1.1倍</td><td>自动通过</td></tr>
+                <tr><td><span class="tag tag-c">C</span></td><td>60-69分</td><td>30天</td><td>0.8倍</td><td><strong>人工审批</strong></td></tr>
+                <tr><td><span class="tag tag-d">D</span></td><td>&lt;60分</td><td>现款现货</td><td>0</td><td>系统拒绝</td></tr>
+            </table>
+
+            <h4>授信额度计算</h4>
+            <div class="flow-block">基础授信额度 = 信用分数 × 1000元/分 × 业务风险系数
+
+业务风险系数：
+- 低风险（15分）：系数 1.0
+- 中风险（10分）：系数 0.67
+- 高风险（5分）：系数 0.33</div>
+
+            <h4>新客评分规则</h4>
+            <table>
+                <tr><th>客户类型</th><th>参与维度</th><th>说明</th></tr>
+                <tr><td>新客</td><td>仅维度一 + 维度二</td><td>维度三、四初始为0</td></tr>
+                <tr><td>老客</td><td>全部4个维度</td><td>逐步启用</td></tr>
+            </table>
+
+            <h3>3.3 动态调整</h3>
+
+            <h4>负向调整（扣分/冻结）</h4>
+            <table>
+                <tr><th>逾期天数</th><th>信用分调整</th><th>额度调整</th><th>恢复条件</th></tr>
+                <tr><td>1-7天</td><td>0分（记录次数）</td><td>不变</td><td>清偿欠款</td></tr>
+                <tr><td>8-15天</td><td>-5分</td><td>不变</td><td>清偿+连续履约3个月</td></tr>
+                <tr><td>16-30天</td><td>-10分</td><td>冻结50%</td><td>清偿+连续履约6个月</td></tr>
+                <tr><td>31-60天</td><td>-20分</td><td>冻结100%</td><td>清偿+连续履约12个月</td></tr>
+                <tr><td>&gt;60天</td><td>降为D级</td><td>取消授信</td><td>全部清偿+12个月</td></tr>
+            </table>
+
+            <h4>正向调整（加分/提额）</h4>
+            <table>
+                <tr><th>触发条件</th><th>调整</th><th>额度</th><th>上限</th></tr>
+                <tr><td>连续3个月无逾期</td><td>信用分+5分</td><td>不变</td><td>累计+15分</td></tr>
+                <tr><td>连续6个月无逾期</td><td>信用分+10分</td><td>不变</td><td>累计+20分</td></tr>
+                <tr><td>连续12个月无逾期</td><td>信用分不变</td><td>提升100%</td><td>上限200%</td></tr>
+                <tr><td>季度交易额增长&gt;30%</td><td>-</td><td>额度+20%</td><td>上限300%</td></tr>
+            </table>
+
+            <h3>3.4 风险预警</h3>
+
+            <h4>三级预警体系</h4>
+            <table>
+                <tr><th>级别</th><th>触发条件</th><th>响应措施</th><th>负责部门</th></tr>
+                <tr style="background:#FFFDE7">
+                    <td><span style="background:#FAAD14;padding:2px 8px;border-radius:4px;color:#fff">🟡 黄色</span></td>
+                    <td>逾期1次 或 下降&gt;10分/季度</td>
+                    <td>客户经理上门了解</td>
+                    <td>销售部</td>
+                </tr>
+                <tr style="background:#FFF7E6">
+                    <td><span style="background:#FA8C16;padding:2px 8px;border-radius:4px;color:#fff">🟠 橙色</span></td>
+                    <td>逾期2次 或 下降&gt;20分 或 司法纠纷</td>
+                    <td>冻结新增授信</td>
+                    <td>销售部</td>
+                </tr>
+                <tr style="background:#FFF1F0">
+                    <td><span style="background:#F5222D;padding:2px 8px;border-radius:4px;color:#fff">🔴 红色</span></td>
+                    <td>逾期&gt;30天 或 失信记录 或 经营异常</td>
+                    <td>冻结额度，启动法律程序</td>
+                    <td>法务部+销售部</td>
+                </tr>
+            </table>
+
+            <div class="highlight">
+                <div class="highlight-title">✓ 钉钉Webhook通知已确认支持</div>
+                预警触发时自动推送通知到对应部门
+            </div>
+
+            <h3>3.5 授信管理</h3>
+            <table>
+                <tr><th>等级</th><th>审批方式</th></tr>
+                <tr><td>S/A/B级</td><td>系统自动通过，直接出额度</td></tr>
+                <tr><td>C级</td><td>人工审批（运营审批）</td></tr>
+                <tr><td>D级</td><td>系统拒绝</td></tr>
+            </table>
+
+            <h3>3.6 逾期处理</h3>
+            <div class="flow-block">应付日期 = 订单确认收货日期 + 账期天数
+
+到期未付款 → 触发逾期</div>
+        </div>
+
+        <!-- 4. 核心流程 -->
+        <div class="section" id="section-4">
+            <h2>4. 核心流程</h2>
+
+            <h3>4.1 企业入库流程</h3>
+            <div class="flow-block">客户注册/后台创建/批量导入
+    ↓
+企业进入企业库（状态：待完善资料）
+    ↓
+运营录入/获取企业基本信息
+    ↓
+企业完善资料（维度一、二有数据）
+    ↓
+系统计算静态评分 → 确定信用等级
+    ↓
+新客获得临时授信额度
+    ↓
+企业开始交易（有平台行为数据）
+    ↓
+系统逐步启用维度三、四 → 更新综合评分</div>
+
+            <h3>4.2 信用评分流程</h3>
+            <div class="flow-block">定时触发/手动触发
+    ↓
+获取4个维度数据
+    ↓
+各维度独立计算得分
+    ↓
+加权求和 → 综合评分
+    ↓
+确定信用等级（S/A/B/C/D）
+    ↓
+计算授信额度
+    ↓
+输出评分结果</div>
+
+            <h3>4.3 逾期预警流程</h3>
+            <div class="flow-block">每日检查所有企业订单
+    ↓
+核对每笔订单应付日期
+    ↓
+发现逾期
+    ↓
+判断逾期天数
+    ↓
+触发对应级别预警
+    ↓
+钉钉通知负责部门
+    ↓
+记录预警日志
+    ↓
+运营处理
+    ↓
+人工复审（如需要）</div>
+
+            <h3>4.4 动态调整流程</h3>
+            <div class="flow-block">触发事件（逾期/还款/主动调整）
+    ↓
+规则引擎判断
+    ↓
+计算调整幅度
+    ↓
+更新信用分
+    ↓
+更新授信额度（如需要）
+    ↓
+触发预警（如需要）
+    ↓
+记录调整日志
+    ↓
+钉钉通知（如需要）</div>
+        </div>
+
+        <!-- 5. 风险监控指标 -->
+        <div class="section" id="section-5">
+            <h2>5. 风险监控指标</h2>
+            <table>
+                <tr><th>指标名称</th><th>计算公式</th><th>目标值</th><th>监控频率</th></tr>
+                <tr><td>坏账率</td><td>逾期超90天金额/总授信金额</td><td>&lt;3%</td><td>月度</td></tr>
+                <tr><td>逾期率</td><td>逾期客户数/维持交易客户数</td><td>&lt;5%</td><td>月度</td></tr>
+                <tr><td>预警处理及时率</td><td>3天内处理的预警/总预警数</td><td>&gt;80%</td><td>月度</td></tr>
+                <tr><td>授信使用率</td><td>实际赊销额/总授信额度</td><td>60-80%</td><td>月度</td></tr>
+            </table>
+        </div>
+
+        <!-- 6. 验收标准 -->
+        <div class="section" id="section-6">
+            <h2>6. 验收标准</h2>
+
+            <h3>6.1 功能验收</h3>
+            <ul>
+                <li>✅ 企业可从注册/后台创建/批量导入进入企业库</li>
+                <li>✅ 4维度评分正确计算，综合评分=维度一×30%+维度二×25%+维度三×30%+维度四×15%</li>
+                <li>✅ 信用等级正确划分：S(90-100)/A(80-89)/B(70-79)/C(60-69)/D(&lt;60)</li>
+                <li>✅ B级以上（含B级）系统自动通过授信，C级需人工审批</li>
+                <li>✅ 逾期触发规则正确</li>
+                <li>✅ 三级预警正确触发：黄色/橙色/红色</li>
+                <li>✅ 钉钉Webhook通知成功推送</li>
+                <li>✅ 权重可配置，调整后评分重新计算</li>
+                <li>✅ 维度四（业务风险）运营可手动配置</li>
+                <li>✅ 新客评分仅用维度一、二，维度三、四为0</li>
+            </ul>
+
+            <h3>6.2 交互验收</h3>
+            <ul>
+                <li>✅ 企业列表支持搜索、筛选、批量操作</li>
+                <li>✅ 企业详情页展示4维度评分、授信额度、预警状态</li>
+                <li>✅ 预警列表按级别分类，支持处理和复审</li>
+                <li>✅ 动态调整记录完整，支持查看历史</li>
+            </ul>
+
+            <h3>6.3 业务流程验收</h3>
+            <ul>
+                <li>✅ 逾期催账流程透明，管理层可查看进度</li>
+                <li>✅ 业务员可查看自己客户的信用状况</li>
+                <li>✅ 老板可查看整体风险状况和要账进度</li>
+            </ul>
+        </div>
+
+        <!-- 7. 变更记录 -->
+        <div class="section" id="section-7">
+            <h2>7. 变更记录</h2>
+            <table>
+                <tr><th>日期</th><th>版本</th><th>变更内容</th><th>作者</th></tr>
+                <tr><td>2026-06-20</td><td>v1.0</td><td>初始版本</td><td>PM</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <button class="nav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+    </div>
+</body>
+</html>
