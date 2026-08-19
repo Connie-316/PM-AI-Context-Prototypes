@@ -1,4 +1,3 @@
-<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -403,7 +402,7 @@
         <div class="page-title-wrap">
           <div class="page-title">资金管理</div>
         </div>
-        <div class="page-subtitle">资金流水（30 字段）· 销售统计（4 维度 · 双时间口径）· 支出统计（12 字段）</div>
+        <div class="page-subtitle">资金流水（31 字段）· 销售统计（4 维度 · 双时间口径）· 支出统计（11 字段）</div>
       </div>
     </div>
 
@@ -417,9 +416,9 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
             </div>
           </div>
-          <div class="entry-card-desc">每笔资金动作的真实记录。基于订单状态触发，30 字段分 7 组，覆盖 4 个时间维度。</div>
+          <div class="entry-card-desc">每笔资金动作的真实记录。基于订单状态触发，31 字段分 7 组，覆盖 4 个时间维度。</div>
           <div class="entry-card-foot">
-            <div class="entry-card-count">30 字段 / 7 组</div>
+            <div class="entry-card-count">31 字段 / 7 组</div>
             <div class="entry-card-link">进入查看 →</div>
           </div>
         </div>
@@ -445,9 +444,9 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             </div>
           </div>
-          <div class="entry-card-desc">聚焦"钱出去了"的所有记录。4 种退款类型 × 4 种退款状态，12 字段明细追踪。</div>
+          <div class="entry-card-desc">聚焦"钱出去了"的所有记录。4 种退款类型 × 4 种退款状态，11 字段明细追踪。</div>
           <div class="entry-card-foot">
-            <div class="entry-card-count">12 字段 · 4×4 状态</div>
+            <div class="entry-card-count">11 字段 · 4×4 状态</div>
             <div class="entry-card-link">进入查看 →</div>
           </div>
         </div>
@@ -464,7 +463,7 @@
           资金流水
           <span class="num">模块 01</span>
         </div>
-        <div class="module-meta">30 字段 / 7 组 · 收支明细页 · 待支付不计入</div>
+        <div class="module-meta">31 字段 / 7 组 · 收支明细页 · 待支付不计入</div>
       </div>
 
       <!-- 筛选区 -->
@@ -836,8 +835,8 @@
           </div>
           <div class="summary-card net">
             <div class="label">净销售额</div>
-            <div class="value">¥1,055,000</div>
-            <div class="delta">= 销售 - 退款 - 坏账</div>
+            <div class="value">¥1,122,500</div>
+            <div class="delta">= 销售 - 退款（坏账已从销售总额里剔除，不重复扣减）</div>
           </div>
         </div>
 
@@ -908,7 +907,7 @@
             <div class="td w-sales"><strong>¥1,182,600</strong></div>
             <div class="td w-refundcount"><strong>7</strong></div>
             <div class="td w-refundamt"><strong style="color:#CF1322">¥60,100</strong></div>
-            <div class="td w-net"><strong>¥1,055,000</strong></div>
+            <div class="td w-net"><strong>¥1,122,500</strong></div>
             <div class="td w-op"></div>
           </div>
         </div>
@@ -948,7 +947,7 @@
           支出统计
           <span class="num" style="background:#FF4D4F">模块 03</span>
         </div>
-        <div class="module-meta">12 字段 · 4 种退款类型 × 4 种退款状态</div>
+        <div class="module-meta">11 字段 · 4 种退款类型 × 4 种退款状态</div>
       </div>
 
       <div class="module-body">
@@ -1040,7 +1039,7 @@
           </div>
         </div>
 
-        <!-- 列表（12 列：砍掉商品名称/分类） -->
+        <!-- 列表（11 列：砍掉商品名称/分类） -->
         <div class="table-box" style="border: 1px solid #F0F0F0; border-radius: 8px;">
           <div class="table-head">
             <div class="th w-flow-id">退款单号</div>
@@ -1305,7 +1304,7 @@
               <tr><th style="width:140px">字段名</th><th style="width:120px">中文名</th><th style="width:100px">类型</th><th style="width:60px">必填</th><th class="note-col">含义 / 取值</th></tr>
             </thead>
             <tbody>
-              <tr><td><code>fund_status</code></td><td>资金状态</td><td>enum</td><td><span class="req">*</span></td><td>5 个值：<code>received</code> 已入账 / <code>reversed</code> 已冲销 / <code>bad_debt</code> 坏账 / <code>refunded</code> 已退款 / <code>failed</code> 退款失败</td></tr>
+              <tr><td><code>fund_status</code></td><td>资金状态</td><td>enum</td><td><span class="req">*</span></td><td>7 个值：<code>received</code> 已入账 / <code>reversed</code> 已冲销 / <code>bad_debt</code> 坏账 / <code>refunded</code> 已退款 / <code>failed</code> 退款失败 / <code>pending</code> 退款处理中-待发起 / <code>processing</code> 退款处理中-通道处理（2026-08-17补：此前只列5个，漏了退款流程会用到的pending/processing，跟下方状态机图和PRD §3.1.2已经一致）</td></tr>
               <tr><td><code>reconcile_status</code></td><td>对账状态</td><td>enum</td><td><span class="opt">○</span></td><td><code>unreconciled</code> 未对账 / <code>matched</code> 已匹配 / <code>abnormal</code> 异常（需人工介入）</td></tr>
             </tbody>
           </table>
@@ -1331,7 +1330,7 @@
 
         <!-- 状态枚举 -->
         <div class="doc-tab-content" id="tab-enums">
-          <h3 style="font-size:13px;font-weight:600;margin:8px 0 12px;color:#1F1F1F;">资金状态机（5 个枚举值）</h3>
+          <h3 style="font-size:13px;font-weight:600;margin:8px 0 12px;color:#1F1F1F;">资金状态机（7 个枚举值，2026-08-17修正此前标题写的5个漏了pending/processing）</h3>
           <div class="state-machine">
             <div class="state-row">
               <div class="state-box income">received<br><span style="font-size:10px;color:#8C8C8C">已入账</span></div>
@@ -1462,8 +1461,8 @@
             </div>
             <div class="formula-item" style="border-left-color:#1664FF;background:#E6F4FF;">
               <div class="formula-name" style="color:#1664FF">⭐ 净销售额</div>
-              <div class="formula-expr">销售总额 - 退款总额 - 坏账金额</div>
-              <div class="formula-note">老板最该看的数字</div>
+              <div class="formula-expr">销售总额 - 退款总额</div>
+              <div class="formula-note">老板最该看的数字（2026-08-17修正：此前多减了一次坏账金额，坏账已经通过fund_status=received筛选被排除在销售总额之外，不需要再减，PRD §3.2.4已于2026-08-08修复过这个bug，原型公式字典之前没同步）</div>
             </div>
             <div class="formula-item">
               <div class="formula-name">成交订单数</div>

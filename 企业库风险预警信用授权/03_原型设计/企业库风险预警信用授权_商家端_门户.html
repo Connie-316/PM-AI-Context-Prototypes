@@ -1,4 +1,3 @@
-<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -926,24 +925,26 @@
                 <div class="card">
                     <div class="dimension-title">维度四：业务风险 配置参考</div>
                     <div class="ref-table">
-                        <div class="ref-title">⚠️ 业务风险等级配置参考（运营手动选择）</div>
+                        <div class="ref-title">⚠️ 业务线风险分档（运营手动选择，2026-08-17按Excel原始资料修正为4档）</div>
                         <div class="ref-grid">
                             <div class="ref-item">
                                 <div class="level">🟢 低风险（15分）</div>
-                                <div class="score">系数: 1.0</div>
-                                <div class="products">适用：标准件、非标件</div>
+                                <div class="score">业务线: 标准件/C类零件</div>
                             </div>
                             <div class="ref-item">
-                                <div class="level">🟡 中风险（10分）</div>
-                                <div class="score">系数: 0.67</div>
-                                <div class="products">适用：铸件、混合类型</div>
+                                <div class="level">🟡 中风险（11分）</div>
+                                <div class="score">业务线: 成形公&刃口</div>
+                            </div>
+                            <div class="ref-item">
+                                <div class="level">🟠 中高风险（9分）</div>
+                                <div class="score">业务线: 模架</div>
                             </div>
                             <div class="ref-item">
                                 <div class="level">🔴 高风险（5分）</div>
-                                <div class="score">系数: 0.33</div>
-                                <div class="products">适用：模具CLD、定制化产品</div>
+                                <div class="score">业务线: 模具CLD</div>
                             </div>
                         </div>
+                        <div style="margin-top:8px;font-size:12px;color:#999;">授信额度公式里的"业务风险系数"是固定值20，跟这张表无关，不要混淆——见PRD §3.2.3</div>
                     </div>
                 </div>
             </div>
@@ -1145,13 +1146,13 @@
                 <div class="card">
                     <div class="card-title">授信额度 <span class="data-source"><span class="source-tag source-api">自动计算</span></span></div>
                     <div class="credit-grid">
-                        <div class="credit-item"><label>基础额度</label><div class="value">85,000元</div></div>
-                        <div class="credit-item"><label>可用额度</label><div class="value success">50,000元</div></div>
-                        <div class="credit-item"><label>已用额度</label><div class="value warning">35,000元</div></div>
+                        <div class="credit-item"><label>基础额度</label><div class="value">2,550,000元</div></div>
+                        <div class="credit-item"><label>可用额度</label><div class="value success">1,550,000元</div></div>
+                        <div class="credit-item"><label>已用额度</label><div class="value warning">1,000,000元</div></div>
                         <div class="credit-item"><label>账期</label><div class="value">90天（<span class="grade-badge grade-a">A级</span>）</div></div>
                     </div>
                     <div class="formula-box">
-                        <b>额度计算公式：</b>基础额度 = 信用分(85) × 1000元/分 × 业务风险系数(1.0) = 85,000元
+                        <b>额度计算公式：</b>基础额度 = 信用分(85) × 行业基准系数(1000元/分) × 业务风险系数(20) × 授信倍率(A级1.5) = 2,550,000元（2026-08-17按Excel原始资料修正，此前漏乘授信倍率且业务风险系数用错为1.0）
                     </div>
                 </div>
 
@@ -1545,25 +1546,33 @@
                         <label class="risk-option" onclick="selectRiskOption(this)">
                             <div>
                                 <div class="risk-name">🟢 低风险</div>
-                                <div class="risk-desc">适用：标准件、非标件</div>
+                                <div class="risk-desc">业务线：标准件/C类零件</div>
                             </div>
-                            <div class="risk-score">15分（系数1.0）</div>
-                            <input type="radio" name="risk-level" value="low" style="display:none;">
+                            <div class="risk-score">15分</div>
+                            <input type="radio" name="risk-level" value="standard" style="display:none;">
                         </label>
                         <label class="risk-option selected" onclick="selectRiskOption(this)">
                             <div>
                                 <div class="risk-name">🟡 中风险</div>
-                                <div class="risk-desc">适用：铸件、混合类型</div>
+                                <div class="risk-desc">业务线：成形公&刃口</div>
                             </div>
-                            <div class="risk-score">10分（系数0.67）</div>
-                            <input type="radio" name="risk-level" value="mid" checked style="display:none;">
+                            <div class="risk-score">11分</div>
+                            <input type="radio" name="risk-level" value="mould-parts" checked style="display:none;">
+                        </label>
+                        <label class="risk-option" onclick="selectRiskOption(this)">
+                            <div>
+                                <div class="risk-name">🟠 中高风险</div>
+                                <div class="risk-desc">业务线：模架</div>
+                            </div>
+                            <div class="risk-score">9分</div>
+                            <input type="radio" name="risk-level" value="frame" style="display:none;">
                         </label>
                         <label class="risk-option" onclick="selectRiskOption(this)">
                             <div>
                                 <div class="risk-name">🔴 高风险</div>
-                                <div class="risk-desc">适用：模具CLD、定制化产品</div>
+                                <div class="risk-desc">业务线：模具CLD</div>
                             </div>
-                            <div class="risk-score">5分（系数0.33）</div>
+                            <div class="risk-score">5分</div>
                             <input type="radio" name="risk-level" value="high" style="display:none;">
                         </label>
                     </div>
@@ -1801,9 +1810,10 @@
                     <div class="form-item">
                         <label>业务风险等级</label>
                         <select>
-                            <option value="low">🟢 低风险（系数1.0）</option>
-                            <option value="mid">🟡 中风险（系数0.67）</option>
-                            <option value="high">🔴 高风险（系数0.33）</option>
+                            <option value="standard">🟢 低风险（标准件/C类零件，15分）</option>
+                            <option value="mould-parts">🟡 中风险（成形公&刃口，11分）</option>
+                            <option value="frame">🟠 中高风险（模架，9分）</option>
+                            <option value="high">🔴 高风险（模具CLD，5分）</option>
                         </select>
                     </div>
                     <div class="form-item">

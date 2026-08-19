@@ -1,4 +1,3 @@
-<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -139,7 +138,7 @@
                 <tr><td><strong>财务</strong></td><td>启泰财务岗位</td><td>查看每笔收支 → 客户取消的退款能跟踪到原支付单 → 账期坏账手动勾销</td></tr>
                 <tr><td><strong>销售</strong></td><td>启泰销售/销售管理</td><td>按客户/渠道看销售排行 → 铸件按来图时间看真实需求 → 客户取消的订单可追溯</td></tr>
                 <tr><td><strong>运营/管理层</strong></td><td>启泰运营 + 老板</td><td>看本月净销售（含坏账剔除）→ 按商品分类看各品类销售 → 异常退款快速定位</td></tr>
-                <tr><td><strong>研发</strong></td><td>启泰研发 + DBA</td><td>30 字段 7 组清晰建模 → 状态机可测试 → 统计公式可 SQL 复现</td></tr>
+                <tr><td><strong>研发</strong></td><td>启泰研发 + DBA</td><td>31 字段 7 组清晰建模 → 状态机可测试 → 统计公式可 SQL 复现</td></tr>
             </table>
         </div>
 
@@ -150,7 +149,7 @@
             <h4>3.1.1 功能描述</h4>
             <p>展示每一笔"钱真实发生过"的事件，<strong>待支付、已取消的订单不计入</strong>。收支明细页是商家最常用的对账入口。</p>
 
-            <h4>3.1.2 字段说明（数据库表 fund_flow，30 字段 / 7 组）</h4>
+            <h4>3.1.2 字段说明（数据库表 fund_flow，31 字段 / 7 组）</h4>
             <table>
                 <tr><th>组</th><th>字段</th><th>类型</th><th>必填</th><th>含义</th></tr>
                 <tr><td rowspan="2"><strong>①核心标识</strong></td><td>flow_id</td><td>bigint</td><td>KEY</td><td>主键，自增</td></tr>
@@ -508,7 +507,7 @@ remark = "已坏账勾销 by 财务XXX" + 时间戳
                 <tr><td>2026-07-13</td><td>v1.0</td><td>
                     初始版本，对齐 3 模块字段 / 状态机 / 统计公式：
                     <ul>
-                        <li>资金流水 30 字段 / 7 组（对齐 资金流水_收支明细_字段全解.html 原型）</li>
+                        <li>资金流水 31 字段 / 7 组（对齐 资金流水_收支明细_字段全解.html 原型）</li>
                         <li>销售统计 4 维度 + 铸件双时间口径</li>
                         <li>支出统计 11 字段 + 4×4 状态</li>
                         <li>新增 bad_debt 坏账状态 + 财务勾销流程（无审批）</li>

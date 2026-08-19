@@ -1,7 +1,6 @@
-<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块 -->
 <!--
   优惠券模块 · 商家后台 · 优惠券管理(6合1)
-  版本: v2.18 | 更新: 2026-22
+  版本: v2.18 | 更新: 2026-06-22
   关联PRD: §13商家端功能
 -->
 <!DOCTYPE html>
@@ -68,6 +67,8 @@
     .data-table tr:hover td:last-child { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
     .status-tag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    /* 2026-08-17按PRD §13.1/§13.5/§13.6/§16.1补充：兑换码是第三期功能，本期不验收，加视觉标记跟第一期功能区分开 */
+    .phase3-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #FFF7E6; color: #FA8C16; border: 1px solid #FFD591; margin-left: 6px; }
     .status-online { background: #F6FFED; color: #52C41A; border: 1px solid #B7EB8F; }
     .status-offline { background: #F5F5F5; color: #999; border: 1px solid #D9D9D9; }
     .status-used { background: #FFF1F0; color: #F5222D; border: 1px solid #FFCCC7; }
@@ -182,7 +183,7 @@
         <div class="sidebar-item" onclick="showSection('copy')"><span class="icon">📄</span>复制优惠券</div>
       </div>
       <div class="sidebar-section">
-        <div class="sidebar-title">兑换码</div>
+        <div class="sidebar-title">兑换码 <span class="phase3-tag">第三期</span></div>
         <div class="sidebar-item" onclick="showSection('code')"><span class="icon">🔑</span>兑换码管理</div>
         <div class="sidebar-item" onclick="showSection('codedetail')"><span class="icon">📋</span>兑换明细</div>
       </div>
@@ -374,7 +375,7 @@
                 <div class="form-checkbox-group">
                   <label><input type="checkbox" checked> 手动领取（领券中心）</label>
                   <label><input type="checkbox"> 自动发放（注册/首单）</label>
-                  <label><input type="checkbox" checked> 兑换码（自动生成）</label>
+                  <label><input type="checkbox" checked> 兑换码（自动生成）<span class="phase3-tag">第三期</span></label>
                 </div>
               </div>
             </div>
@@ -515,7 +516,7 @@
                 <div class="form-checkbox-group">
                   <label><input type="checkbox" checked> 手动领取（领券中心）</label>
                   <label><input type="checkbox"> 自动发放（注册/首单）</label>
-                  <label><input type="checkbox"> 兑换码</label>
+                  <label><input type="checkbox"> 兑换码<span class="phase3-tag">第三期</span></label>
                 </div>
               </div>
               <div class="form-group">
@@ -674,7 +675,7 @@
       <!-- ==================== 兑换码管理 ==================== -->
       <div class="tab-content" id="sec-code">
         <div class="page-header">
-          <div class="page-title">🔑 兑换码管理</div>
+          <div class="page-title">🔑 兑换码管理 <span class="phase3-tag">第三期 · 本期不验收</span></div>
           <button class="btn-primary" onclick="showSection('codedetail')">查看兑换明细 ›</button>
         </div>
 
@@ -966,10 +967,15 @@ function goCopy(id) {
   if (!c) return;
   document.getElementById('copy_source_name').textContent = '🎫 '+c.name+'（'+(c.type==='full'?'满减券':'折扣券')+'）';
 
-  // 自动生成新名称：末尾数字+1
-  var baseName = c.name.replace(/\d+$/, '').trim();
-  var num = parseInt(c.name.match(/\d+$/)?.[0] || '0');
-  var newName = baseName + (num + 1);
+  // 自动生成新名称：原名称加"-副本"后缀，重复则加"-副本2"/"-副本3"以此类推（2026-08-17按PRD §13.7修正：
+  // 此前是"名称末尾数字+1"，但如果名称末尾数字恰好是优惠金额本身（比如"满500减50"），+1会变成
+  // "满500减51"，看起来像是把优惠金额改成了51元，容易误导，PRD 08-08已经改成不碰名称数字的固定后缀）
+  var newName = c.name + '-副本';
+  var suffixNum = 2;
+  while (couponData.some(function(x){ return x.name === newName; })) {
+    newName = c.name + '-副本' + suffixNum;
+    suffixNum++;
+  }
 
   document.getElementById('copy_name').value = newName;
   document.getElementById('copy_quota').value = c.quota;

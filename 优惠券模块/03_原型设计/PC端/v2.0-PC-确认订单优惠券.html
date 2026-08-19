@@ -1,7 +1,6 @@
-<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块 -->
 <!--
   优惠券模块 · 确认订单 · PC端多商品用券
-  版本: v2.18 | 更新: 2026-22
+  版本: v2.18 | 更新: 2026-06-22
   关联PRD: §12.3确认订单优惠明细
 -->
 <!DOCTYPE html>
@@ -218,9 +217,11 @@
     .breakdown-item { display: flex; justify-content: space-between; margin-bottom: 4px; color: #666; }
     .breakdown-item:last-child { margin-bottom: 0; }
     .breakdown-item .amount { color: #F02C2C; }
-
-
-    >
+  </style>
+</head>
+<body>
+  <div class="top-header">
+    <div class="header-main">
       <div class="header-logo-img">数智聚模</div>
       <div class="header-nav"><a href="#">首页</a><a href="#">分类</a><a href="#">优惠券中心</a><a href="#" class="active">我的</a></div>
       <div class="header-user">
@@ -265,8 +266,8 @@
             <div class="order-item-bottom">
               <div class="order-item-price-wrap">
                 <span class="order-item-original">¥81.40</span>
-                <span class="order-item-price">¥71.15</span>
-                <span class="order-item-save">省¥10.25</span>
+                <span class="order-item-price">¥79.35</span>
+                <span class="order-item-save">省¥2.05</span>
               </div>
               <span class="order-item-count">×5</span>
             </div>
@@ -280,8 +281,8 @@
             <div class="order-item-bottom">
               <div class="order-item-price-wrap">
                 <span class="order-item-original">¥1580.00</span>
-                <span class="order-item-price">¥1540.25</span>
-                <span class="order-item-save">省¥39.75</span>
+                <span class="order-item-price">¥1540.24</span>
+                <span class="order-item-save">省¥39.76</span>
               </div>
               <span class="order-item-count">×1</span>
             </div>
@@ -296,8 +297,8 @@
           </div>
           <div class="breakdown-content" id="breakdownContent" style="display:none;">
             <div style="font-size:12px;color:#666;margin-bottom:8px;">优惠券（满500减50）</div>
-            <div class="breakdown-item"><span>数智聚模刀入子 ×5</span><span class="amount">-¥10.25</span></div>
-            <div class="breakdown-item"><span>精密导柱组件 ×1</span><span class="amount">-¥39.75</span></div>
+            <div class="breakdown-item"><span>数智聚模刀入子 ×5</span><span class="amount">-¥10.24</span></div>
+            <div class="breakdown-item"><span>精密导柱组件 ×1</span><span class="amount">-¥39.76</span></div>
             <div style="font-size:12px;color:#666;margin:10px 0 8px;border-top:1px dashed #F0F0F0;padding-top:10px;">积分抵扣（100积分抵¥10）</div>
             <div class="breakdown-item"><span>积分抵扣</span><span class="amount">-¥10.00</span></div>
           </div>
@@ -312,7 +313,11 @@
         </div>
         <div class="coupon-right">已选1张 · <span class="summary-switch" onclick="event.stopPropagation();toggleModal()">换券 ›</span></div>
       </div>
-      <div class="coupon-tip">⚠ 购物车包含限时折扣商品，该订单不可使用优惠券</div>
+      <!-- 2026-08-17按PRD §12.4规则4修正提示文案（此前跟PRD原文不完全一致），并补充规则3的注释：
+           自动选券优先级=优惠金额最大→金额相同选快过期→仍相同选领取时间早的（2026-08-08补充第三级排序，
+           避免两张配置完全一样的券选谁没定义）——本demo购物车只有1张已选券，不涉及多张同金额同过期
+           时间打平的场景，第三级排序规则无法在这个静态demo里可视化演示，此处只做规则备注 -->
+      <div class="coupon-tip">⚠ 购物车包含限时折扣商品，不可使用优惠券</div>
 
       <div class="remark-card">
         <span class="remark-label">备注</span>
@@ -331,6 +336,7 @@
         <button class="submit-btn">提交订单</button>
       </div>
     </div>
+  </div>
   </div>
 
   <div class="modal-mask" id="modalMask" onclick="toggleModal()"></div>
@@ -351,6 +357,9 @@
       </label>
     </div>
     <div class="modal-body">
+      <!-- 2026-08-17按PRD §12.4规则5补充：本demo购物车有2张可用券，展示的是"自动选中最优惠一张"的状态；
+           如果可用券数量为0，这个tab-modal-content区域应该显示"暂无可用优惠券"占位提示，不是空白，
+           静态demo无法同时展示两种数量的状态，这里只做规则备注，不额外插一个假的空态截图 -->
       <div class="tab-modal-content active" data-tab="available">
         <div class="modal-coupon-item" onclick="selectCoupon(this)">
           <div class="modal-coupon-radio selected"></div>
@@ -460,85 +469,6 @@
         });
       });
     });
-  
-    var ;
-    var couponData = {
-      standard: { available: [
-        { name: '满500减50', price: '-50', condition: '满500可用', reason: '', disabled: false },
-        { name: '满200减20', price: '-20', condition: '满200可用', reason: '', disabled: false },
-        { name: '限时8折券', price: '-0', condition: '需满300', reason: '金额不足（需满300）', disabled: true }
-      ], selected: 0 },
-      casting: { available: [
-        { name: '满200减20', price: '-20', condition: '满200可用', reason: '', disabled: false },
-        { name: '满300减30', price: '-30', condition: '满300可用', reason: '', disabled: false }
-      ], selected: 1 }
-    };);
-      el.classList.add('active');
-      currentSettleType = ;
-      var tip = document.querySelector(']');
-      if (!availTab) return;
-      var items = availTab.querySelectorAll('.modal-coupon-item');
-      items.forEach(function(item, i) {
-        var d = data.available[i];
-        if (!d) return;
-        item.className = d.disabled ? 'modal-coupon-item disabled' : 'modal-coupon-item';
-        var nameEl = item.querySelector('.modal-coupon-name');
-        if (nameEl) nameEl.textContent = '🎫 ' + d.name;
-        var priceEl = item.querySelector('.modal-coupon-price');
-        if (priceEl) priceEl.textContent = '-' + d.price;
-        var condEl = item.querySelector('.modal-coupon-condition');
-        if (condEl) condEl.textContent = d.condition;
-        var reasonEl = item.querySelector('.modal-coupon-reason');
-        if (d.reason) { reasonEl.textContent = '⚠ ' + d.reason; reasonEl.style.display = 'block'; }
-        else if (reasonEl) { reasonEl.style.display = 'none'; }
-        var radio = item.querySelector('.modal-coupon-radio');
-        if (radio) radio.className = i === data.selected ? 'modal-coupon-radio selected' : 'modal-coupon-radio';
-      });
-      var availCount = data.available.filter(function(c) { return !c.disabled; }).length;
-      var typeLabel = currentSettleType === 'standard' ? '';
-      var subEl = document.getElementById('modalSub');
-      if (subEl) subEl.textContent = '共 ' + availCount + ' 张可用（' + typeLabel + '）';
-      var btnEl = document.getElementById('modalConfirmBtn');
-      if (btnEl) btnEl.textContent = '确定（已选' + data.available[data.selected].name + '）';
-    }
-    var couponData = {
-      standard: {
-        available: [
-          { name: '满500减50', price: '-50', condition: '满500可用', reason: '', disabled: false },
-          { name: '满200减20', price: '-20', condition: '满200可用', reason: '', disabled: false },
-          { name: '限时8折券', price: '-0', condition: '需满300', reason: '金额不足（需满300）', disabled: true }
-        ],
-        selected: 0
-      }
-    };
-    var currentSettleType = 'standard';
-
-    function reloadModalTab() {
-      var data = couponData[currentSettleType];
-      var availTab = document.querySelector('.tab-modal-content[data-tab="available"]');
-      if (!availTab) return;
-      var items = availTab.querySelectorAll('.modal-coupon-item');
-      items.forEach(function(item, i) {
-        var d = data.available[i];
-        if (!d) return;
-        item.className = d.disabled ? 'modal-coupon-item disabled' : 'modal-coupon-item';
-        var nameEl = item.querySelector('.modal-coupon-name');
-        if (nameEl) nameEl.textContent = '🎫 ' + d.name;
-        var priceEl = item.querySelector('.modal-coupon-price');
-        if (priceEl) priceEl.textContent = d.price;
-        var condEl = item.querySelector('.modal-coupon-condition');
-        if (condEl) condEl.textContent = d.condition;
-        var reasonEl = item.querySelector('.modal-coupon-reason');
-        if (d.reason) { reasonEl.textContent = '⚠ ' + d.reason; reasonEl.style.display = 'block'; }
-        else if (reasonEl) { reasonEl.style.display = 'none'; }
-        var radio = item.querySelector('.modal-coupon-radio');
-        if (radio) radio.className = i === data.selected ? 'modal-coupon-radio selected' : 'modal-coupon-radio';
-      });
-    }
-
-    function confirmCoupon() {
-      toggleModal();
-    }
   </script>
 
 </html>

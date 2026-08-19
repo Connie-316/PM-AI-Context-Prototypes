@@ -1,4 +1,3 @@
-<!-- 此文件由私有仓库 PM-AI-Context 自动生成，请勿在此仓库直接编辑，改动请回私有仓库对应模块 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -271,11 +270,14 @@
         <div class="sidebar-item" data-file="小程序/v2.0-WX-10g-确认订单优惠券-部分退款.html" data-title="确认订单-部分退款">
           部分退款 <span class="badge done">✅</span>
         </div>
+        <div class="sidebar-item" data-file="小程序/v2.0-WX-10h-确认订单优惠券-全部退款-已使用.html" data-title="确认订单-全部退款已使用">
+          退款-已使用 <span class="badge done">✅</span>
+        </div>
       </div>
 
       <!-- PC端原型 -->
       <div class="sidebar-section hidden" data-panel="pc">
-        <div class="sidebar-header">💻 PC门户原型 · 9个页面</div>
+        <div class="sidebar-header">💻 PC门户原型 · 10个页面</div>
         <div class="sidebar-item" data-file="PC端/v2.0-PC-领券中心.html" data-title="领券中心">
           领券中心 <span class="badge done">✅</span>
         </div>
@@ -303,6 +305,9 @@
         <div class="sidebar-item" data-file="PC端/v2.0-PC-确认订单优惠券-部分退款.html" data-title="确认订单-部分退款">
           部分退款 <span class="badge done">✅</span>
         </div>
+        <div class="sidebar-item" data-file="PC端/v2.0-PC-确认订单优惠券-全部退款-已使用.html" data-title="确认订单-退款已使用">
+          退款-已使用 <span class="badge done">✅</span>
+        </div>
       </div>
 
       <!-- 商家后台原型 -->
@@ -315,7 +320,7 @@
 
       <!-- PRD文档章节 -->
       <div class="sidebar-section hidden" data-panel="prd">
-        <div class="sidebar-header">📄 PRD v1.1 章节导航</div>
+        <div class="sidebar-header">📄 PRD v1.5 章节导航</div>
         <div class="sidebar-item" data-prd-section="overview">一、业务背景</div>
         <div class="sidebar-item" data-prd-section="version">二、版本规划</div>
         <div class="sidebar-item" data-prd-section="type">三、优惠券类型</div>
@@ -346,9 +351,9 @@
     <div class="info-panel">
       <div class="status-grid">
         <div class="status-card"><div class="num">13</div><div class="label">小程序</div></div>
-        <div class="status-card"><div class="num">9</div><div class="label">PC端</div></div>
+        <div class="status-card"><div class="num">10</div><div class="label">PC端</div></div>
         <div class="status-card"><div class="num">6</div><div class="label">商家后台</div></div>
-        <div class="status-card"><div class="num">23</div><div class="label">原型总数</div></div>
+        <div class="status-card"><div class="num">24</div><div class="label">原型总数</div></div>
       </div>
 
       <div class="info-section">
@@ -387,16 +392,16 @@
 // ===== 页面数据 =====
 var pageInfo = {
   mini: {
-    '领券中心':    { tabs: '全部/可领取/已领取', btn: '立即领取/已领取✓', type: '满减/折扣' },
-    '我的优惠券':   { tabs: '全部/待使用/已使用/已失效', btn: '去使用/已使用/已失效', type: '满减/折扣' },
+    '领券中心':    { tabs: '全部/可领取/已领取', btn: '立即领取/去使用（2026-08-17按PRD §11.6修正，此前误写"已领取✓"）', type: '满减/折扣' },
+    '我的优惠券':   { tabs: '可用/不可用/全部（2026-08-17按PRD §11.4修正，此前误写"全部/待使用/已使用/已失效"）', btn: '去使用/已过期', type: '满减/折扣' },
     '购物车优惠券浮层': { tabs: '可用/不可用', btn: '确定', type: '仅满减' },
-    '商品详情领券区': { tabs: '展开/收起', btn: '立即领取/已领取✓', type: '品牌/新客' },
+    '商品详情领券区': { tabs: '展开/收起', btn: '立即领取/去使用（2026-08-17修正，同上）', type: '品牌/新客' },
     '确认订单选券': { tabs: '可用/不可用', btn: '确定', type: '满减' }
   },
   pc: {
-    '领券中心':      { tabs: '全部/可领取/已领取', btn: '立即领取/已领取', type: '满减/折扣' },
-    '我的优惠券':     { tabs: '全部/待使用/已使用/已失效', btn: '去使用', type: '满减/折扣' },
-    '商品详情优惠券': { tabs: '展开/收起', btn: '立即领取/已领取✓', type: '品牌/品类' },
+    '领券中心':      { tabs: '全部/可领取/已领取', btn: '立即领取/去使用（2026-08-17修正）', type: '满减/折扣' },
+    '我的优惠券':     { tabs: '可用/不可用/全部（2026-08-17修正，同mini端）', btn: '去使用', type: '满减/折扣' },
+    '商品详情优惠券': { tabs: '展开/收起', btn: '立即领取/去使用（2026-08-17修正）', type: '品牌/品类' },
     '确认订单优惠券': { tabs: '可用/不可用', btn: '提交订单', type: '满减' }
   },
   admin: {
@@ -458,7 +463,7 @@ document.querySelectorAll('.sidebar-item[data-prd-section]').forEach(function(it
     var section = this.dataset.prdSection;
     document.getElementById('toolbarTitle').textContent = 'PRD / §' + sectionNum(section) + ' ' + this.textContent;
     document.getElementById('openBtn').href = '../02_PRD/优惠券模块PRD_v1.5.md';
-    document.getElementById('infoTerminal').textContent = 'PRD v1.1';
+    document.getElementById('infoTerminal').textContent = 'PRD v1.5';
     document.getElementById('infoFile').textContent = '优惠券模块PRD_v1.5.md';
 
     loadPrdSection(section);
